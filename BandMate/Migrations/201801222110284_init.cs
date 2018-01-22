@@ -146,6 +146,7 @@ namespace BandMate.Migrations
                     {
                         SizeId = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
                         UpCharge = c.Double(),
                         QuantityAvailable = c.Int(nullable: false),
                         Product_ProductId = c.Int(),
