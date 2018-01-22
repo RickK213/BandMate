@@ -31,13 +31,23 @@ namespace BandMate.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
+                "dbo.SubscriptionTypes",
+                c => new
+                    {
+                        SubscriptionTypeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Price = c.Double(nullable: false),
+                    })
+                .PrimaryKey(t => t.SubscriptionTypeId);
+            
+            CreateTable(
                 "dbo.AspNetUsers",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        MyProperty = c.Int(nullable: false),
+                        NotificationPreferenceId = c.Int(),
                         Title = c.String(),
-                        SubscriptionId = c.Int(nullable: false),
+                        SubscriptionId = c.Int(),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -49,14 +59,13 @@ namespace BandMate.Migrations
                         LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
-                        NotificationPreference_NotificationPreferenceId = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.NotificationPreferences", t => t.NotificationPreference_NotificationPreferenceId)
-                .ForeignKey("dbo.Subscriptions", t => t.SubscriptionId, cascadeDelete: true)
+                .ForeignKey("dbo.NotificationPreferences", t => t.NotificationPreferenceId)
+                .ForeignKey("dbo.Subscriptions", t => t.SubscriptionId)
+                .Index(t => t.NotificationPreferenceId)
                 .Index(t => t.SubscriptionId)
-                .Index(t => t.UserName, unique: true, name: "UserNameIndex")
-                .Index(t => t.NotificationPreference_NotificationPreferenceId);
+                .Index(t => t.UserName, unique: true, name: "UserNameIndex");
             
             CreateTable(
                 "dbo.Bands",
@@ -333,16 +342,6 @@ namespace BandMate.Migrations
                 .Index(t => t.SubscriptionTypeId);
             
             CreateTable(
-                "dbo.SubscriptionTypes",
-                c => new
-                    {
-                        SubscriptionTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Price = c.Double(nullable: false),
-                    })
-                .PrimaryKey(t => t.SubscriptionTypeId);
-            
-            CreateTable(
                 "dbo.BandApplicationUsers",
                 c => new
                     {
@@ -362,7 +361,7 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.AspNetUsers", "SubscriptionId", "dbo.Subscriptions");
             DropForeignKey("dbo.Subscriptions", "SubscriptionTypeId", "dbo.SubscriptionTypes");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUsers", "NotificationPreference_NotificationPreferenceId", "dbo.NotificationPreferences");
+            DropForeignKey("dbo.AspNetUsers", "NotificationPreferenceId", "dbo.NotificationPreferences");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Venues", "Band_BandId", "dbo.Bands");
@@ -413,14 +412,13 @@ namespace BandMate.Migrations
             DropIndex("dbo.Events", new[] { "Venue_VenueId" });
             DropIndex("dbo.Events", new[] { "SetList_SetListId" });
             DropIndex("dbo.Bands", new[] { "StoreId" });
-            DropIndex("dbo.AspNetUsers", new[] { "NotificationPreference_NotificationPreferenceId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "SubscriptionId" });
+            DropIndex("dbo.AspNetUsers", new[] { "NotificationPreferenceId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropTable("dbo.BandApplicationUsers");
-            DropTable("dbo.SubscriptionTypes");
             DropTable("dbo.Subscriptions");
             DropTable("dbo.NotificationPreferences");
             DropTable("dbo.AspNetUserLogins");
@@ -442,6 +440,7 @@ namespace BandMate.Migrations
             DropTable("dbo.Events");
             DropTable("dbo.Bands");
             DropTable("dbo.AspNetUsers");
+            DropTable("dbo.SubscriptionTypes");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
         }

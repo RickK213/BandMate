@@ -21,12 +21,12 @@ namespace BandMate.Models
         public ICollection<Band> Bands { get; set; }
 
         public NotificationPreference NotificationPreference { get; set; }
-        public int MyProperty { get; set; }
+        public int? NotificationPreferenceId { get; set; }
 
         public string Title { get; set; }
 
         public Subscription Subscription { get; set; }
-        public int SubscriptionId { get; set; }
+        public int? SubscriptionId { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -40,5 +40,8 @@ namespace BandMate.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<BandMate.Models.SubscriptionType> SubscriptionTypes { get; set; }
+
     }
 }
