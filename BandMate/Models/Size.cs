@@ -13,7 +13,7 @@ namespace BandMate.Models
         [Required]
         public string Name { get; set; }
 
-        public double UpCharge { get; set; }
+        public double? UpCharge { get; set; }
         public int QuantityAvailable { get; set; }
 
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -8,10 +9,9 @@ namespace BandMate.Models
     public class Band
     {
         public int BandId { get; set; }
-        public string Name { get; set; }
 
-        public Subscription Subscription { get; set; }
-        public int SubscriptionId { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         public ICollection<ApplicationUser> BandMembers { get; set; }
 

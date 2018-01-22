@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -10,10 +11,8 @@ namespace BandMate.Models
         public int AddressId { get; set; }
 
         //[Display(Name = "streetOne")]
+        [Required]
         public string StreetOne { get; set; }
-
-        //[Display(Name = "streetTwo")]
-        public string StreetTwo { get; set; }
 
         //[Display(Name = "city")]
         public City City { get; set; }

@@ -6,13 +6,11 @@ using System.Web;
 
 namespace BandMate.Models
 {
-    public class SubscriptionType
+    public class NotificationPreference
     {
-        public int SubscriptionTypeId { get; set; }
+        public int NotificationPreferenceId { get; set; }
 
         [Required]
         public string Name { get; set; }
-
-        public double Price { get; set; }
     }
 }
