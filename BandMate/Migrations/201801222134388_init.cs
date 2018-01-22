@@ -8,6 +8,24 @@ namespace BandMate.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.NotificationPreferences",
+                c => new
+                    {
+                        NotificationPreferenceId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.NotificationPreferenceId);
+            
+            CreateTable(
+                "dbo.ProductTypes",
+                c => new
+                    {
+                        ProductTypeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.ProductTypeId);
+            
+            CreateTable(
                 "dbo.AspNetRoles",
                 c => new
                     {
@@ -29,6 +47,31 @@ namespace BandMate.Migrations
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.Sizes",
+                c => new
+                    {
+                        SizeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
+                        UpCharge = c.Double(),
+                        QuantityAvailable = c.Int(nullable: false),
+                        Product_ProductId = c.Int(),
+                    })
+                .PrimaryKey(t => t.SizeId)
+                .ForeignKey("dbo.Products", t => t.Product_ProductId)
+                .Index(t => t.Product_ProductId);
+            
+            CreateTable(
+                "dbo.States",
+                c => new
+                    {
+                        StateId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.StateId);
             
             CreateTable(
                 "dbo.SubscriptionTypes",
@@ -132,30 +175,6 @@ namespace BandMate.Migrations
                 .Index(t => t.Transaction_TransactionId);
             
             CreateTable(
-                "dbo.ProductTypes",
-                c => new
-                    {
-                        ProductTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.ProductTypeId);
-            
-            CreateTable(
-                "dbo.Sizes",
-                c => new
-                    {
-                        SizeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Abbreviation = c.String(nullable: false),
-                        UpCharge = c.Double(),
-                        QuantityAvailable = c.Int(nullable: false),
-                        Product_ProductId = c.Int(),
-                    })
-                .PrimaryKey(t => t.SizeId)
-                .ForeignKey("dbo.Products", t => t.Product_ProductId)
-                .Index(t => t.Product_ProductId);
-            
-            CreateTable(
                 "dbo.SetLists",
                 c => new
                     {
@@ -225,16 +244,6 @@ namespace BandMate.Migrations
                         Name = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.CityId);
-            
-            CreateTable(
-                "dbo.States",
-                c => new
-                    {
-                        StateId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Abbreviation = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.StateId);
             
             CreateTable(
                 "dbo.ZipCodes",
@@ -319,15 +328,6 @@ namespace BandMate.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.NotificationPreferences",
-                c => new
-                    {
-                        NotificationPreferenceId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.NotificationPreferenceId);
-            
-            CreateTable(
                 "dbo.Subscriptions",
                 c => new
                     {
@@ -403,7 +403,6 @@ namespace BandMate.Migrations
             DropIndex("dbo.Venues", new[] { "Address_AddressId" });
             DropIndex("dbo.Songs", new[] { "SetList_SetListId" });
             DropIndex("dbo.SetLists", new[] { "Band_BandId" });
-            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
             DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
             DropIndex("dbo.Products", new[] { "Store_StoreId" });
             DropIndex("dbo.Products", new[] { "TourDate_EventId" });
@@ -416,12 +415,12 @@ namespace BandMate.Migrations
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "SubscriptionId" });
             DropIndex("dbo.AspNetUsers", new[] { "NotificationPreferenceId" });
+            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropTable("dbo.BandApplicationUsers");
             DropTable("dbo.Subscriptions");
-            DropTable("dbo.NotificationPreferences");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Tours");
@@ -429,21 +428,22 @@ namespace BandMate.Migrations
             DropTable("dbo.Stores");
             DropTable("dbo.Invitations");
             DropTable("dbo.ZipCodes");
-            DropTable("dbo.States");
             DropTable("dbo.Cities");
             DropTable("dbo.Addresses");
             DropTable("dbo.Venues");
             DropTable("dbo.Songs");
             DropTable("dbo.SetLists");
-            DropTable("dbo.Sizes");
-            DropTable("dbo.ProductTypes");
             DropTable("dbo.Products");
             DropTable("dbo.Events");
             DropTable("dbo.Bands");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.SubscriptionTypes");
+            DropTable("dbo.States");
+            DropTable("dbo.Sizes");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
+            DropTable("dbo.ProductTypes");
+            DropTable("dbo.NotificationPreferences");
         }
     }
 }

@@ -49,5 +49,7 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.NotificationPreference> NotificationPreferences { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.State> States { get; set; }
+
     }
 }
