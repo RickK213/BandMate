@@ -50,19 +50,19 @@ namespace BandMate
             }
 
             // creating Creating Manager role    
-            if (!roleManager.RoleExists("BandManager"))
+            if (!roleManager.RoleExists("Band Manager"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "BandManager";
+                role.Name = "Band Manager";
                 roleManager.Create(role);
 
             }
 
             // creating Creating Employee role    
-            if (!roleManager.RoleExists("BandMember"))
+            if (!roleManager.RoleExists("Band Member"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "BandMember";
+                role.Name = "Band Member";
                 roleManager.Create(role);
 
             }
