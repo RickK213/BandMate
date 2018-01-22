@@ -43,5 +43,11 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.SubscriptionType> SubscriptionTypes { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.ProductType> ProductTypes { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Size> Sizes { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.NotificationPreference> NotificationPreferences { get; set; }
+
     }
 }
