@@ -33,7 +33,7 @@ namespace BandMate.Migrations
 
             SubscriptionType annualSubscription = new SubscriptionType();
             annualSubscription.Name = "Annual Subscription";
-            annualSubscription.Price = 110.00d;
+            annualSubscription.Price = 108.00d;
 
             context.SubscriptionTypes.Add(monthlySubscription);
             context.SubscriptionTypes.Add(annualSubscription);

@@ -1,0 +1,48 @@
+﻿@using BandMate.Models;
+@model IEnumerable<BandMate.Models.SubscriptionType>
+@{
+    ViewBag.Title = "Subscribe to BandMate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Subscribe to BandMate</h2>
+
+<p>To start using BandMate, you must first sign up for a monthly or annual subscription.</p>
+<div class="row">
+    @foreach (SubscriptionType subscriptionType in @Model)
+    {
+        string hiddenValue;
+        string period;
+        string price = String.Format("{0:C2}", subscriptionType.Price);
+        int priceInCents = Convert.ToInt32(subscriptionType.Price*100);
+        if (subscriptionType.Name == "Monthly Subscription")
+        {
+            hiddenValue = "monthly";
+            period = "month";
+        }
+        else
+        {
+            hiddenValue = "annual";
+            period = "year";
+        }
+        <div class="col-md-6">
+            <div class="well">
+                <center>
+                    <h3 style="margin-top: 0;">@subscriptionType.Name</h3>
+                    <h4 class="text-info">@price/@period</h4>
+                    <form action="/Stripe/CreateSubscription" method="POST">
+                        <input type="hidden" name="subscriptionType" value="@hiddenValue" />
+                        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="pk_test_ata9mq4hHm1XWwGFU7InLmsX"
+                                @*data-image="/images/marketplace.png"*@
+                                data-name="BandMate"
+                                data-description="@subscriptionType.Name"
+                                data-amount="@priceInCents"
+                                data-label="Sign up for @subscriptionType.Name">
+                        </script>
+                    </form>
+                </center>
+            </div>
+        </div>
+    }
+</div>

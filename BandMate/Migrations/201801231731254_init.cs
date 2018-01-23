@@ -74,6 +74,21 @@ namespace BandMate.Migrations
                 .PrimaryKey(t => t.StateId);
             
             CreateTable(
+                "dbo.Subscriptions",
+                c => new
+                    {
+                        SubscriptionId = c.Int(nullable: false, identity: true),
+                        SubscriptionTypeId = c.Int(nullable: false),
+                        IsActive = c.Boolean(nullable: false),
+                        StartDate = c.DateTime(nullable: false),
+                        EndDate = c.DateTime(nullable: false),
+                        AutoRenewal = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.SubscriptionId)
+                .ForeignKey("dbo.SubscriptionTypes", t => t.SubscriptionTypeId, cascadeDelete: true)
+                .Index(t => t.SubscriptionTypeId);
+            
+            CreateTable(
                 "dbo.SubscriptionTypes",
                 c => new
                     {
@@ -328,21 +343,6 @@ namespace BandMate.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Subscriptions",
-                c => new
-                    {
-                        SubscriptionId = c.Int(nullable: false, identity: true),
-                        SubscriptionTypeId = c.Int(nullable: false),
-                        IsActive = c.Boolean(nullable: false),
-                        StartDate = c.DateTime(nullable: false),
-                        EndDate = c.DateTime(nullable: false),
-                        AutoRenewal = c.Boolean(nullable: false),
-                    })
-                .PrimaryKey(t => t.SubscriptionId)
-                .ForeignKey("dbo.SubscriptionTypes", t => t.SubscriptionTypeId, cascadeDelete: true)
-                .Index(t => t.SubscriptionTypeId);
-            
-            CreateTable(
                 "dbo.BandApplicationUsers",
                 c => new
                     {
@@ -360,7 +360,6 @@ namespace BandMate.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.AspNetUsers", "SubscriptionId", "dbo.Subscriptions");
-            DropForeignKey("dbo.Subscriptions", "SubscriptionTypeId", "dbo.SubscriptionTypes");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "NotificationPreferenceId", "dbo.NotificationPreferences");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
@@ -387,10 +386,10 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Products", "ProductType_ProductTypeId", "dbo.ProductTypes");
             DropForeignKey("dbo.BandApplicationUsers", "ApplicationUser_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.BandApplicationUsers", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.Subscriptions", "SubscriptionTypeId", "dbo.SubscriptionTypes");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropIndex("dbo.BandApplicationUsers", new[] { "ApplicationUser_Id" });
             DropIndex("dbo.BandApplicationUsers", new[] { "Band_BandId" });
-            DropIndex("dbo.Subscriptions", new[] { "SubscriptionTypeId" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.Tours", new[] { "Band_BandId" });
@@ -415,12 +414,12 @@ namespace BandMate.Migrations
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "SubscriptionId" });
             DropIndex("dbo.AspNetUsers", new[] { "NotificationPreferenceId" });
+            DropIndex("dbo.Subscriptions", new[] { "SubscriptionTypeId" });
             DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropTable("dbo.BandApplicationUsers");
-            DropTable("dbo.Subscriptions");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Tours");
@@ -438,6 +437,7 @@ namespace BandMate.Migrations
             DropTable("dbo.Bands");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.SubscriptionTypes");
+            DropTable("dbo.Subscriptions");
             DropTable("dbo.States");
             DropTable("dbo.Sizes");
             DropTable("dbo.AspNetUserRoles");

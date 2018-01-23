@@ -51,5 +51,7 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.State> States { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.Subscription> Subscriptions { get; set; }
+
     }
 }

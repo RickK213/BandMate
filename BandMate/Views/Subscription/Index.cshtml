@@ -1,0 +1,26 @@
+﻿@model BandMate.Models.Subscription
+@{
+    ViewBag.Title = "My BandMate Subscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>My BandMate Subscription</h2>
+@if (Model != null)
+{
+    <h4>Subscription Details</h4>
+    <p><strong>Subscription Type:</strong> @Model.SubscriptionType.Name</p>
+    <p><strong>Subscription Price:</strong> @String.Format("{0:C2}", Model.SubscriptionType.Price)</p>
+    <p><strong>Start Date:</strong> @String.Format("{0:MM/dd/yyyy}", Model.StartDate)</p>
+    <p><strong>End Date:</strong> @String.Format("{0:MM/dd/yyyy}", Model.EndDate)</p>
+    @:
+        string autoRenewalStatus = "On";
+    if (Model.AutoRenewal == false)
+    {
+        autoRenewalStatus = "Off";
+    }
+    <p><strong>Auto Renewal:</strong> @autoRenewalStatus</p>
+        <p>
+            @Html.ActionLink("Cancel Subscription", "Cancel", "Subscription", new { subscriptionId = Model.SubscriptionId }, new { @class = "btn btn-danger" })
+        </p>
+}
+
