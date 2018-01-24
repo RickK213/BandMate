@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using BandMate.Models;
 using Microsoft.AspNet.Identity;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace BandMate.Controllers
 {
@@ -21,7 +24,7 @@ namespace BandMate.Controllers
         {
             CheckSubscription();
             var bands = GetUserBands();
-            if( bands.Count <= 0 )
+            if (bands.Count <= 0)
             {
                 return RedirectToAction("Create");
             }
@@ -130,7 +133,7 @@ namespace BandMate.Controllers
                 Band band = db.Bands.Find(bandId);
                 band.Name = bandName;
                 db.SaveChanges();
-                TempData["infoMessage"] = "Success! Band name changed to " + band.Name + ".";
+                TempData["infoMessage"] = "Changes saved!";
             }
             return RedirectToAction("Index", new { bandId = bandId });
         }
@@ -212,7 +215,8 @@ namespace BandMate.Controllers
                 .Include(u => u.Bands)
                 .Where(u => u.Id == userId)
                 .FirstOrDefault();
-            return user.Bands.ToList();
+            List<Band> bands = user.Bands.ToList();
+            return bands;
         }
 
         private void CheckSubscription()
@@ -229,6 +233,28 @@ namespace BandMate.Controllers
                 Response.Redirect("/Subscription/Create");
             }
         }
+
+        public ActionResult InviteMember(int? bandId, string email, string title, string bandName)
+        {
+            string baseUrl = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+            string plainTextContent = User.Identity.GetUserName() + " has invited you to join the band '" + bandName + "' on BandMate!\r\n\r\nTo join, sign-up and log-in to your account using this email address!\r\n\r\n" + baseUrl;
+            string htmlTextContent = "<p>" + User.Identity.GetUserName() + " has invited you to join the band '" + bandName + "' on BandMate!</p><p>To join, sign-up and log-in to your account using the email address: " + email + " </p><p>" + baseUrl + "</p>";
+            SendEmail(email, "You've been invited to join BandMate!", plainTextContent, htmlTextContent);
+            TempData["infoMessage"] = "Invitation sent to " + email;
+            return RedirectToAction("Members", "Band", new { bandId = bandId });
+        }
+
+        private void SendEmail(string toEmail, string subject, string plainTextContent, string htmlTextContent)
+        {
+            //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("info@bandmate.com", "BandMate");
+            var to = new EmailAddress(toEmail);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
+            var response = client.SendEmailAsync(msg);
+        }
+
 
     }
 }
