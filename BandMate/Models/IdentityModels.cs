@@ -53,5 +53,8 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.Subscription> Subscriptions { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.Band> Bands { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Store> Stores { get; set; }
     }
 }

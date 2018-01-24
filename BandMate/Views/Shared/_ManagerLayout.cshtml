@@ -1,0 +1,75 @@
+﻿@using BandMate.Models
+@model BandMate.Models.BandViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="margin-top: 40px;">
+
+    @*Dashboard Menu*@
+    <div class="col-md-3">
+
+        <div class="btn-group btn-flex">
+            <button type="button" class="btn btn-primary btn-lg">@Model.CurrentBand.Name</button>
+            <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" style="width: 100%;">
+                @if (Model.OtherBands.Count > 0)
+                {
+                    foreach (Band band in Model.OtherBands)
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Band", new { band.BandId })">@band.Name</a>
+                        </li>
+                    }
+                    <li role="separator" class="divider"></li>
+                }
+                <li>
+                    <a href="@Url.Action("Create", "Band")"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add New Band</a>
+                </li>
+            </ul>
+        </div>
+        @{
+            int bandMemberCount = 0;
+            int tourCount = 0;
+            int venueCount = 0;
+            int setListCount = 0;
+            if (Model.CurrentBand.BandMembers != null)
+            {
+                bandMemberCount = Model.CurrentBand.BandMembers.Count;
+            }
+            if (Model.CurrentBand.Tours != null)
+            {
+                tourCount = Model.CurrentBand.Tours.Count;
+            }
+            if (Model.CurrentBand.Venues != null)
+            {
+                venueCount = Model.CurrentBand.Venues.Count;
+            }
+            if (Model.CurrentBand.SetLists != null)
+            {
+                setListCount = Model.CurrentBand.SetLists.Count;
+            }
+        }
+
+        <div class="list-group" style="margin-top: 20px;">
+            <a class="list-group-item" href="@Url.Action("Index", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+            <a class="list-group-item" href="@Url.Action("Members", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Band Members <span class="badge">@bandMemberCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Index", "Tour", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-road" aria-hidden="true"></span> My Tours <span class="badge">@tourCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Index", "Venue", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> My Venues <span class="badge">@venueCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Index", "SetList", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> My Set Lists <span class="badge">@setListCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Index", "Event", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> My Events</a>
+            <a class="list-group-item" href="@Url.Action("Index", "Store", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> My Store</a>
+        </div>
+
+    </div>
+
+    @*Main Content*@
+    <div class="col-md-9">
+        @Html.Partial("_AlertsPartial")
+        @RenderBody()
+    </div>
+</div>

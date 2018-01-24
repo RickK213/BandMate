@@ -25,7 +25,8 @@ namespace BandMate.Controllers
                 .FirstOrDefault();
             if (user.Subscription == null )
             {
-                return RedirectToAction("Create", "Subscription");            }
+                return RedirectToAction("Create", "Subscription");
+            }
 
             return View(user.Subscription);
         }

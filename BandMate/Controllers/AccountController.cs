@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BandMate.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace BandMate.Controllers
 {
@@ -167,7 +169,8 @@ namespace BandMate.Controllers
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);   
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);   
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");   
-                    //Ends Here  
+                    //Ends Here
+
                     return RedirectToAction("RoleSwitcher", "Account");
                 }
                 ViewBag.Name = new SelectList(context.Roles.Where(u => !u.Name.Contains("Admin"))
@@ -440,6 +443,31 @@ namespace BandMate.Controllers
                 }
                 else if (IsBandManager())
                 {
+                    //Create a default Band for the manager
+                    string userId = User.Identity.GetUserId();
+                    var user = context.Users
+                        .Include(u => u.Bands)
+                        .Where(u => u.Id == userId)
+                        .FirstOrDefault();
+
+                    if ( user.Bands == null || user.Bands.Count==0 )
+                    {
+                        Store store = new Store();
+                        context.Stores.Add(store);
+                        context.SaveChanges();
+
+                        Band band = new Band();
+                        band.Name = "Unnamed Band";
+                        band.Store = store;
+                        context.Bands.Add(band);
+                        context.SaveChanges();
+
+                        user.Bands = new List<Band>();
+                        user.Bands.Add(band);
+                        user.Title = "Band Manager";
+                        context.SaveChanges();
+                    }
+
                     return RedirectToAction("Create", "Subscription");
                 }
                 else if (IsBandMember())

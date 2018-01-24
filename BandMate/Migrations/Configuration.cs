@@ -21,10 +21,6 @@ namespace BandMate.Migrations
 
         protected override void Seed(BandMate.Models.ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
 
             //Seed the subscription types
             SubscriptionType monthlySubscription = new SubscriptionType();
@@ -92,7 +88,6 @@ namespace BandMate.Migrations
             context.NotificationPreferences.Add(textPreference);
 
             context.SaveChanges();
-
 
             //Seed States table with all US States from CSV
             string seedFile = "~/CSV/SeedData/";//states.csv removed from end of seedFile

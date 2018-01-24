@@ -28,3 +28,14 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Roboto Slab', sans-serif;
     font-weight: 700;
 }
+
+.btn-flex {
+  display: flex;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.btn-flex .btn:first-child {
+    flex-grow: 1;
+    text-align: left;
+}

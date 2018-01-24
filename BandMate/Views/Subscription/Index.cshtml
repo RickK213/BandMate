@@ -21,6 +21,7 @@
     <p><strong>Auto Renewal:</strong> @autoRenewalStatus</p>
         <p>
             @Html.ActionLink("Cancel Subscription", "Cancel", "Subscription", new { subscriptionId = Model.SubscriptionId }, new { @class = "btn btn-danger" })
+            @Html.ActionLink("Go To Dashboard", "Index", "Band", null, new { @class = "btn btn-primary" })
         </p>
 }
 

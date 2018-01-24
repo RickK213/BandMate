@@ -8,95 +8,16 @@ namespace BandMate.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.NotificationPreferences",
+                "dbo.Bands",
                 c => new
                     {
-                        NotificationPreferenceId = c.Int(nullable: false, identity: true),
+                        BandId = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false),
+                        StoreId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.NotificationPreferenceId);
-            
-            CreateTable(
-                "dbo.ProductTypes",
-                c => new
-                    {
-                        ProductTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.ProductTypeId);
-            
-            CreateTable(
-                "dbo.AspNetRoles",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        Name = c.String(nullable: false, maxLength: 256),
-                    })
-                .PrimaryKey(t => t.Id)
-                .Index(t => t.Name, unique: true, name: "RoleNameIndex");
-            
-            CreateTable(
-                "dbo.AspNetUserRoles",
-                c => new
-                    {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        RoleId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId)
-                .Index(t => t.RoleId);
-            
-            CreateTable(
-                "dbo.Sizes",
-                c => new
-                    {
-                        SizeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Abbreviation = c.String(nullable: false),
-                        UpCharge = c.Double(),
-                        QuantityAvailable = c.Int(nullable: false),
-                        Product_ProductId = c.Int(),
-                    })
-                .PrimaryKey(t => t.SizeId)
-                .ForeignKey("dbo.Products", t => t.Product_ProductId)
-                .Index(t => t.Product_ProductId);
-            
-            CreateTable(
-                "dbo.States",
-                c => new
-                    {
-                        StateId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Abbreviation = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.StateId);
-            
-            CreateTable(
-                "dbo.Subscriptions",
-                c => new
-                    {
-                        SubscriptionId = c.Int(nullable: false, identity: true),
-                        SubscriptionTypeId = c.Int(nullable: false),
-                        IsActive = c.Boolean(nullable: false),
-                        StartDate = c.DateTime(nullable: false),
-                        EndDate = c.DateTime(nullable: false),
-                        AutoRenewal = c.Boolean(nullable: false),
-                    })
-                .PrimaryKey(t => t.SubscriptionId)
-                .ForeignKey("dbo.SubscriptionTypes", t => t.SubscriptionTypeId, cascadeDelete: true)
-                .Index(t => t.SubscriptionTypeId);
-            
-            CreateTable(
-                "dbo.SubscriptionTypes",
-                c => new
-                    {
-                        SubscriptionTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Price = c.Double(nullable: false),
-                    })
-                .PrimaryKey(t => t.SubscriptionTypeId);
+                .PrimaryKey(t => t.BandId)
+                .ForeignKey("dbo.Stores", t => t.StoreId, cascadeDelete: true)
+                .Index(t => t.StoreId);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -126,16 +47,76 @@ namespace BandMate.Migrations
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
             
             CreateTable(
-                "dbo.Bands",
+                "dbo.AspNetUserClaims",
                 c => new
                     {
-                        BandId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        StoreId = c.Int(nullable: false),
+                        Id = c.Int(nullable: false, identity: true),
+                        UserId = c.String(nullable: false, maxLength: 128),
+                        ClaimType = c.String(),
+                        ClaimValue = c.String(),
                     })
-                .PrimaryKey(t => t.BandId)
-                .ForeignKey("dbo.Stores", t => t.StoreId, cascadeDelete: true)
-                .Index(t => t.StoreId);
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.AspNetUserLogins",
+                c => new
+                    {
+                        LoginProvider = c.String(nullable: false, maxLength: 128),
+                        ProviderKey = c.String(nullable: false, maxLength: 128),
+                        UserId = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.NotificationPreferences",
+                c => new
+                    {
+                        NotificationPreferenceId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.NotificationPreferenceId);
+            
+            CreateTable(
+                "dbo.AspNetUserRoles",
+                c => new
+                    {
+                        UserId = c.String(nullable: false, maxLength: 128),
+                        RoleId = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.UserId, t.RoleId })
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
+                .Index(t => t.UserId)
+                .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.Subscriptions",
+                c => new
+                    {
+                        SubscriptionId = c.Int(nullable: false, identity: true),
+                        SubscriptionTypeId = c.Int(nullable: false),
+                        IsActive = c.Boolean(nullable: false),
+                        StartDate = c.DateTime(nullable: false),
+                        EndDate = c.DateTime(nullable: false),
+                        AutoRenewal = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.SubscriptionId)
+                .ForeignKey("dbo.SubscriptionTypes", t => t.SubscriptionTypeId, cascadeDelete: true)
+                .Index(t => t.SubscriptionTypeId);
+            
+            CreateTable(
+                "dbo.SubscriptionTypes",
+                c => new
+                    {
+                        SubscriptionTypeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Price = c.Double(nullable: false),
+                    })
+                .PrimaryKey(t => t.SubscriptionTypeId);
             
             CreateTable(
                 "dbo.Events",
@@ -188,6 +169,30 @@ namespace BandMate.Migrations
                 .Index(t => t.TourDate_EventId)
                 .Index(t => t.Store_StoreId)
                 .Index(t => t.Transaction_TransactionId);
+            
+            CreateTable(
+                "dbo.ProductTypes",
+                c => new
+                    {
+                        ProductTypeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.ProductTypeId);
+            
+            CreateTable(
+                "dbo.Sizes",
+                c => new
+                    {
+                        SizeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
+                        UpCharge = c.Double(),
+                        QuantityAvailable = c.Int(nullable: false),
+                        Product_ProductId = c.Int(),
+                    })
+                .PrimaryKey(t => t.SizeId)
+                .ForeignKey("dbo.Products", t => t.Product_ProductId)
+                .Index(t => t.Product_ProductId);
             
             CreateTable(
                 "dbo.SetLists",
@@ -261,6 +266,16 @@ namespace BandMate.Migrations
                 .PrimaryKey(t => t.CityId);
             
             CreateTable(
+                "dbo.States",
+                c => new
+                    {
+                        StateId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.StateId);
+            
+            CreateTable(
                 "dbo.ZipCodes",
                 c => new
                     {
@@ -318,52 +333,33 @@ namespace BandMate.Migrations
                 .Index(t => t.Band_BandId);
             
             CreateTable(
-                "dbo.AspNetUserClaims",
+                "dbo.AspNetRoles",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        ClaimType = c.String(),
-                        ClaimValue = c.String(),
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Name = c.String(nullable: false, maxLength: 256),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
+                .Index(t => t.Name, unique: true, name: "RoleNameIndex");
             
             CreateTable(
-                "dbo.AspNetUserLogins",
+                "dbo.ApplicationUserBands",
                 c => new
                     {
-                        LoginProvider = c.String(nullable: false, maxLength: 128),
-                        ProviderKey = c.String(nullable: false, maxLength: 128),
-                        UserId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
-            
-            CreateTable(
-                "dbo.BandApplicationUsers",
-                c => new
-                    {
-                        Band_BandId = c.Int(nullable: false),
                         ApplicationUser_Id = c.String(nullable: false, maxLength: 128),
+                        Band_BandId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => new { t.Band_BandId, t.ApplicationUser_Id })
-                .ForeignKey("dbo.Bands", t => t.Band_BandId, cascadeDelete: true)
+                .PrimaryKey(t => new { t.ApplicationUser_Id, t.Band_BandId })
                 .ForeignKey("dbo.AspNetUsers", t => t.ApplicationUser_Id, cascadeDelete: true)
-                .Index(t => t.Band_BandId)
-                .Index(t => t.ApplicationUser_Id);
+                .ForeignKey("dbo.Bands", t => t.Band_BandId, cascadeDelete: true)
+                .Index(t => t.ApplicationUser_Id)
+                .Index(t => t.Band_BandId);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.AspNetUsers", "SubscriptionId", "dbo.Subscriptions");
-            DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUsers", "NotificationPreferenceId", "dbo.NotificationPreferences");
-            DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.Venues", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Tours", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Tour_TourId", "dbo.Tours");
@@ -384,14 +380,17 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Products", "TourDate_EventId", "dbo.Events");
             DropForeignKey("dbo.Sizes", "Product_ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "ProductType_ProductTypeId", "dbo.ProductTypes");
-            DropForeignKey("dbo.BandApplicationUsers", "ApplicationUser_Id", "dbo.AspNetUsers");
-            DropForeignKey("dbo.BandApplicationUsers", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.AspNetUsers", "SubscriptionId", "dbo.Subscriptions");
             DropForeignKey("dbo.Subscriptions", "SubscriptionTypeId", "dbo.SubscriptionTypes");
-            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropIndex("dbo.BandApplicationUsers", new[] { "ApplicationUser_Id" });
-            DropIndex("dbo.BandApplicationUsers", new[] { "Band_BandId" });
-            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
-            DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
+            DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUsers", "NotificationPreferenceId", "dbo.NotificationPreferences");
+            DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.ApplicationUserBands", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.ApplicationUserBands", "ApplicationUser_Id", "dbo.AspNetUsers");
+            DropIndex("dbo.ApplicationUserBands", new[] { "Band_BandId" });
+            DropIndex("dbo.ApplicationUserBands", new[] { "ApplicationUser_Id" });
+            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.Tours", new[] { "Band_BandId" });
             DropIndex("dbo.Transactions", new[] { "Store_StoreId" });
             DropIndex("dbo.Invitations", new[] { "Band_BandId" });
@@ -402,6 +401,7 @@ namespace BandMate.Migrations
             DropIndex("dbo.Venues", new[] { "Address_AddressId" });
             DropIndex("dbo.Songs", new[] { "SetList_SetListId" });
             DropIndex("dbo.SetLists", new[] { "Band_BandId" });
+            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
             DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
             DropIndex("dbo.Products", new[] { "Store_StoreId" });
             DropIndex("dbo.Products", new[] { "TourDate_EventId" });
@@ -410,40 +410,40 @@ namespace BandMate.Migrations
             DropIndex("dbo.Events", new[] { "Band_BandId" });
             DropIndex("dbo.Events", new[] { "Venue_VenueId" });
             DropIndex("dbo.Events", new[] { "SetList_SetListId" });
-            DropIndex("dbo.Bands", new[] { "StoreId" });
+            DropIndex("dbo.Subscriptions", new[] { "SubscriptionTypeId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
+            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
+            DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "SubscriptionId" });
             DropIndex("dbo.AspNetUsers", new[] { "NotificationPreferenceId" });
-            DropIndex("dbo.Subscriptions", new[] { "SubscriptionTypeId" });
-            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropTable("dbo.BandApplicationUsers");
-            DropTable("dbo.AspNetUserLogins");
-            DropTable("dbo.AspNetUserClaims");
+            DropIndex("dbo.Bands", new[] { "StoreId" });
+            DropTable("dbo.ApplicationUserBands");
+            DropTable("dbo.AspNetRoles");
             DropTable("dbo.Tours");
             DropTable("dbo.Transactions");
             DropTable("dbo.Stores");
             DropTable("dbo.Invitations");
             DropTable("dbo.ZipCodes");
+            DropTable("dbo.States");
             DropTable("dbo.Cities");
             DropTable("dbo.Addresses");
             DropTable("dbo.Venues");
             DropTable("dbo.Songs");
             DropTable("dbo.SetLists");
+            DropTable("dbo.Sizes");
+            DropTable("dbo.ProductTypes");
             DropTable("dbo.Products");
             DropTable("dbo.Events");
-            DropTable("dbo.Bands");
-            DropTable("dbo.AspNetUsers");
             DropTable("dbo.SubscriptionTypes");
             DropTable("dbo.Subscriptions");
-            DropTable("dbo.States");
-            DropTable("dbo.Sizes");
             DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetRoles");
-            DropTable("dbo.ProductTypes");
             DropTable("dbo.NotificationPreferences");
+            DropTable("dbo.AspNetUserLogins");
+            DropTable("dbo.AspNetUserClaims");
+            DropTable("dbo.AspNetUsers");
+            DropTable("dbo.Bands");
         }
     }
 }
