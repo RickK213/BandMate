@@ -1,4 +1,4 @@
-﻿@model BandMate.Models.BandIndexViewModel
+﻿@model BandMate.Models.BandViewModel
 
 @{
     ViewBag.Title = "Dashboard";
@@ -12,7 +12,8 @@
         <a href="/Band/Delete/@Model.CurrentBand.BandId" class="btn btn-danger btn-xs pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" action="/Band/Rename" method="Post">
+        <form class="form-horizontal" action="/Band/Edit" method="Post">
+            @Html.AntiForgeryToken()
             <input type="hidden" name="bandId" value="@Model.CurrentBand.BandId"/>
             <div class="form-group">
                 <label for="bandName" class="col-sm-2 control-label">Band Name</label>
@@ -22,7 +23,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Save Band Name</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
