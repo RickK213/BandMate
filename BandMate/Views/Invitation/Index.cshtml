@@ -1,0 +1,46 @@
+﻿@using BandMate.Models
+@model InvitationIndexViewModel
+
+@{
+    ViewBag.Title = "My Invitations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>My Invitations</h2>
+@{ 
+    List<Invitation> invitations = Model.Invitations.ToList();
+    List<Band> inviteBands = Model.InviteBands.ToList();
+}
+@if (invitations.Count() > 0)
+{
+    @:<div class="row">
+    for (int i = 0; i < invitations.Count; i++)
+    {
+        List<ApplicationUser> bandMembers = inviteBands[i].BandMembers.ToList();
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Invitation from @inviteBands[i].Name</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Invitation sent on: </strong>@String.Format("{0:MM/dd/yy}", invitations[i].CreatedOn)</p>
+                    <p><strong>Invitation sent by: </strong>@bandMembers[0].UserName</p>
+                    <p><strong>Your Title: </strong>@invitations[i].Title</p>
+                    <p>
+                        @Html.ActionLink("Accept Invitation", "Accept", "Invitation", routeValues: null, htmlAttributes: new { @class = "btn btn-success" })
+                        @Html.ActionLink("Decline Invitation", "Decline", "Invitation", routeValues: null, htmlAttributes: new { @class = "btn btn-danger" })
+                    </p>
+                </div>
+            </div>
+        </div>
+        if( (i+1) % 2 ==0 )
+        {
+            @:</div><div class="row">
+        }
+    }
+    @:</div>
+}
+else
+{
+    <div class="alert alert-danger">No invitations found.</div>
+}

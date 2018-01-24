@@ -234,15 +234,16 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BandController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvitationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\StripeController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201801240515262_init.cs" />
-    <Compile Include="Migrations\201801240515262_init.Designer.cs">
-      <DependentUpon>201801240515262_init.cs</DependentUpon>
+    <Compile Include="Migrations\201801241538140_init.cs" />
+    <Compile Include="Migrations\201801241538140_init.Designer.cs">
+      <DependentUpon>201801241538140_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invitation.cs" />
+    <Compile Include="Models\InvitationViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NotificationPreference.cs" />
     <Compile Include="Models\Product.cs" />
@@ -386,6 +388,7 @@
     <Content Include="Views\Shared\_ManagerLayout.cshtml" />
     <Content Include="Views\Shared\_AlertsPartial.cshtml" />
     <Content Include="Views\Band\Members.cshtml" />
+    <Content Include="Views\Invitation\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -402,8 +405,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201801240515262_init.resx">
-      <DependentUpon>201801240515262_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201801241538140_init.resx">
+      <DependentUpon>201801241538140_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -13,6 +13,10 @@ namespace BandMate.Models
         [Required]
         public string Email { get; set; }
 
+        public string Title { get; set; }
+
+        public int BandId { get; set; }
+
         public DateTime CreatedOn { get; set; }
         public bool IsAccepted { get; set; }
     }

@@ -234,12 +234,35 @@ namespace BandMate.Controllers
             }
         }
 
-        public ActionResult InviteMember(int? bandId, string email, string title, string bandName)
+        public ActionResult InviteMember(int? bandId, string email, string title)
         {
+            Band band = db.Bands
+                .Include(b => b.Invitations)
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+            if (band == null)
+            {
+                return HttpNotFound();
+            }
+            string bandName = band.Name;
             string baseUrl = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
             string plainTextContent = User.Identity.GetUserName() + " has invited you to join the band '" + bandName + "' on BandMate!\r\n\r\nTo join, sign-up and log-in to your account using this email address!\r\n\r\n" + baseUrl;
             string htmlTextContent = "<p>" + User.Identity.GetUserName() + " has invited you to join the band '" + bandName + "' on BandMate!</p><p>To join, sign-up and log-in to your account using the email address: " + email + " </p><p>" + baseUrl + "</p>";
             SendEmail(email, "You've been invited to join BandMate!", plainTextContent, htmlTextContent);
+
+            Invitation invitation = new Invitation();
+            invitation.Email = email;
+            invitation.Title = title;
+            invitation.CreatedOn = DateTime.Now;
+            invitation.IsAccepted = false;
+            invitation.BandId = band.BandId;
+            db.Invitations.Add(invitation);
+            db.SaveChanges();
+
+            band.Invitations.Add(invitation);
+            db.SaveChanges();
+
+
             TempData["infoMessage"] = "Invitation sent to " + email;
             return RedirectToAction("Members", "Band", new { bandId = bandId });
         }
@@ -247,7 +270,7 @@ namespace BandMate.Controllers
         private void SendEmail(string toEmail, string subject, string plainTextContent, string htmlTextContent)
         {
             //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
-            var apiKey = "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";
+            var apiKey = "";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("info@bandmate.com", "BandMate");
             var to = new EmailAddress(toEmail);

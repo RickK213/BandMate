@@ -290,13 +290,14 @@ namespace BandMate.Migrations
                     {
                         InvitationId = c.Int(nullable: false, identity: true),
                         Email = c.String(nullable: false),
+                        Title = c.String(),
+                        BandId = c.Int(nullable: false),
                         CreatedOn = c.DateTime(nullable: false),
                         IsAccepted = c.Boolean(nullable: false),
-                        Band_BandId = c.Int(),
                     })
                 .PrimaryKey(t => t.InvitationId)
-                .ForeignKey("dbo.Bands", t => t.Band_BandId)
-                .Index(t => t.Band_BandId);
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
+                .Index(t => t.BandId);
             
             CreateTable(
                 "dbo.Stores",
@@ -368,7 +369,7 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Products", "Transaction_TransactionId", "dbo.Transactions");
             DropForeignKey("dbo.Products", "Store_StoreId", "dbo.Stores");
             DropForeignKey("dbo.SetLists", "Band_BandId", "dbo.Bands");
-            DropForeignKey("dbo.Invitations", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Venue_VenueId", "dbo.Venues");
             DropForeignKey("dbo.Venues", "Address_AddressId", "dbo.Addresses");
@@ -393,7 +394,7 @@ namespace BandMate.Migrations
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.Tours", new[] { "Band_BandId" });
             DropIndex("dbo.Transactions", new[] { "Store_StoreId" });
-            DropIndex("dbo.Invitations", new[] { "Band_BandId" });
+            DropIndex("dbo.Invitations", new[] { "BandId" });
             DropIndex("dbo.Addresses", new[] { "ZipCodeId" });
             DropIndex("dbo.Addresses", new[] { "StateId" });
             DropIndex("dbo.Addresses", new[] { "CityId" });
