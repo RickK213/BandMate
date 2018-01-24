@@ -14,6 +14,7 @@ namespace BandMate
 
         //properties
         public string SendGridKey { get; set; }
+        public string StripeSecretKey { get; set; }
         //constructor
         public KeyManager()
         {
@@ -25,6 +26,7 @@ namespace BandMate
         {
             JObject keyObject = JObject.Parse(File.ReadAllText(@"C:\Users\Rick Kippert\Dropbox\_devCodeCamp\Assignments\BandMate\App\BandMate\BandMate\JSON\keys.json"));
             SendGridKey = keyObject.GetValue("SendGridKey").ToString();
+            StripeSecretKey = keyObject.GetValue("StripeSecretKey").ToString();
         }
 
     }

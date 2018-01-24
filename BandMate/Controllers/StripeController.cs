@@ -25,8 +25,9 @@ namespace BandMate.Controllers
         public ActionResult CreateSubscription(string stripeEmail, string stripeToken, string subscriptionType)
         {
 
-            //TO DO: move this key to a config file that is not in source control:
-            StripeConfiguration.SetApiKey("sk_test_A1hCCloeZ40NRJNUNakK39Cs");
+            KeyManager keyManager = new KeyManager();
+            string stripeKey = keyManager.StripeSecretKey;
+            StripeConfiguration.SetApiKey(stripeKey);
 
             //Create Customer
             var customerOptions = new StripeCustomerCreateOptions
