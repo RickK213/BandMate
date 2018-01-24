@@ -270,12 +270,13 @@ namespace BandMate.Controllers
         private void SendEmail(string toEmail, string subject, string plainTextContent, string htmlTextContent)
         {
             //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
-            var apiKey = "";
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("info@bandmate.com", "BandMate");
-            var to = new EmailAddress(toEmail);
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
-            var response = client.SendEmailAsync(msg);
+            KeyManager keyManager = new KeyManager();
+            var apiKey = keyManager.SendGridKey;
+            //var client = new SendGridClient(apiKey);
+            //var from = new EmailAddress("info@bandmate.com", "BandMate");
+            //var to = new EmailAddress(toEmail);
+            //var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
+            //var response = client.SendEmailAsync(msg);
         }
 
 
