@@ -60,7 +60,7 @@
                         <td>@user.PhoneNumber</td>
                         <td>@user.Title</td>
                         <td>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-s btn-danger" href="@Url.Action("RemoveMember", "Band", new { bandId = Model.CurrentBand.BandId, bandMemberId = user.BandMemberId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove Member</a>
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("RemoveMember", "Band", new { bandId = Model.CurrentBand.BandId, bandMemberId = user.BandMemberId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove Member</a>
                         </td>
                     </tr>
                 }

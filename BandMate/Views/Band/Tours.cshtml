@@ -35,15 +35,15 @@
                 {
                     <tr>
                         <td>
-                            <a class="btn btn-s btn-primary" href="@Url.Action("Details", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @tour.Name</a>
+                            <a class="btn btn-xs btn-primary" href="@Url.Action("Details", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @tour.Name</a>
                         </td>
                         <td>
                             @tour.TourDates.Count Tour Dates
-                            <a class="btn btn-s btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
+                            <a class="btn btn-xs btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
                         </td>
                         <td>
-                            <a class="btn btn-s btn-info" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-s btn-danger" href="@Url.Action("Delete", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
                         </td>
                     </tr>
                 }

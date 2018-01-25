@@ -51,8 +51,6 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.NotificationPreference> NotificationPreferences { get; set; }
 
-        public System.Data.Entity.DbSet<BandMate.Models.State> States { get; set; }
-
         public System.Data.Entity.DbSet<BandMate.Models.Subscription> Subscriptions { get; set; }
 
         public System.Data.Entity.DbSet<BandMate.Models.Band> Bands { get; set; }
@@ -64,6 +62,16 @@ namespace BandMate.Models
         public System.Data.Entity.DbSet<BandMate.Models.BandMember> BandMembers { get; set; }
 
         public System.Data.Entity.DbSet<BandMate.Models.Tour> Tours { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Venue> Venues { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Address> Addresses { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.City> Cities { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.State> States { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.ZipCode> ZipCodes { get; set; }
 
     }
 }

@@ -14,6 +14,10 @@ namespace BandMate.Models
         public string Name { get; set; }
 
         public Address Address { get; set; }
+        public int AddressId { get; set; }
+
+        public int BandId { get; set; }
+
         public string ContactFirstName { get; set; }
         public string ContactLastName { get; set; }
         public string ContactPhoneNumber { get; set; }

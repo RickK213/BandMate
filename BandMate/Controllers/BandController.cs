@@ -298,6 +298,12 @@ namespace BandMate.Controllers
             return View(viewModel);
         }
 
+        // GET: Band/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+        
         // POST: Band/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -555,6 +561,10 @@ namespace BandMate.Controllers
                 .Include("Bands.Tours.TourDates")
                 .Include("Bands.Tours.TourDates.ProductsSold")
                 .Include("Bands.Venues")
+                .Include("Bands.Venues.Address")
+                .Include("Bands.Venues.Address.City")
+                .Include("Bands.Venues.Address.State")
+                .Include("Bands.Venues.Address.ZipCode")
                 .Include("Bands.SetLists")
                 .Include("Bands.SetLists.Songs")
                 .Include("Bands.Events")

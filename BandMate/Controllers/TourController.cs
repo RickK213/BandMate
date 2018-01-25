@@ -6,6 +6,7 @@ using BandMate.Models;
 
 namespace BandMate.Controllers
 {
+    [Authorize]
     public class TourController : Controller
     {
 
