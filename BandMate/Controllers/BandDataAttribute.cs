@@ -49,6 +49,26 @@ namespace BandMate.Controllers
             base.OnActionExecuting(filterContext);
         }
 
+        public override void OnResultExecuting(ResultExecutingContext filterContext)
+        {
+
+
+            HttpContext.Current.Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+            HttpContext.Current.Response.Cache.SetValidUntilExpires(false);
+            HttpContext.Current.Response.Cache.SetRevalidation(HttpCacheRevalidation.AllCaches);
+            HttpContext.Current.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            HttpContext.Current.Response.Cache.SetNoStore();
+
+
+            filterContext.HttpContext.Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+            filterContext.HttpContext.Response.Cache.SetValidUntilExpires(false);
+            filterContext.HttpContext.Response.Cache.SetRevalidation(HttpCacheRevalidation.AllCaches);
+            filterContext.HttpContext.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            filterContext.HttpContext.Response.Cache.SetNoStore();
+
+            base.OnResultExecuting(filterContext);
+        }
+
         private List<Band> GetUserBands()
         {
             string userId = HttpContext.Current.User.Identity.GetUserId();
@@ -66,6 +86,7 @@ namespace BandMate.Controllers
                 .Include("Bands.SetLists.Songs")
                 .Include("Bands.Events")
                 .Include("Bands.Store")
+                .Include("Bands.Store.Products")
                 .Where(u => u.Id == userId)
                 .FirstOrDefault();
             List<Band> bands = user.Bands.ToList();

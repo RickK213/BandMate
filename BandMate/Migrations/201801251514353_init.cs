@@ -116,6 +116,7 @@ namespace BandMate.Migrations
                 c => new
                     {
                         SetListId = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
                         Band_BandId = c.Int(),
                     })
                 .PrimaryKey(t => t.SetListId)

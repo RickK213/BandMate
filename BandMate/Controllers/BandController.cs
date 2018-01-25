@@ -11,13 +11,14 @@ using Microsoft.AspNet.Identity;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
+using System.Web.UI;
 
 namespace BandMate.Controllers
 {
     [Authorize]
-    [BandData(BandId = "bandId")]
     public class BandController : Controller
     {
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -25,9 +26,26 @@ namespace BandMate.Controllers
         ////////////////////////////////////////////////////////////////////////////////////////
         public ActionResult Index(int? bandId)
         {
+            //Common code for all actions in BandController
             CheckSubscription();
-            Band currentBand = (Band)RouteData.Values["currentBand"];
-            List<Band> otherBands = (List<Band>)RouteData.Values["otherBands"];
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
             var viewModel = new BandViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
@@ -47,8 +65,26 @@ namespace BandMate.Controllers
         ////////////////////////////////////////////////////////////////////////////////////////
         public ActionResult Members(int? bandId)
         {
-            Band currentBand = (Band)RouteData.Values["currentBand"];
-            List<Band> otherBands = (List<Band>)RouteData.Values["otherBands"];
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
             List<ApplicationUser> currentBandMembers = GetBandMembers(currentBand);
             var viewModel = new BandMemberViewModel();
             viewModel.OtherBands = otherBands;
@@ -70,12 +106,190 @@ namespace BandMate.Controllers
         ////////////////////////////////////////////////////////////////////////////////////////
         public ActionResult Tours(int? bandId)
         {
-            Band currentBand = (Band)RouteData.Values["currentBand"];
-            List<Band> otherBands = (List<Band>)RouteData.Values["otherBands"];
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
             var viewModel = new BandTourViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
             viewModel.CurrentBandTours = currentBand.Tours.ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //DASHBOARD: MY VENUES
+        ////////////////////////////////////////////////////////////////////////////////////////
+        public ActionResult Venues(int? bandId)
+        {
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
+            var viewModel = new BandVenueViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandVenues = currentBand.Venues.ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //DASHBOARD: MY SET LISTS
+        ////////////////////////////////////////////////////////////////////////////////////////
+        public ActionResult SetLists(int? bandId)
+        {
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
+            var viewModel = new BandSetListViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandSetLists = currentBand.SetLists.ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //DASHBOARD: MY EVENTS
+        ////////////////////////////////////////////////////////////////////////////////////////
+        public ActionResult Events(int? bandId)
+        {
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
+            var viewModel = new BandEventViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandEvents = currentBand.Events.ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //DASHBOARD: MY STORE
+        ////////////////////////////////////////////////////////////////////////////////////////
+        public ActionResult Store(int? bandId)
+        {
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
+            var viewModel = new BandStoreViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandProducts = currentBand.Store.Products.ToList();
             if (TempData["infoMessage"] != null)
             {
                 ViewBag.infoMessage = TempData["infoMessage"].ToString();
@@ -329,5 +543,30 @@ namespace BandMate.Controllers
             }
             return base.RedirectToAction(action, controller, new { bandId = bandId });
         }
+
+        private List<Band> GetUserBands()
+        {
+            string userId = User.Identity.GetUserId();
+            var user = db.Users
+                .Include(u => u.Subscription)
+                .Include(u => u.Subscription.SubscriptionType)
+                .Include(u => u.Bands)
+                .Include("Bands.BandMembers")
+                .Include("Bands.Invitations")
+                .Include("Bands.Tours")
+                .Include("Bands.Tours.TourDates")
+                .Include("Bands.Tours.TourDates.ProductsSold")
+                .Include("Bands.Venues")
+                .Include("Bands.SetLists")
+                .Include("Bands.SetLists.Songs")
+                .Include("Bands.Events")
+                .Include("Bands.Store")
+                .Include("Bands.Store.Products")
+                .Where(u => u.Id == userId)
+                .FirstOrDefault();
+            List<Band> bands = user.Bands.ToList();
+            return bands;
+        }
+
     }
 }

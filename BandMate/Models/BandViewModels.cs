@@ -21,4 +21,24 @@ namespace BandMate.Models
         public List<Tour> CurrentBandTours { get; set; }
     }
 
+    public class BandVenueViewModel : BandViewModel
+    {
+        public List<Venue> CurrentBandVenues { get; set; }
+    }
+
+    public class BandSetListViewModel : BandViewModel
+    {
+        public List<SetList> CurrentBandSetLists { get; set; }
+    }
+
+    public class BandEventViewModel : BandViewModel
+    {
+        public List<Event> CurrentBandEvents { get; set; }
+    }
+
+    public class BandStoreViewModel : BandViewModel
+    {
+        public List<Product> CurrentBandProducts { get; set; }
+    }
+
 }
