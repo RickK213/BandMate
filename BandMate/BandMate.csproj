@@ -410,6 +410,7 @@
     <Content Include="Views\Tour\Details.cshtml" />
     <Content Include="Views\Venue\Create.cshtml" />
     <Content Include="Views\Venue\Edit.cshtml" />
+    <Content Include="Views\Venue\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

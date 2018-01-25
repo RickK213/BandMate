@@ -99,6 +99,18 @@ namespace BandMate.Controllers
             return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
         }
 
+        public ActionResult Details(int venueId)
+        {
+            var venue = db.Venues
+                .Include(v => v.Address)
+                .Include("Address.City")
+                .Include("Address.State")
+                .Include("Address.ZipCode")
+                .Where(v => v.VenueId == venueId)
+                .FirstOrDefault();
+            return View(venue);
+        }
+
         private Address GetAddress(string StreetOne, string City_Name, string StateId, string ZipCode_Number, string lat, string lng)
         {
             int stateIdNumber = Convert.ToInt32(StateId);

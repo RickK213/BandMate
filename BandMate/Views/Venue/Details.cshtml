@@ -1,0 +1,62 @@
+﻿@model BandMate.Models.Venue
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div id="map" style="width: 100%; height: 400px; margin-bottom: 20px;"></div>
+</div>
+
+<h2>@Model.Name</h2>
+<hr />
+<div class="row">
+    <div class="col-md-2">
+        <p class="pull-right"><strong>Address:</strong></p>
+    </div>
+    <div class="col-md-10">
+        <p>
+            @Model.Address.StreetOne<br />
+            @Model.Address.City.Name, @Model.Address.State.Abbreviation @Model.Address.ZipCode.Number
+        </p>
+</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <p class="pull-right"><strong>Contact Person:</strong></p>
+    </div>
+    <div class="col-md-10">
+        <p>
+            @Model.ContactFirstName @Model.ContactLastName<br />
+            @String.Format("{0:(###) ###-####}", Convert.ToInt64(Model.ContactPhoneNumber))<br />
+            <a href="mailto:@Model.ContactEmail">@Model.ContactEmail</a>
+        </p>
+</div>
+</div>
+@Html.ActionLink("Return to My Venues", "Venues", "Band", routeValues: new { bandId = Model.BandId }, htmlAttributes: new { @class="btn btn-default" })
+
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            let map;
+            let marker;
+
+            function initMap(latitude, longtitude) {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 15,
+                    center: { lat: latitude, lng: longtitude }
+                });
+                marker = new google.maps.Marker({
+                    position: { lat: latitude, lng: longtitude },
+                    map: map
+                });
+            }
+
+            initMap(@Model.Address.Lat, @Model.Address.Lng);
+        });
+    </script>
+}
+
