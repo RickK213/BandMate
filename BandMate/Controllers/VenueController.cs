@@ -43,13 +43,69 @@ namespace BandMate.Controllers
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
+        [HttpGet]
+        public ActionResult Edit(int venueId)
+        {
+            var venue = db.Venues
+                .Include(v => v.Address)
+                .Include("Address.City")
+                .Include("Address.State")
+                .Include("Address.ZipCode")
+                .Where(v => v.VenueId == venueId)
+                .FirstOrDefault();
+            ViewBag.BandId = venue.BandId;
+            ViewBag.StateId = new SelectList(db.States, "StateId", "Abbreviation");
+            return View(venue);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(string venueName, int venueId, string contactFirstName, string contactLastName, string contactPhone, string contactEmail, string streetOne, string city, string StateId, string zipCode, string lat, string lng)
+        {
+            if (!User.IsInRole("Band Manager"))
+            {
+                return HttpNotFound();
+            }
+
+            var venue = db.Venues
+                .Include(v => v.Address)
+                .Include("Address.City")
+                .Include("Address.State")
+                .Include("Address.ZipCode")
+                .Where(v => v.VenueId == venueId)
+                .FirstOrDefault();
+
+            Address address = GetAddress(streetOne, city, StateId, zipCode, lat, lng);
+            venue.Name = venueName;
+            venue.ContactFirstName = contactFirstName;
+            venue.ContactLastName = contactLastName;
+            venue.ContactPhoneNumber = contactPhone;
+            venue.ContactEmail = contactEmail;
+            venue.AddressId = address.AddressId;
+            db.SaveChanges();
+            return RedirectToAction("Venues", "Band", new { bandId = venue.BandId });
+        }
+
+        public ActionResult Delete(int venueId)
+        {
+            var venue = db.Venues.Find(venueId);
+            var band = db.Bands
+                .Include(b => b.Venues)
+                .Where(b => b.BandId == venue.BandId)
+                .FirstOrDefault();
+            db.Venues.Remove(venue);
+            band.Venues.Remove(venue);
+            db.SaveChanges();
+            TempData["infoMessage"] = venue.Name + " Deleted!";
+            return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
+        }
+
         private Address GetAddress(string StreetOne, string City_Name, string StateId, string ZipCode_Number, string lat, string lng)
         {
             int stateIdNumber = Convert.ToInt32(StateId);
             if (db.Addresses.Any(a => a.StreetOne == StreetOne && a.City.Name == City_Name && a.State.StateId == stateIdNumber && a.ZipCode.Number == ZipCode_Number))
             {
                 var addressFound = db.Addresses.First(a => a.StreetOne == StreetOne && a.City.Name == City_Name && a.State.StateId == stateIdNumber && a.ZipCode.Number == ZipCode_Number);
-                return new Address();
+                return addressFound;
             }
             Address address = new Address();
             address.StreetOne = StreetOne;
