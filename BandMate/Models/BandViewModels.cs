@@ -11,7 +11,14 @@ namespace BandMate.Models
         public List<Band> OtherBands { get; set; }
     }
 
-    public class BandIndexViewModel : BandViewModel
+    public class BandMemberViewModel : BandViewModel
     {
+        public List<ApplicationUser> CurrentBandMembers { get; set; }
     }
+
+    public class BandTourViewModel : BandViewModel
+    {
+        public List<Tour> CurrentBandTours { get; set; }
+    }
+
 }

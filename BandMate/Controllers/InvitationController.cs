@@ -27,24 +27,55 @@ namespace BandMate.Controllers
                 .Where(i => i.Email == user.Email)
                 .ToList();
 
-            List<Band> inviteBands = new List<Band>();
-            if ( invitations.Count>0 )
+            if (TempData["infoMessage"] != null)
             {
-                foreach (Invitation invitation in invitations)
-                {
-                    var band = db.Bands
-                        .Include(b => b.BandMembers)
-                        .Where(b => b.BandId == invitation.BandId)
-                        .FirstOrDefault();
-                    inviteBands.Add(band);
-                }
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
             }
 
-            InvitationIndexViewModel viewModel = new InvitationIndexViewModel();
-            viewModel.Invitations = invitations;
-            viewModel.InviteBands = inviteBands;
-
-            return View(viewModel);
+            return View(invitations);
         }
+
+        public ActionResult Decline(int invitationId)
+        {
+            var invitation = db.Invitations.Find(invitationId);
+            db.Invitations.Remove(invitation);
+            db.SaveChanges();
+            TempData["infoMessage"] = "Invitation declined.";
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Accept(int invitationId)
+        {
+            string userId = User.Identity.GetUserId();
+            var user = db.Users
+                .Include(u => u.Bands)
+                .Where(u => u.Id == userId)
+                .FirstOrDefault();
+
+            var invitation = db.Invitations.Find(invitationId);
+            invitation.IsAccepted = true;
+            db.SaveChanges();
+
+            BandMember bandMember = new BandMember();
+            bandMember.UserId = user.Id;
+            bandMember.Title = invitation.Title;
+            db.BandMembers.Add(bandMember);
+            db.SaveChanges();
+
+            var band = db.Bands
+                .Include(b => b.BandMembers)
+                .Where(b => b.BandId == invitation.BandId)
+                .FirstOrDefault();
+
+            band.BandMembers.Add(bandMember);
+            db.SaveChanges();
+
+            return RedirectToAction("MemberBands", "Band", new { bandId = band.BandId } );
+        }
+
     }
 }

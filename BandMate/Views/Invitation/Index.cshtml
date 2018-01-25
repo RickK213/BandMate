@@ -1,5 +1,5 @@
 ﻿@using BandMate.Models
-@model InvitationIndexViewModel
+@model IEnumerable<BandMate.Models.Invitation>
 
 @{
     ViewBag.Title = "My Invitations";
@@ -7,36 +7,34 @@
 }
 
 <h2>My Invitations</h2>
-@{ 
-    List<Invitation> invitations = Model.Invitations.ToList();
-    List<Band> inviteBands = Model.InviteBands.ToList();
-}
-@if (invitations.Count() > 0)
+@Html.Partial("_AlertsPartial")
+@if (Model.Count() > 0)
 {
     @:<div class="row">
-    for (int i = 0; i < invitations.Count; i++)
+    int count=1;
+    foreach (Invitation invitation in Model)
     {
-        List<ApplicationUser> bandMembers = inviteBands[i].BandMembers.ToList();
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Invitation from @inviteBands[i].Name</h3>
+                    <h3 class="panel-title">Invitation from @invitation.InvitedBy</h3>
                 </div>
                 <div class="panel-body">
-                    <p><strong>Invitation sent on: </strong>@String.Format("{0:MM/dd/yy}", invitations[i].CreatedOn)</p>
-                    <p><strong>Invitation sent by: </strong>@bandMembers[0].UserName</p>
-                    <p><strong>Your Title: </strong>@invitations[i].Title</p>
+                    <p><strong>Invitation sent on: </strong>@String.Format("{0:MM/dd/yy}", invitation.CreatedOn)</p>
+                    <p><strong>Invitation sent by: </strong>@invitation.InvitedBy</p>
+                    <p><strong>Your Title: </strong>@invitation.Title</p>
                     <p>
-                        @Html.ActionLink("Accept Invitation", "Accept", "Invitation", routeValues: null, htmlAttributes: new { @class = "btn btn-success" })
-                        @Html.ActionLink("Decline Invitation", "Decline", "Invitation", routeValues: null, htmlAttributes: new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Accept Invitation", "Accept", "Invitation", routeValues: new { invitationId = invitation.InvitationId }, htmlAttributes: new { @class = "btn btn-success" })
+                        @Html.ActionLink("Decline Invitation", "Decline", "Invitation", routeValues: new { invitationId = invitation.InvitationId }, htmlAttributes: new { @class = "btn btn-danger" })
                     </p>
                 </div>
             </div>
         </div>
-        if( (i+1) % 2 ==0 )
+        if( count % 2 ==0 )
         {
             @:</div><div class="row">
         }
+        count++;
     }
     @:</div>
 }

@@ -14,8 +14,7 @@ namespace BandMate.Models
         //[StringLength(17, ErrorMessage = "Name cannot be longer than 17 characters.")]
         public string Name { get; set; }
 
-        public ICollection<ApplicationUser> BandMembers { get; set; }
-
+        public ICollection<BandMember> BandMembers { get; set; }
         public ICollection<Invitation> Invitations { get; set; }
         public ICollection<Tour> Tours { get; set; }
         public ICollection<Venue> Venues { get; set; }

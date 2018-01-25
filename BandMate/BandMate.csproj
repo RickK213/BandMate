@@ -242,14 +242,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="KeyManager.cs" />
-    <Compile Include="Migrations\201801241538140_init.cs" />
-    <Compile Include="Migrations\201801241538140_init.Designer.cs">
-      <DependentUpon>201801241538140_init.cs</DependentUpon>
+    <Compile Include="Migrations\201801242327157_init.cs" />
+    <Compile Include="Migrations\201801242327157_init.Designer.cs">
+      <DependentUpon>201801242327157_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Band.cs" />
+    <Compile Include="Models\BandMember.cs" />
     <Compile Include="Models\BandViewModels.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\Event.cs" />
@@ -391,6 +392,10 @@
     <Content Include="Views\Shared\_AlertsPartial.cshtml" />
     <Content Include="Views\Band\Members.cshtml" />
     <Content Include="Views\Invitation\Index.cshtml" />
+    <Content Include="Views\Band\MemberBands.cshtml" />
+    <Content Include="Views\Shared\_MemberLayout.cshtml" />
+    <Content Include="Views\Band\NoMemberData.cshtml" />
+    <Content Include="Views\Band\Tours.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -407,8 +412,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201801241538140_init.resx">
-      <DependentUpon>201801241538140_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201801242327157_init.resx">
+      <DependentUpon>201801242327157_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

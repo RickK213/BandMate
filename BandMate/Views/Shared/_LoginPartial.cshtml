@@ -19,7 +19,7 @@
                 @if (User.IsInRole("Band Member"))
                 {
                     <li>
-                        @Html.ActionLink("Dashboard", "Index", "Invitation", routeValues: null, htmlAttributes: new { title = "Dashboard" })
+                        @Html.ActionLink("Dashboard", "MemberBands", "Band", routeValues: null, htmlAttributes: new { title = "Dashboard" })
                     </li>
                 }
                 <li>

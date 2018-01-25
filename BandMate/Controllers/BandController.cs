@@ -39,6 +39,7 @@ namespace BandMate.Controllers
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            List<ApplicationUser> currentBandMembers = GetBandMembers(currentBand);
             var viewModel = new BandViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
@@ -88,6 +89,7 @@ namespace BandMate.Controllers
             Band band = new Band();
             band.Name = Name;
             band.Store = store;
+            band.BandMembers = new List<BandMember>();
             db.Bands.Add(band);
             db.SaveChanges();
 
@@ -105,25 +107,6 @@ namespace BandMate.Controllers
             return RedirectToAction("Index", new { bandId = band.BandId });
         }
 
-        // GET: Band/Edit/5
-        //public ActionResult Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Band band = db.Bands.Find(id);
-        //    if (band == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.StoreId = new SelectList(db.Stores, "StoreId", "PlaylistId", band.StoreId);
-        //    return View(band);
-        //}
-
-        // POST: Band/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(string bandName, int bandId)
@@ -192,9 +175,11 @@ namespace BandMate.Controllers
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
-            var viewModel = new BandViewModel();
+            List<ApplicationUser> currentBandMembers = GetBandMembers(currentBand);
+            var viewModel = new BandMemberViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandMembers = currentBandMembers;
             if (TempData["infoMessage"] != null)
             {
                 ViewBag.infoMessage = TempData["infoMessage"].ToString();
@@ -206,6 +191,19 @@ namespace BandMate.Controllers
             return View(viewModel);
         }
 
+        private List<ApplicationUser> GetBandMembers(Band band)
+        {
+            List<ApplicationUser> bandMembers = new List<ApplicationUser>();
+            foreach (BandMember bandMember in band.BandMembers)
+            {
+                ApplicationUser user = db.Users.Where(u => u.Id == bandMember.UserId).FirstOrDefault();
+                user.Title = bandMember.Title;
+                user.BandMemberId = bandMember.BandMemberId;
+                bandMembers.Add(user);
+            }
+            return bandMembers;
+        }
+
         private List<Band> GetUserBands()
         {
             string userId = User.Identity.GetUserId();
@@ -213,6 +211,16 @@ namespace BandMate.Controllers
                 .Include(u => u.Subscription)
                 .Include(u => u.Subscription.SubscriptionType)
                 .Include(u => u.Bands)
+                .Include("Bands.BandMembers")
+                .Include("Bands.Invitations")
+                .Include("Bands.Tours")
+                .Include("Bands.Tours.TourDates")
+                .Include("Bands.Tours.TourDates.ProductsSold")
+                .Include("Bands.Venues")
+                .Include("Bands.SetLists")
+                .Include("Bands.SetLists.Songs")
+                .Include("Bands.Events")
+                .Include("Bands.Store")
                 .Where(u => u.Id == userId)
                 .FirstOrDefault();
             List<Band> bands = user.Bands.ToList();
@@ -253,6 +261,8 @@ namespace BandMate.Controllers
             Invitation invitation = new Invitation();
             invitation.Email = email;
             invitation.Title = title;
+            invitation.InvitedBy = User.Identity.GetUserName();
+            invitation.BandName = band.Name;
             invitation.CreatedOn = DateTime.Now;
             invitation.IsAccepted = false;
             invitation.BandId = band.BandId;
@@ -261,7 +271,6 @@ namespace BandMate.Controllers
 
             band.Invitations.Add(invitation);
             db.SaveChanges();
-
 
             TempData["infoMessage"] = "Invitation sent to " + email;
             return RedirectToAction("Members", "Band", new { bandId = bandId });
@@ -272,11 +281,128 @@ namespace BandMate.Controllers
             //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
             KeyManager keyManager = new KeyManager();
             var apiKey = keyManager.SendGridKey;
-            //var client = new SendGridClient(apiKey);
-            //var from = new EmailAddress("info@bandmate.com", "BandMate");
-            //var to = new EmailAddress(toEmail);
-            //var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
-            //var response = client.SendEmailAsync(msg);
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("info@bandmate.com", "BandMate");
+            var to = new EmailAddress(toEmail);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
+            var response = client.SendEmailAsync(msg);
+        }
+
+        public ActionResult MemberBands(int? bandId)
+        {
+            var bands = db.Bands.Include(b =>b.BandMembers).ToList();
+            List<Band> myBands = new List<Band>();
+            foreach(Band band in bands)
+            {
+                foreach(BandMember bandMember in band.BandMembers)
+                {
+                    if ( bandMember.UserId == User.Identity.GetUserId() )
+                    {
+                        myBands.Add(band);
+                    }
+                }
+            }
+
+            //Get the Band Member's Invitations
+            string userId = User.Identity.GetUserId();
+            var user = db.Users
+                .Include(u => u.Bands)
+                .Where(u => u.Id == userId)
+                .FirstOrDefault();
+            var invitations = db.Invitations
+                .Where(i => i.IsAccepted == false)
+                .Where(i => i.Email == user.Email)
+                .ToList();
+
+            if (myBands.Count <= 0)
+            {
+                //User is not a member of any bands. Do they have any invitations?
+                if ( invitations.Count > 0 )
+                {
+                    return RedirectToAction("Index", "Invitation");
+                }
+                //User is not a member of any bands and they have no pending invitations. They cannot use the site.
+                return RedirectToAction("NoMemberData", "Band");
+            }
+            Band currentBand = myBands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("MemberBands", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            var viewModel = new BandViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        public ActionResult RemoveMember(int? bandId, int bandMemberId)
+        {
+            var band = db.Bands
+                .Include(b => b.BandMembers)
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+
+            BandMember bandMember = band.BandMembers.Where(m => m.BandMemberId == bandMemberId).FirstOrDefault();
+            band.BandMembers.Remove(bandMember);
+            db.SaveChanges();
+            TempData["infoMessage"] = bandMember.Title + " removed from your band.";
+            return RedirectToAction("Members", "Band", new { bandId = bandId });
+        }
+
+        public ActionResult NoMemberData()
+        {
+            return View();
+        }
+
+        public ActionResult Tours(int? bandId)
+        {
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+
+            //Beginning of action-specific code
+            var viewModel = new BandTourViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandTours = currentBand.Tours.ToList();
+
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
         }
 
 

@@ -83,7 +83,7 @@ namespace BandMate.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("RoleSwitcher", "Account");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -450,6 +450,7 @@ namespace BandMate.Controllers
                         .Where(u => u.Id == userId)
                         .FirstOrDefault();
 
+                    //If the Band Manager does not have any bands...
                     if ( user.Bands == null || user.Bands.Count==0 )
                     {
                         Store store = new Store();
@@ -459,20 +460,20 @@ namespace BandMate.Controllers
                         Band band = new Band();
                         band.Name = "Unnamed Band";
                         band.Store = store;
+                        band.BandMembers = new List<BandMember>();
                         context.Bands.Add(band);
                         context.SaveChanges();
 
                         user.Bands = new List<Band>();
                         user.Bands.Add(band);
-                        user.Title = "Band Manager";
                         context.SaveChanges();
                     }
 
-                    return RedirectToAction("Create", "Subscription");
+                    return RedirectToAction("Index", "Band");
                 }
                 else if (IsBandMember())
                 {
-                    return RedirectToAction("Index", "Manage");
+                    return RedirectToAction("MemberBands", "Band");
                 }
                 else
                 {

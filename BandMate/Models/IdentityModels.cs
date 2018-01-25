@@ -23,10 +23,12 @@ namespace BandMate.Models
         public NotificationPreference NotificationPreference { get; set; }
         public int? NotificationPreferenceId { get; set; }
 
-        public string Title { get; set; }
-
         public Subscription Subscription { get; set; }
         public int? SubscriptionId { get; set; }
+
+        //note: the 2 properties below will not be saved in the database but will change depending on what band the user is viewing
+        public string Title { get; set; }
+        public int BandMemberId { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -58,6 +60,10 @@ namespace BandMate.Models
         public System.Data.Entity.DbSet<BandMate.Models.Store> Stores { get; set; }
 
         public System.Data.Entity.DbSet<BandMate.Models.Invitation> Invitations { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.BandMember> BandMembers { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Tour> Tours { get; set; }
 
     }
 }

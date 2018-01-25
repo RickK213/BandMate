@@ -13,6 +13,10 @@ namespace BandMate.Models
         [Required]
         public string Email { get; set; }
 
+        public string InvitedBy { get; set; }
+
+        public string BandName { get; set; }
+
         public string Title { get; set; }
 
         public int BandId { get; set; }
