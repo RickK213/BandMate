@@ -76,7 +76,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("Members", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
@@ -117,7 +117,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("Tours", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
@@ -157,7 +157,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("Venues", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
@@ -197,7 +197,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("SetLists", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
@@ -237,7 +237,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("Events", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
@@ -277,7 +277,7 @@ namespace BandMate.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Band", new { bandId = currentBand.BandId });
+                return RedirectToAction("Store", "Band", new { bandId = currentBand.BandId });
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();

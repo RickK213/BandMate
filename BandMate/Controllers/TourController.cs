@@ -16,6 +16,7 @@ namespace BandMate.Controllers
         {
             Tour tour = new Tour();
             tour.Name = tourName;
+            tour.BandId = bandId;
             db.Tours.Add(tour);
             db.SaveChanges();
 
@@ -27,7 +28,39 @@ namespace BandMate.Controllers
             band.Tours.Add(tour);
             db.SaveChanges();
 
-            return RedirectToAction("Tours", "Band");
+            return RedirectToAction("Tours", "Band", new { bandId = bandId });
         }
+
+        public ActionResult Delete(int tourId, int bandId)
+        {
+            var tour = db.Tours.Find(tourId);
+            var band = db.Bands
+                .Include(b => b.Tours)
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+            db.Tours.Remove(tour);
+            band.Tours.Remove(tour);
+            db.SaveChanges();
+
+            return RedirectToAction("Tours", "Band", new { bandId = tour.BandId });
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int tourId)
+        {
+            var tour = db.Tours.Find(tourId);
+            return View(tour);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(int tourId, string tourName)
+        {
+            var tour = db.Tours.Find(tourId);
+            tour.Name = tourName;
+            db.SaveChanges();
+            return RedirectToAction("Tours", "Band", new { bandId = tour.BandId });
+        }
+
+
     }
 }

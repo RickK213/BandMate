@@ -31,5 +31,10 @@ $(document).ready(function () {
         $("#dangerAlert").fadeIn();
     }
 
+    //Activate Tool Tips
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
 
 });

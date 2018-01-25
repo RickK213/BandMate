@@ -25,19 +25,25 @@
         {
             <hr />
             <h4>@Model.CurrentBand.Name Tours</h4>
-            <table class="table table-striped table-condensed table-bordered table-hover">
+            <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th>Tour Name</th>
-                    <th># of Tour Dates</th>
+                    <th>Tour <small>(Click to view details)</small></th>
+                    <th>Tour Dates</th>
                     <th>Actions</th>
                 </tr>
                 @foreach (Tour tour in Model.CurrentBandTours)
                 {
                     <tr>
-                        <td>@tour.Name</td>
-                        <td>@tour.TourDates.Count</td>
                         <td>
-                            @Html.ActionLink("Manage Tour", "Edit", "Tour", routeValues: new { tourId = tour.TourId }, htmlAttributes: new { @class= "btn btn-xs btn-info" })
+                            <a class="btn btn-s btn-primary" href="@Url.Action("Details", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @tour.Name</a>
+                        </td>
+                        <td>
+                            @tour.TourDates.Count Tour Dates
+                            <a class="btn btn-s btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-s btn-info" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-s btn-danger" href="@Url.Action("Delete", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
                         </td>
                     </tr>
                 }

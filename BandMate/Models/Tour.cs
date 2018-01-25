@@ -9,6 +9,7 @@ namespace BandMate.Models
     public class Tour
     {
         public int TourId { get; set; }
+        public int BandId { get; set; }
 
         [Required]
         public string Name { get; set; }
