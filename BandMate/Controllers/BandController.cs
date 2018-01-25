@@ -452,6 +452,7 @@ namespace BandMate.Controllers
             var response = client.SendEmailAsync(msg);
         }
 
+        //MOVE THIS TO BAND MEMBER CONTROLLER!!!!!!!!!!!!!!!!!!!!!!!!
         public ActionResult MemberBands(int? bandId)
         {
             var bands = db.Bands.Include(b =>b.BandMembers).ToList();

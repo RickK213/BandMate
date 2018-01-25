@@ -61,6 +61,15 @@ namespace BandMate.Controllers
             return RedirectToAction("Tours", "Band", new { bandId = tour.BandId });
         }
 
+        public ActionResult Details(int tourId)
+        {
+        var tour = db.Tours
+                .Include(t => t.TourDates)
+                .Include("TourDates.ProductsSold")
+                .Where(t => t.TourId == tourId)
+                .FirstOrDefault();
+        return View(tour);
+        }
 
     }
 }
