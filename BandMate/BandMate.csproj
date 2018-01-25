@@ -233,6 +233,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BandController.cs" />
+    <Compile Include="Controllers\BandDataAttribute.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvitationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
