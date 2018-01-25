@@ -4,14 +4,11 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using BandMate.Models;
 using Microsoft.AspNet.Identity;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Threading.Tasks;
-using System.Web.UI;
 
 namespace BandMate.Controllers
 {

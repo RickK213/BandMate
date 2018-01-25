@@ -241,6 +241,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\StripeController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
+    <Compile Include="Controllers\TourController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -408,6 +409,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\BandMember\" />
     <Folder Include="Views\Stripe\" />
+    <Folder Include="Views\Tour\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
