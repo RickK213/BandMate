@@ -565,14 +565,23 @@ namespace BandMate.Controllers
                 .Include("Bands.Venues.Address.City")
                 .Include("Bands.Venues.Address.State")
                 .Include("Bands.Venues.Address.ZipCode")
+                .Include("Bands.Songs")
                 .Include("Bands.SetLists")
-                .Include("Bands.SetLists.Songs")
+                .Include("Bands.SetLists.SetListSongs")
                 .Include("Bands.Events")
                 .Include("Bands.Store")
                 .Include("Bands.Store.Products")
                 .Where(u => u.Id == userId)
                 .FirstOrDefault();
             List<Band> bands = user.Bands.ToList();
+            foreach (Band band in bands)
+            {
+                //band.SetLists = band.SetLists.OrderBy(s => s.Name);
+                foreach (var setList in band.SetLists)
+                {
+                    setList.SetListSongs = setList.SetListSongs.OrderBy(s => s.SetListOrder).ToList();
+                }
+            }
             return bands;
         }
 

@@ -34,7 +34,6 @@ $(document).ready(function () {
     //Activate Tool Tips
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
-
+    });
 
 });

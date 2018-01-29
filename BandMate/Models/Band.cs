@@ -19,6 +19,7 @@ namespace BandMate.Models
         public ICollection<Tour> Tours { get; set; }
         public ICollection<Venue> Venues { get; set; }
         public ICollection<SetList> SetLists { get; set; }
+        public ICollection<Song> Songs { get; set; }
         public ICollection<Event> Events { get; set; }
 
         public Store Store { get; set; }

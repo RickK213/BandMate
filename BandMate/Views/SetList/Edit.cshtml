@@ -1,0 +1,262 @@
+﻿@using BandMate.Models
+@model BandMate.Models.SetListEditViewModel
+
+@{
+    ViewBag.Title = "Edit Set List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit <span class="setListName">@Model.SetList.Name</span> <span class="small" style="display: none;" id="saveTime"></span></h2>
+<hr />
+<div class="row">
+    <div class="col-md-2">
+        <h4 class="pull-right">Set List Name</h4>
+    </div>
+    <div class="col-md-10">
+        <div class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" id="setListName" name="setListName" value="@Model.SetList.Name">
+            </div>
+            <button class="btn btn-primary" id="saveSetListName">Save Set List Name</button>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="row">
+    <div class="col-md-2">
+        @if (Model.SetList.SetListSongs.Count() > 0)
+        {
+            <h4 class="pull-right">Songs</h4>
+        }
+    </div>
+    <ol class="list-group col-md-10 sortable" id="songs">
+        @if (Model.SetList.SetListSongs.Count() > 0)
+        {
+            foreach (SetListSong setListSong in Model.SetList.SetListSongs)
+            {
+            <li class="list-group-item" data-songId="@setListSong.Song.SongId">
+                <div class="row">
+                    <div class="col-md-1">
+                        <a class="btn btn-link btn-s"><span class="glyphicon glyphicon-move"></span></a>
+                    </div>
+                    <div class="col-md-10">
+                        <h4>@setListSong.Song.Name</h4>
+                    </div>
+                    <div class="col-md-1">
+                        <a class="btn btn-danger btn-s removeSong" data-setListSongId="@setListSong.SetListSongId"><span class="glyphicon glyphicon-trash"></span></a>
+                    </div>
+                </div>
+            </li>
+            }
+        }
+    </ol>
+    <ol class='sortable'></ol>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-10">
+        <div class="form-inline">
+            <div class="form-group">
+                <select class="form-control songOption">
+                    <option value="">Add Song...</option>
+                    <option value="existing">Existing Song</option>
+                    <option value="new">New song</option>
+                </select>
+            </div>
+            <div class="form-group songSelect" style="display: none;">
+                <select class="form-control">
+                    <option value="">Choose song...</option>
+                    @foreach (Song song in Model.Songs)
+                    {
+                        <option>@song.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group songTextInput" style="display: none;">
+                <input type="text" class="form-control" placeholder="New Song Name">
+            </div>
+            <button class="btn btn-primary saveSong" style="display: none;">Add Song</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Add song
+        $(".saveSong").each(function (index) {
+            let button = $(this);
+            $(this).on("click", function () {
+                let songName = button.siblings(".songName").children(':first').val();
+                $.ajax({
+                    url: '/Song/Create',
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "songName": songName, "bandId": @Model.SetList.BandId, "setListId": @Model.SetList.SetListId }),
+                    processData: false,
+                    success: function (data, textStatus, jQxhr) {
+                        let response = JSON.parse(data);
+                        if(response.append===false && response.newSong===false)
+                        {
+                            alert("You have already added " + songName + " to this set list.");
+                        }
+                        if(response.append === true)
+                        {
+                            $("#songs").append(htmlDecode(response.html));
+                        }
+                        if(response.newSong === true)
+                        {
+                            $(".songSelect select").append("<option>" + songName + "</option>");
+                        }
+                        button.siblings(".songName").children(':first').val("");
+                        updateSaveTime();
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+            });
+        });
+
+        //Manage adding new or existing song
+        $(".songOption").each(function (index) {
+            let selectBox = $(this);
+            $(this).on("change", function () {
+                let selection = selectBox.val();
+                if(selection === "")
+                {
+                    selectBox.parent().siblings(".songSelect").hide();
+                    selectBox.parent().siblings(".songTextInput").hide();
+                    selectBox.parent().siblings(".saveSong").hide();
+                }
+                else if(selection === "existing")
+                {
+                    selectBox.parent().siblings(".songSelect").show().addClass("songName");
+                    selectBox.parent().siblings(".songTextInput").hide().removeClass("songName");
+                    selectBox.parent().siblings(".saveSong").show();
+                }
+                else if(selection === "new")
+                {
+                    selectBox.parent().siblings(".songSelect").hide().removeClass("songName");
+                    selectBox.parent().siblings(".songTextInput").show().addClass("songName");
+                    selectBox.parent().siblings(".saveSong").show();
+                }
+            });
+        });
+
+        //Rename set list
+        $("#saveSetListName").click(function(event){
+            let setListName = $("#setListName").val();
+            $.ajax({
+                url: '/SetList/SaveName',
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({ "setListName": setListName, "setListId": @Model.SetList.SetListId }),
+                processData: false,
+                success: function (data, textStatus, jQxhr) {
+                    $("#setListName").val(data);
+                    $(".setListName").html(data);
+                    updateSaveTime();
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        });
+
+        //Sort song list
+        var group = $(".sortable").sortable({
+            group: 'list-group',
+            delay: 500,
+            onDragStart: function($item, container, _super) {
+                $item.find('.sortable').sortable('disable');
+                _super($item, container);
+            },
+            onDrop: function ($item, container, _super) {
+                var data = group.sortable("serialize").get();
+                var jsonString = JSON.stringify(data[0]);
+                $.ajax({
+                    url: '/SetList/Reorder',
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "jsonString": jsonString, "setListId": @Model.SetList.SetListId }),
+                    processData: false,
+                    success: function (data, textStatus, jQxhr) {
+                        $item.find('.sortable').sortable('enable');
+                        $("#songs").html(data);
+                        _super($item, container);
+                        updateSaveTime();
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+            }
+        });
+
+        //Remove song from set list
+        $("#songs").on("click", ".removeSong", function(){
+            let button = $(this);
+            console.log("delete button pushed");
+            let setListSongId = button.attr("data-setListSongId");
+            $.ajax({
+                url: '/SetList/RemoveSong',
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({ "setListSongId": setListSongId, "setListId": @Model.SetList.SetListId }),
+                processData: false,
+                success: function (data, textStatus, jQxhr) {
+                    console.log("back from server");
+                    button.closest(".list-group-item").fadeOut(function(){
+                        $(this).remove();
+                    });
+                    updateSaveTime();
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        });
+
+        function updateSaveTime()
+        {
+            let date = new Date();
+            let time = formatAMPM(date);
+            $("#saveTime").html("Last Saved: " + time).fadeIn();
+            //flash yellow color
+            $("#saveTime").css("color", "yellow");
+            setTimeout(function(){
+                $("#saveTime").css("color", "#7a8288");
+            }, 3000);
+        }
+
+        function formatAMPM(date) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            seconds = ("0" + seconds).slice(-2);
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+            return strTime;
+        }
+
+        function htmlDecode(input){
+            var e = document.createElement('div');
+            e.innerHTML = input;
+            // handle case of empty input
+            return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+        }
+    });
+</script>
+}

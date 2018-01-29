@@ -9,6 +9,7 @@ namespace BandMate.Models
     {
         public int SetListId { get; set; }
         public string Name { get; set; }
-        public ICollection<Song> Songs { get; set; }
+        public int BandId { get; set; }
+        public ICollection<SetListSong> SetListSongs { get; set; }
     }
 }

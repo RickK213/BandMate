@@ -39,3 +39,30 @@ h1, h2, h3, h4, h5, h6 {
     flex-grow: 1;
     text-align: left;
 }
+
+/*Sorting styles*/
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+.sortable li{
+    list-style-type: none;
+    height: 61px;
+}
+
+.sortable li.placeholder {
+    position: relative;
+  /** More li styles **/
+}
+.sortable li.placeholder:before {
+    position: absolute;
+    float: left;
+    margin-top: 22px;
+    margin-left: -10px;
+}

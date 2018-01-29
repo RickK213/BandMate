@@ -39,7 +39,7 @@
                         </td>
                         <td>
                             @tour.TourDates.Count Tour Dates
-                            <a class="btn btn-xs btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
+                            <a class="btn btn-xs btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
                         </td>
                         <td>
                             <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>

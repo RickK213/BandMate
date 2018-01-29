@@ -20,13 +20,19 @@ namespace BandMate
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                      "~/Scripts/moment.js",
+                      "~/Scripts/transition.js",
+                      "~/Scripts/collapse.js",
                       "~/Scripts/bootstrap.js",
+                      "~/Scripts/bootstrap-datetimepicker.min.js",
                       "~/Scripts/respond.js",
+                      "~/Scripts/jquery-sortable-min.js",
                       "~/Scripts/app.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap-slate.min.css",
+                      "~/Content/bootstrap-datetimepicker.css",
                       "~/Content/site.css"));
         }
     }

@@ -73,5 +73,11 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.ZipCode> ZipCodes { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.SetList> SetLists { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Song> Songs { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.SetListSong> SetListSongs { get; set; }
+
     }
 }

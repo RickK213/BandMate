@@ -165,11 +165,26 @@ namespace BandMate.Migrations
                     {
                         SetListId = c.Int(nullable: false, identity: true),
                         Name = c.String(),
-                        Band_BandId = c.Int(),
+                        BandId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.SetListId)
-                .ForeignKey("dbo.Bands", t => t.Band_BandId)
-                .Index(t => t.Band_BandId);
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
+                .Index(t => t.BandId);
+            
+            CreateTable(
+                "dbo.SetListSongs",
+                c => new
+                    {
+                        SetListSongId = c.Int(nullable: false, identity: true),
+                        SetListOrder = c.Int(nullable: false),
+                        SongId = c.Int(nullable: false),
+                        SetList_SetListId = c.Int(),
+                    })
+                .PrimaryKey(t => t.SetListSongId)
+                .ForeignKey("dbo.Songs", t => t.SongId, cascadeDelete: true)
+                .ForeignKey("dbo.SetLists", t => t.SetList_SetListId)
+                .Index(t => t.SongId)
+                .Index(t => t.SetList_SetListId);
             
             CreateTable(
                 "dbo.Songs",
@@ -177,11 +192,11 @@ namespace BandMate.Migrations
                     {
                         SongId = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false),
-                        SetList_SetListId = c.Int(),
+                        BandId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.SongId)
-                .ForeignKey("dbo.SetLists", t => t.SetList_SetListId)
-                .Index(t => t.SetList_SetListId);
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
+                .Index(t => t.BandId);
             
             CreateTable(
                 "dbo.Venues",
@@ -382,13 +397,15 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Transactions", "Store_StoreId", "dbo.Stores");
             DropForeignKey("dbo.Products", "Transaction_TransactionId", "dbo.Transactions");
             DropForeignKey("dbo.Products", "Store_StoreId", "dbo.Stores");
-            DropForeignKey("dbo.SetLists", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.Songs", "BandId", "dbo.Bands");
+            DropForeignKey("dbo.SetLists", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Venue_VenueId", "dbo.Venues");
             DropForeignKey("dbo.Venues", "AddressId", "dbo.Addresses");
             DropForeignKey("dbo.Events", "SetList_SetListId", "dbo.SetLists");
-            DropForeignKey("dbo.Songs", "SetList_SetListId", "dbo.SetLists");
+            DropForeignKey("dbo.SetListSongs", "SetList_SetListId", "dbo.SetLists");
+            DropForeignKey("dbo.SetListSongs", "SongId", "dbo.Songs");
             DropForeignKey("dbo.Products", "TourDate_EventId", "dbo.Events");
             DropForeignKey("dbo.Sizes", "Product_ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "ProductType_ProductTypeId", "dbo.ProductTypes");
@@ -410,8 +427,10 @@ namespace BandMate.Migrations
             DropIndex("dbo.Invitations", new[] { "BandId" });
             DropIndex("dbo.Venues", new[] { "BandId" });
             DropIndex("dbo.Venues", new[] { "AddressId" });
-            DropIndex("dbo.Songs", new[] { "SetList_SetListId" });
-            DropIndex("dbo.SetLists", new[] { "Band_BandId" });
+            DropIndex("dbo.Songs", new[] { "BandId" });
+            DropIndex("dbo.SetListSongs", new[] { "SetList_SetListId" });
+            DropIndex("dbo.SetListSongs", new[] { "SongId" });
+            DropIndex("dbo.SetLists", new[] { "BandId" });
             DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
             DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
             DropIndex("dbo.Products", new[] { "Store_StoreId" });
@@ -441,6 +460,7 @@ namespace BandMate.Migrations
             DropTable("dbo.Invitations");
             DropTable("dbo.Venues");
             DropTable("dbo.Songs");
+            DropTable("dbo.SetListSongs");
             DropTable("dbo.SetLists");
             DropTable("dbo.Sizes");
             DropTable("dbo.ProductTypes");
