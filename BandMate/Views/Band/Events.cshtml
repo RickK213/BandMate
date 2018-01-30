@@ -49,35 +49,107 @@
 
         </form>
         <hr />
+        <p class="text-info text-center" style="margin-top: 20px;">Click each day to send event reminders.<br />Click each event for details and to edit/delete event.</p>
         <div id='calendar'></div>
-        @if (Model.CurrentBandEvents.Count > 0)
-        {
-            <hr />
-            <h4>@Model.CurrentBand.Name Events</h4>
-            <table class="table table-striped table-condensed table-bordered table-hover">
-                <tr>
-                    <th>Event Name</th>
-                </tr>
-                @foreach (Event bandEvent in Model.CurrentBandEvents)
-                {
-                    <tr>
-                        <td>@bandEvent.Name</td>
-                    </tr>
-                }
-            </table>
-        }
     </div>
 </div>
+<!--event details modal-->
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="eventModalTitle"></h4>
+            </div>
+            <div class="modal-body" id="eventModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="eventEditButton"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit Event</button>
+                <button type="button" class="btn btn-danger" id="eventDeleteButton" data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete Event</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--day agenda view modal-->
+<div class="modal fade" id="dayModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="dayModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="eventReminderButton" data-toggle="tooltip" data-placement="top" title="Send Daily Itinerary to All Band Members"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send Reminders</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
 <script type="text/javascript">
     $(document).ready(function () {
-        @*console.log(@Html.Raw(HttpUtility.HtmlDecode(Model.EventsJson)));*@
         let eventsJson = @Html.Raw(HttpUtility.HtmlDecode(Model.EventsJson));
-        console.log(eventsJson);
-        console.log(typeof eventsJson);
-        //console.log(JSON.parse(@Model.EventsJson));
+        //console.log(eventsJson);
         $('#calendar').fullCalendar({
-            events: eventsJson
+            events: eventsJson,
+            dayClick: function(date, jsEvent, view) {
+                $('#eventReminderButton').attr('data-eventDate', date.format());
+                $('#eventReminderButton').attr('data-bandId', @Model.CurrentBand.BandId);
+                $('#dayModalBody').fullCalendar({
+                    events: eventsJson,
+                    defaultDate: date.format(),
+                    defaultView: "basicDay",
+                    header: {
+                        center: '',
+                        right:  ''
+                    }
+                });
+                $('#dayModal').modal();
+                console.log('Clicked on: ' + date.format());
+            },
+            header : {
+                right:  'today month,agendaWeek,agendaDay, prev,next,'
+            },
+            eventClick: function(calEvent, jsEvent, view) {
+                //console.log(calEvent);
+                $("#eventModalTitle").html(calEvent.title);
+                let eventHtml = getEventHtml(calEvent);
+                $("#eventModalBody").html(eventHtml);
+                $('#eventEditButton, #eventDeleteButton').attr('data-eventId', calEvent.id);
+                $('#eventModal').modal();
+                //alert('Event Name: ' + calEvent.title + '\nEvent Id: ' + calEvent.id);
+            },
+            eventMouseover: function(calEvent, jsEvent, view) {
+                //alert('Event Description: ' + calEvent.description);
+            }
+        });
+
+        //Get event Html
+        function getEventHtml(calEvent)
+        {
+            let eventHtml = '<p><strong>Event Date/Time:</strong><br />' + calEvent.start.format('MM/DD/YYYY hh:mm A'); + '</p>';
+            eventHtml += '<p><strong>Details:</strong><br />' + calEvent.description + '</p>';
+            return eventHtml;
+        }
+
+        //Edit event
+        $("#eventModal").on("click", "#eventEditButton", function(){
+            let button = $(this);
+            let eventId = button.attr("data-eventId");
+            window.location = '/Event/Edit?eventId='+eventId;
+        });
+
+        //Delete event
+        $("#eventModal").on("click", "#eventDeleteButton", function(){
+            let button = $(this);
+            let eventId = button.attr("data-eventId");
+            window.location = '/Event/Delete?eventId='+eventId;
+        });
+
+        //Send event reminders
+        $("#dayModal").on("click", "#eventReminderButton", function(){
+            let button = $(this);
+            let eventDate = button.attr("data-eventDate");
+            let bandId = button.attr("data-bandId");
+            window.location = '/Event/SendReminders?eventDate='+eventDate+'&bandId='+bandId;
         });
     });
 </script>

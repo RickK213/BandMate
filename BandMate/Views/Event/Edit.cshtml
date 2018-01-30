@@ -1,0 +1,46 @@
+﻿@model BandMate.Models.Event
+
+@{
+    ViewBag.Title = "Edit Event";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Event</h2>
+
+<form class="form-horizontal" action="/Event/Edit" method="POST">
+    <input type="hidden" name="eventId" value="@Model.EventId" />
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Date &amp; Time</label>
+        <div class="col-md-10">
+            <div class="input-group date">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                <input type="text" class="form-control" name="eventDate" id="eventDate" value="@Model.EventDate" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Event Name</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" name="name" value="@Model.Name" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Description</label>
+        <div class="col-md-10">
+            <textarea class="form-control" rows="3" name="description">@Model.Description</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="submit" type="submit" value="Save Event" class="btn btn-primary" />
+        </div>
+    </div>
+
+</form>
+@Html.ActionLink("Return to Events", "Events", "Band", routeValues: new { bandId = Model.BandId }, htmlAttributes: new { @class = "btn btn-default" })

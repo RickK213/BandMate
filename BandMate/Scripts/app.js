@@ -39,8 +39,8 @@ $(document).ready(function () {
     //Setup all datetimepickers
     $(function () {
         $('.date').datetimepicker({
-            sideBySide: true
-            //format: 'MM/DD/YYYY'
+            sideBySide: true,
+            format: 'MM/DD/YYYY hh:mm A'
         });
     });
 

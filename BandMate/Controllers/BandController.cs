@@ -288,14 +288,14 @@ namespace BandMate.Controllers
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
             viewModel.CurrentBandEvents = currentBand.Events.ToList();
-            //string eventsJson = JsonConvert.SerializeObject(currentBand.Events.ToList());
             string eventsJson = "[";
             foreach (Event bandEvent in currentBand.Events)
             {
                 eventsJson += "{";
                 eventsJson += "\"id\": " + bandEvent.EventId + ",";
                 eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
-                eventsJson += "\"start\": \"" + bandEvent.EventDate + "\"";
+                eventsJson += "\"start\": \"" + bandEvent.EventDate.ToString("r") + "\",";
+                eventsJson += "\"description\": \"" + bandEvent.Description + "\"";
                 eventsJson += "},";
             }
             eventsJson += "]";
