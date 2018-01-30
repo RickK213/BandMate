@@ -10,6 +10,7 @@ using SendGrid.Helpers.Mail;
 
 namespace BandMate.Controllers
 {
+    [Authorize]
     public class EventController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -104,10 +105,11 @@ namespace BandMate.Controllers
                     string email = user.Email;
                     EmailIninerary(email, subject, plainTextContent, htmlTextContent);
                 }
-
+                //TO DO: send text to users who prefer text messages
             }
 
-            return View();
+            TempData["infoMessage"] = "Intineraries sent to " + band.BandMembers.Count + " band members.";
+            return RedirectToAction("Events", "Band", new { bandId = bandId });
         }
 
         private void EmailIninerary(string toEmail, string subject, string plainTextContent, string htmlTextContent)
@@ -141,8 +143,12 @@ namespace BandMate.Controllers
                 eventsJson += "},";
             }
             eventsJson += "]";
-
-            return View();
+            EventItineraryViewModel viewModel = new EventItineraryViewModel();
+            viewModel.EventsJson = eventsJson;
+            viewModel.BandName = band.Name;
+            viewModel.EventDate = eventDate.ToString("r");
+            //YOU ARE HERE! CREATE THE viewModel and View!!!
+            return View(viewModel);
         }
 
     }

@@ -263,6 +263,7 @@
     <Compile Include="Models\BandViewModels.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\EventViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invitation.cs" />
     <Compile Include="Models\InvitationViewModels.cs" />
@@ -429,6 +430,7 @@
     <Content Include="Views\Band\Songs.cshtml" />
     <Content Include="Views\Song\Edit.cshtml" />
     <Content Include="Views\Event\Edit.cshtml" />
+    <Content Include="Views\Event\Itinerary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
