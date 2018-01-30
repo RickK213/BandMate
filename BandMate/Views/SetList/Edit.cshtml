@@ -25,12 +25,16 @@
 
 <div class="row">
     <div class="col-md-2">
-        @if (Model.SetList.SetListSongs.Count() > 0)
-        {
-            <h4 class="pull-right">Songs</h4>
+        @{
+            string listDisplay = "none";
+            if (Model.SetList.SetListSongs.Count() > 0)
+            {
+                <h4 class="pull-right">Songs</h4>
+                listDisplay = "block";
+            }
         }
     </div>
-    <ol class="list-group col-md-10 sortable" id="songs">
+    <ol class="list-group col-md-10 sortable" id="songs" style="display: @listDisplay;">
         @if (Model.SetList.SetListSongs.Count() > 0)
         {
             foreach (SetListSong setListSong in Model.SetList.SetListSongs)
@@ -51,8 +55,7 @@
             }
         }
     </ol>
-    <ol class='sortable'></ol>
-    <hr />
+    <ol class="sortable" style="display: @listDisplay;"></ol>
 </div>
 
 <div class="row">
@@ -82,6 +85,7 @@
         </div>
     </div>
 </div>
+<hr />
 @Html.ActionLink("Return to My Set Lists", "SetLists", "Band", routeValues: new { bandId = Model.SetList.BandId }, htmlAttributes: new { @class = "btn btn-default" })
 
 @section Scripts {
@@ -108,7 +112,7 @@
                         }
                         if(response.append === true)
                         {
-                            $("#songs").append(htmlDecode(response.html));
+                            $("#songs").show().append(htmlDecode(response.html));
                         }
                         if(response.newSong === true)
                         {

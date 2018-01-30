@@ -89,6 +89,7 @@ namespace BandMate.Migrations
                     {
                         EventId = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false),
+                        BandId = c.Int(nullable: false),
                         Description = c.String(),
                         EventDate = c.DateTime(nullable: false),
                         AppearanceFee = c.Double(),
@@ -96,17 +97,16 @@ namespace BandMate.Migrations
                         Discriminator = c.String(nullable: false, maxLength: 128),
                         SetList_SetListId = c.Int(),
                         Venue_VenueId = c.Int(),
-                        Band_BandId = c.Int(),
                         Tour_TourId = c.Int(),
                     })
                 .PrimaryKey(t => t.EventId)
                 .ForeignKey("dbo.SetLists", t => t.SetList_SetListId)
                 .ForeignKey("dbo.Venues", t => t.Venue_VenueId)
-                .ForeignKey("dbo.Bands", t => t.Band_BandId)
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
                 .ForeignKey("dbo.Tours", t => t.Tour_TourId)
+                .Index(t => t.BandId)
                 .Index(t => t.SetList_SetListId)
                 .Index(t => t.Venue_VenueId)
-                .Index(t => t.Band_BandId)
                 .Index(t => t.Tour_TourId);
             
             CreateTable(
@@ -400,7 +400,7 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Songs", "BandId", "dbo.Bands");
             DropForeignKey("dbo.SetLists", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.Events", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.Events", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "Venue_VenueId", "dbo.Venues");
             DropForeignKey("dbo.Venues", "AddressId", "dbo.Addresses");
             DropForeignKey("dbo.Events", "SetList_SetListId", "dbo.SetLists");
@@ -437,9 +437,9 @@ namespace BandMate.Migrations
             DropIndex("dbo.Products", new[] { "TourDate_EventId" });
             DropIndex("dbo.Products", new[] { "ProductType_ProductTypeId" });
             DropIndex("dbo.Events", new[] { "Tour_TourId" });
-            DropIndex("dbo.Events", new[] { "Band_BandId" });
             DropIndex("dbo.Events", new[] { "Venue_VenueId" });
             DropIndex("dbo.Events", new[] { "SetList_SetListId" });
+            DropIndex("dbo.Events", new[] { "BandId" });
             DropIndex("dbo.Bands", new[] { "ApplicationUser_Id" });
             DropIndex("dbo.Bands", new[] { "StoreId" });
             DropIndex("dbo.BandMembers", new[] { "Band_BandId" });

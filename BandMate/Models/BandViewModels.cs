@@ -39,6 +39,7 @@ namespace BandMate.Models
     public class BandEventViewModel : BandViewModel
     {
         public List<Event> CurrentBandEvents { get; set; }
+        public string EventsJson { get; set; }
     }
 
     public class BandStoreViewModel : BandViewModel

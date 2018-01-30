@@ -12,15 +12,45 @@
     </div>
     <div class="panel-body">
         <h4>Create New Event</h4>
-        <form class="form-inline" action="/Event/Add" method="POST">
+        <form class="form-horizontal" action="/Event/Create" method="POST">
             <input type="hidden" name="bandId" value="@Model.CurrentBand.BandId" />
+
             <div class="form-group">
-                <label for="tourName">Event Name</label>
-                <input type="text" class="form-control" name="eventName" placeholder="Event Name">
+                <label class="control-label col-md-2">Date &amp; Time</label>
+                <div class="col-md-10">
+                    <div class="input-group date">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <input type="text" class="form-control" name="eventDate" id="eventDate" placeholder="MM/DD/YYYY HH:MM AM" />
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Create Event</button>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Event Name</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Description</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" rows="3" name="description"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="submit" type="submit" value="Create Event" class="btn btn-primary" />
+                </div>
+            </div>
+
         </form>
-        @if (Model.CurrentBandEvents.Count>0)
+        <hr />
+        <div id='calendar'></div>
+        @if (Model.CurrentBandEvents.Count > 0)
         {
             <hr />
             <h4>@Model.CurrentBand.Name Events</h4>
@@ -38,3 +68,17 @@
         }
     </div>
 </div>
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        @*console.log(@Html.Raw(HttpUtility.HtmlDecode(Model.EventsJson)));*@
+        let eventsJson = @Html.Raw(HttpUtility.HtmlDecode(Model.EventsJson));
+        console.log(eventsJson);
+        console.log(typeof eventsJson);
+        //console.log(JSON.parse(@Model.EventsJson));
+        $('#calendar').fullCalendar({
+            events: eventsJson
+        });
+    });
+</script>
+}

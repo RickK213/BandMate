@@ -36,4 +36,12 @@ $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
 
+    //Setup all datetimepickers
+    $(function () {
+        $('.date').datetimepicker({
+            sideBySide: true
+            //format: 'MM/DD/YYYY'
+        });
+    });
+
 });

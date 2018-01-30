@@ -79,5 +79,7 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.SetListSong> SetListSongs { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.Event> Events { get; set; }
+
     }
 }

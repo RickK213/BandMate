@@ -21,6 +21,7 @@ namespace BandMate
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/moment.js",
+                      "~/Scripts/fullcalendar.min.js",
                       "~/Scripts/transition.js",
                       "~/Scripts/collapse.js",
                       "~/Scripts/bootstrap.js",
@@ -33,6 +34,7 @@ namespace BandMate
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap-slate.min.css",
                       "~/Content/bootstrap-datetimepicker.css",
+                      "~/Content/fullcalendar.min.css",
                       "~/Content/site.css"));
         }
     }

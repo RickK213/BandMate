@@ -13,6 +13,8 @@ namespace BandMate.Models
         [Required]
         public string Name { get; set; }
 
+        public int BandId { get; set; }
+
         public string Description { get; set; }
         public DateTime EventDate { get; set; }
     }

@@ -9,6 +9,7 @@ using BandMate.Models;
 using Microsoft.AspNet.Identity;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using Newtonsoft.Json;
 
 namespace BandMate.Controllers
 {
@@ -287,6 +288,18 @@ namespace BandMate.Controllers
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
             viewModel.CurrentBandEvents = currentBand.Events.ToList();
+            //string eventsJson = JsonConvert.SerializeObject(currentBand.Events.ToList());
+            string eventsJson = "[";
+            foreach (Event bandEvent in currentBand.Events)
+            {
+                eventsJson += "{";
+                eventsJson += "\"id\": " + bandEvent.EventId + ",";
+                eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
+                eventsJson += "\"start\": \"" + bandEvent.EventDate + "\"";
+                eventsJson += "},";
+            }
+            eventsJson += "]";
+            viewModel.EventsJson = eventsJson;
             if (TempData["infoMessage"] != null)
             {
                 ViewBag.infoMessage = TempData["infoMessage"].ToString();
