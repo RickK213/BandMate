@@ -92,72 +92,27 @@ namespace BandMate.Migrations
                         BandId = c.Int(nullable: false),
                         Description = c.String(),
                         EventDate = c.DateTime(nullable: false),
-                        AppearanceFee = c.Double(),
-                        FeeCollectedOn = c.DateTime(),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
-                        SetList_SetListId = c.Int(),
-                        Venue_VenueId = c.Int(),
-                        Tour_TourId = c.Int(),
                     })
                 .PrimaryKey(t => t.EventId)
-                .ForeignKey("dbo.SetLists", t => t.SetList_SetListId)
-                .ForeignKey("dbo.Venues", t => t.Venue_VenueId)
                 .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
-                .ForeignKey("dbo.Tours", t => t.Tour_TourId)
-                .Index(t => t.BandId)
-                .Index(t => t.SetList_SetListId)
-                .Index(t => t.Venue_VenueId)
-                .Index(t => t.Tour_TourId);
+                .Index(t => t.BandId);
             
             CreateTable(
-                "dbo.Products",
+                "dbo.Invitations",
                 c => new
                     {
-                        ProductId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Description = c.String(),
-                        ImageFileName = c.String(),
-                        Price = c.Double(nullable: false),
-                        QuantityAvailable = c.Int(nullable: false),
-                        IsSoldOut = c.Boolean(nullable: false),
-                        ProductType_ProductTypeId = c.Int(),
-                        TourDate_EventId = c.Int(),
-                        Store_StoreId = c.Int(),
-                        Transaction_TransactionId = c.Int(),
+                        InvitationId = c.Int(nullable: false, identity: true),
+                        Email = c.String(nullable: false),
+                        InvitedBy = c.String(),
+                        BandName = c.String(),
+                        Title = c.String(),
+                        BandId = c.Int(nullable: false),
+                        CreatedOn = c.DateTime(nullable: false),
+                        IsAccepted = c.Boolean(nullable: false),
                     })
-                .PrimaryKey(t => t.ProductId)
-                .ForeignKey("dbo.ProductTypes", t => t.ProductType_ProductTypeId)
-                .ForeignKey("dbo.Events", t => t.TourDate_EventId)
-                .ForeignKey("dbo.Stores", t => t.Store_StoreId)
-                .ForeignKey("dbo.Transactions", t => t.Transaction_TransactionId)
-                .Index(t => t.ProductType_ProductTypeId)
-                .Index(t => t.TourDate_EventId)
-                .Index(t => t.Store_StoreId)
-                .Index(t => t.Transaction_TransactionId);
-            
-            CreateTable(
-                "dbo.ProductTypes",
-                c => new
-                    {
-                        ProductTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.ProductTypeId);
-            
-            CreateTable(
-                "dbo.Sizes",
-                c => new
-                    {
-                        SizeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        Abbreviation = c.String(nullable: false),
-                        UpCharge = c.Double(),
-                        QuantityAvailable = c.Int(nullable: false),
-                        Product_ProductId = c.Int(),
-                    })
-                .PrimaryKey(t => t.SizeId)
-                .ForeignKey("dbo.Products", t => t.Product_ProductId)
-                .Index(t => t.Product_ProductId);
+                .PrimaryKey(t => t.InvitationId)
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
+                .Index(t => t.BandId);
             
             CreateTable(
                 "dbo.SetLists",
@@ -199,42 +154,6 @@ namespace BandMate.Migrations
                 .Index(t => t.BandId);
             
             CreateTable(
-                "dbo.Venues",
-                c => new
-                    {
-                        VenueId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                        AddressId = c.Int(nullable: false),
-                        BandId = c.Int(nullable: false),
-                        ContactFirstName = c.String(),
-                        ContactLastName = c.String(),
-                        ContactPhoneNumber = c.String(),
-                        ContactEmail = c.String(),
-                    })
-                .PrimaryKey(t => t.VenueId)
-                .ForeignKey("dbo.Addresses", t => t.AddressId, cascadeDelete: true)
-                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
-                .Index(t => t.AddressId)
-                .Index(t => t.BandId);
-            
-            CreateTable(
-                "dbo.Invitations",
-                c => new
-                    {
-                        InvitationId = c.Int(nullable: false, identity: true),
-                        Email = c.String(nullable: false),
-                        InvitedBy = c.String(),
-                        BandName = c.String(),
-                        Title = c.String(),
-                        BandId = c.Int(nullable: false),
-                        CreatedOn = c.DateTime(nullable: false),
-                        IsAccepted = c.Boolean(nullable: false),
-                    })
-                .PrimaryKey(t => t.InvitationId)
-                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
-                .Index(t => t.BandId);
-            
-            CreateTable(
                 "dbo.Stores",
                 c => new
                     {
@@ -242,6 +161,56 @@ namespace BandMate.Migrations
                         PlaylistId = c.String(),
                     })
                 .PrimaryKey(t => t.StoreId);
+            
+            CreateTable(
+                "dbo.Products",
+                c => new
+                    {
+                        ProductId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Description = c.String(),
+                        ImageFileName = c.String(),
+                        Price = c.Double(nullable: false),
+                        QuantityAvailable = c.Int(nullable: false),
+                        IsSoldOut = c.Boolean(nullable: false),
+                        ProductType_ProductTypeId = c.Int(),
+                        Store_StoreId = c.Int(),
+                        Transaction_TransactionId = c.Int(),
+                        TourDate_TourDateId = c.Int(),
+                    })
+                .PrimaryKey(t => t.ProductId)
+                .ForeignKey("dbo.ProductTypes", t => t.ProductType_ProductTypeId)
+                .ForeignKey("dbo.Stores", t => t.Store_StoreId)
+                .ForeignKey("dbo.Transactions", t => t.Transaction_TransactionId)
+                .ForeignKey("dbo.TourDates", t => t.TourDate_TourDateId)
+                .Index(t => t.ProductType_ProductTypeId)
+                .Index(t => t.Store_StoreId)
+                .Index(t => t.Transaction_TransactionId)
+                .Index(t => t.TourDate_TourDateId);
+            
+            CreateTable(
+                "dbo.ProductTypes",
+                c => new
+                    {
+                        ProductTypeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.ProductTypeId);
+            
+            CreateTable(
+                "dbo.Sizes",
+                c => new
+                    {
+                        SizeId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        Abbreviation = c.String(nullable: false),
+                        UpCharge = c.Double(),
+                        QuantityAvailable = c.Int(nullable: false),
+                        Product_ProductId = c.Int(),
+                    })
+                .PrimaryKey(t => t.SizeId)
+                .ForeignKey("dbo.Products", t => t.Product_ProductId)
+                .Index(t => t.Product_ProductId);
             
             CreateTable(
                 "dbo.Transactions",
@@ -267,6 +236,46 @@ namespace BandMate.Migrations
                 .PrimaryKey(t => t.TourId)
                 .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
                 .Index(t => t.BandId);
+            
+            CreateTable(
+                "dbo.TourDates",
+                c => new
+                    {
+                        TourDateId = c.Int(nullable: false, identity: true),
+                        EventDate = c.DateTime(nullable: false),
+                        SetListId = c.Int(nullable: false),
+                        VenueId = c.Int(nullable: false),
+                        AppearanceFee = c.Double(nullable: false),
+                        FeeCollectedOn = c.DateTime(),
+                        BandId = c.Int(nullable: false),
+                        Tour_TourId = c.Int(),
+                    })
+                .PrimaryKey(t => t.TourDateId)
+                .ForeignKey("dbo.SetLists", t => t.SetListId, cascadeDelete: true)
+                .ForeignKey("dbo.Venues", t => t.VenueId, cascadeDelete: true)
+                .ForeignKey("dbo.Tours", t => t.Tour_TourId)
+                .Index(t => t.SetListId)
+                .Index(t => t.VenueId)
+                .Index(t => t.Tour_TourId);
+            
+            CreateTable(
+                "dbo.Venues",
+                c => new
+                    {
+                        VenueId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                        AddressId = c.Int(nullable: false),
+                        ContactFirstName = c.String(),
+                        ContactLastName = c.String(),
+                        ContactPhoneNumber = c.String(),
+                        ContactEmail = c.String(),
+                        Band_BandId = c.Int(),
+                    })
+                .PrimaryKey(t => t.VenueId)
+                .ForeignKey("dbo.Addresses", t => t.AddressId, cascadeDelete: true)
+                .ForeignKey("dbo.Bands", t => t.Band_BandId)
+                .Index(t => t.AddressId)
+                .Index(t => t.Band_BandId);
             
             CreateTable(
                 "dbo.NotificationPreferences",
@@ -390,25 +399,25 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.Bands", "ApplicationUser_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.Subscriptions", "SubscriptionTypeId", "dbo.SubscriptionTypes");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.Venues", "BandId", "dbo.Bands");
+            DropForeignKey("dbo.Venues", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Tours", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.Events", "Tour_TourId", "dbo.Tours");
+            DropForeignKey("dbo.TourDates", "Tour_TourId", "dbo.Tours");
+            DropForeignKey("dbo.TourDates", "VenueId", "dbo.Venues");
+            DropForeignKey("dbo.Venues", "AddressId", "dbo.Addresses");
+            DropForeignKey("dbo.TourDates", "SetListId", "dbo.SetLists");
+            DropForeignKey("dbo.Products", "TourDate_TourDateId", "dbo.TourDates");
             DropForeignKey("dbo.Bands", "StoreId", "dbo.Stores");
             DropForeignKey("dbo.Transactions", "Store_StoreId", "dbo.Stores");
             DropForeignKey("dbo.Products", "Transaction_TransactionId", "dbo.Transactions");
             DropForeignKey("dbo.Products", "Store_StoreId", "dbo.Stores");
-            DropForeignKey("dbo.Songs", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.SetLists", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.Events", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.Events", "Venue_VenueId", "dbo.Venues");
-            DropForeignKey("dbo.Venues", "AddressId", "dbo.Addresses");
-            DropForeignKey("dbo.Events", "SetList_SetListId", "dbo.SetLists");
-            DropForeignKey("dbo.SetListSongs", "SetList_SetListId", "dbo.SetLists");
-            DropForeignKey("dbo.SetListSongs", "SongId", "dbo.Songs");
-            DropForeignKey("dbo.Products", "TourDate_EventId", "dbo.Events");
             DropForeignKey("dbo.Sizes", "Product_ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "ProductType_ProductTypeId", "dbo.ProductTypes");
+            DropForeignKey("dbo.Songs", "BandId", "dbo.Bands");
+            DropForeignKey("dbo.SetLists", "BandId", "dbo.Bands");
+            DropForeignKey("dbo.SetListSongs", "SetList_SetListId", "dbo.SetLists");
+            DropForeignKey("dbo.SetListSongs", "SongId", "dbo.Songs");
+            DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
+            DropForeignKey("dbo.Events", "BandId", "dbo.Bands");
             DropForeignKey("dbo.BandMembers", "Band_BandId", "dbo.Bands");
             DropForeignKey("dbo.Addresses", "ZipCodeId", "dbo.ZipCodes");
             DropForeignKey("dbo.Addresses", "StateId", "dbo.States");
@@ -422,23 +431,23 @@ namespace BandMate.Migrations
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.Venues", new[] { "Band_BandId" });
+            DropIndex("dbo.Venues", new[] { "AddressId" });
+            DropIndex("dbo.TourDates", new[] { "Tour_TourId" });
+            DropIndex("dbo.TourDates", new[] { "VenueId" });
+            DropIndex("dbo.TourDates", new[] { "SetListId" });
             DropIndex("dbo.Tours", new[] { "BandId" });
             DropIndex("dbo.Transactions", new[] { "Store_StoreId" });
-            DropIndex("dbo.Invitations", new[] { "BandId" });
-            DropIndex("dbo.Venues", new[] { "BandId" });
-            DropIndex("dbo.Venues", new[] { "AddressId" });
+            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
+            DropIndex("dbo.Products", new[] { "TourDate_TourDateId" });
+            DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
+            DropIndex("dbo.Products", new[] { "Store_StoreId" });
+            DropIndex("dbo.Products", new[] { "ProductType_ProductTypeId" });
             DropIndex("dbo.Songs", new[] { "BandId" });
             DropIndex("dbo.SetListSongs", new[] { "SetList_SetListId" });
             DropIndex("dbo.SetListSongs", new[] { "SongId" });
             DropIndex("dbo.SetLists", new[] { "BandId" });
-            DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
-            DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
-            DropIndex("dbo.Products", new[] { "Store_StoreId" });
-            DropIndex("dbo.Products", new[] { "TourDate_EventId" });
-            DropIndex("dbo.Products", new[] { "ProductType_ProductTypeId" });
-            DropIndex("dbo.Events", new[] { "Tour_TourId" });
-            DropIndex("dbo.Events", new[] { "Venue_VenueId" });
-            DropIndex("dbo.Events", new[] { "SetList_SetListId" });
+            DropIndex("dbo.Invitations", new[] { "BandId" });
             DropIndex("dbo.Events", new[] { "BandId" });
             DropIndex("dbo.Bands", new[] { "ApplicationUser_Id" });
             DropIndex("dbo.Bands", new[] { "StoreId" });
@@ -454,17 +463,18 @@ namespace BandMate.Migrations
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.NotificationPreferences");
+            DropTable("dbo.Venues");
+            DropTable("dbo.TourDates");
             DropTable("dbo.Tours");
             DropTable("dbo.Transactions");
-            DropTable("dbo.Stores");
-            DropTable("dbo.Invitations");
-            DropTable("dbo.Venues");
-            DropTable("dbo.Songs");
-            DropTable("dbo.SetListSongs");
-            DropTable("dbo.SetLists");
             DropTable("dbo.Sizes");
             DropTable("dbo.ProductTypes");
             DropTable("dbo.Products");
+            DropTable("dbo.Stores");
+            DropTable("dbo.Songs");
+            DropTable("dbo.SetListSongs");
+            DropTable("dbo.SetLists");
+            DropTable("dbo.Invitations");
             DropTable("dbo.Events");
             DropTable("dbo.Bands");
             DropTable("dbo.BandMembers");

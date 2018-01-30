@@ -29,15 +29,15 @@
                 {
                     <tr>
                         <td>
-                            <a class="btn btn-xs btn-primary" href="@Url.Action("Details", "Venue", new { venueId = venue.VenueId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @venue.Name</a>
+                            <a class="btn btn-xs btn-primary" href="@Url.Action("Details", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @venue.Name</a>
                         </td>
                         <td>@venue.Address.City.Name, @venue.Address.State.Abbreviation</td>
                         <td>@venue.ContactFirstName @venue.ContactLastName</td>
                         <td>@String.Format("{0:(###) ###-####}", Convert.ToInt64(venue.ContactPhoneNumber))</td>
                         <td><a href="mailto:@venue.ContactEmail">@venue.ContactEmail</a></td>
                         <td>
-                            <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Venue", new { venueId = venue.VenueId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Venue", new { venueId = venue.VenueId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
                         </td>
                     </tr>
                 }

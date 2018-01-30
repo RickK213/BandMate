@@ -66,3 +66,12 @@ body.dragging, body.dragging * {
     margin-top: 22px;
     margin-left: -10px;
 }
+
+.alert a {
+    text-decoration: none;
+}
+
+/*Fix width on addon inputs*/
+.addon {
+    width: 280px;
+}

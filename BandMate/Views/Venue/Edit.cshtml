@@ -21,6 +21,7 @@
     </div>
     <div class="form-horizontal">
         <input type="hidden" name="venueId" value="@Model.VenueId" />
+        <input type="hidden" name="venueId" value="@ViewBag.BandId" />
         <input id="lat" name="lat" type="hidden" value="@Model.Address.Lat" />
         <input id="lng" name="lng" type="hidden" value="@Model.Address.Lng" />
         <hr />
@@ -103,7 +104,7 @@
     </div>
 }
 
-@Html.ActionLink("Return to My Venues", "Venues", "Band", routeValues: new { bandId = Model.BandId }, htmlAttributes: new { @class = "btn btn-default" })
+@Html.ActionLink("Return to My Venues", "Venues", "Band", routeValues: new { bandId = ViewBag.BandId }, htmlAttributes: new { @class = "btn btn-default" })
 
 @section Scripts {
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>

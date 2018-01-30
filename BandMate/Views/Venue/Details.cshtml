@@ -34,7 +34,7 @@
         </p>
 </div>
 </div>
-@Html.ActionLink("Return to My Venues", "Venues", "Band", routeValues: new { bandId = Model.BandId }, htmlAttributes: new { @class="btn btn-default" })
+@Html.ActionLink("Return to My Venues", "Venues", "Band", routeValues: new { bandId = ViewBag.BandId }, htmlAttributes: new { @class="btn btn-default" })
 
 @section Scripts {
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>

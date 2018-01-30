@@ -36,16 +36,22 @@ namespace BandMate.Controllers
             venue.ContactLastName = contactLastName;
             venue.ContactPhoneNumber = contactPhone;
             venue.ContactEmail = contactEmail;
-            venue.BandId = bandId;
             venue.AddressId = address.AddressId;
             db.Venues.Add(venue);
+
+            var band = db.Bands
+                .Include(b => b.Venues)
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+
+            band.Venues.Add(venue);
             db.SaveChanges();
             TempData["infoMessage"] = "Success! " + venue.Name + " created.";
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
         [HttpGet]
-        public ActionResult Edit(int venueId)
+        public ActionResult Edit(int venueId, int bandId)
         {
             var venue = db.Venues
                 .Include(v => v.Address)
@@ -54,13 +60,13 @@ namespace BandMate.Controllers
                 .Include("Address.ZipCode")
                 .Where(v => v.VenueId == venueId)
                 .FirstOrDefault();
-            ViewBag.BandId = venue.BandId;
             ViewBag.StateId = new SelectList(db.States, "StateId", "Abbreviation");
+            ViewBag.BandId = bandId;
             return View(venue);
         }
 
         [HttpPost]
-        public ActionResult Edit(string venueName, int venueId, string contactFirstName, string contactLastName, string contactPhone, string contactEmail, string streetOne, string city, string StateId, string zipCode, string lat, string lng)
+        public ActionResult Edit(string venueName, int bandId, int venueId, string contactFirstName, string contactLastName, string contactPhone, string contactEmail, string streetOne, string city, string StateId, string zipCode, string lat, string lng)
         {
             if (!User.IsInRole("Band Manager"))
             {
@@ -84,15 +90,15 @@ namespace BandMate.Controllers
             venue.AddressId = address.AddressId;
             db.SaveChanges();
             TempData["infoMessage"] = "Success! " + venue.Name + " modified.";
-            return RedirectToAction("Venues", "Band", new { bandId = venue.BandId });
+            return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
-        public ActionResult Delete(int venueId)
+        public ActionResult Delete(int venueId, int bandId)
         {
             var venue = db.Venues.Find(venueId);
             var band = db.Bands
                 .Include(b => b.Venues)
-                .Where(b => b.BandId == venue.BandId)
+                .Where(b => b.BandId == bandId)
                 .FirstOrDefault();
             db.Venues.Remove(venue);
             band.Venues.Remove(venue);
@@ -101,7 +107,7 @@ namespace BandMate.Controllers
             return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
         }
 
-        public ActionResult Details(int venueId)
+        public ActionResult Details(int venueId, int bandId)
         {
             var venue = db.Venues
                 .Include(v => v.Address)
@@ -110,6 +116,7 @@ namespace BandMate.Controllers
                 .Include("Address.ZipCode")
                 .Where(v => v.VenueId == venueId)
                 .FirstOrDefault();
+            ViewBag.BandId = bandId;
             return View(venue);
         }
 
