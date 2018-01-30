@@ -423,11 +423,12 @@
     <Content Include="Views\Venue\Details.cshtml" />
     <Content Include="Views\TourDate\Create.cshtml" />
     <Content Include="Views\SetList\Edit.cshtml" />
+    <Content Include="Views\Band\Songs.cshtml" />
+    <Content Include="Views\Song\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\BandMember\" />
-    <Folder Include="Views\Song\" />
     <Folder Include="Views\Stripe\" />
   </ItemGroup>
   <ItemGroup>

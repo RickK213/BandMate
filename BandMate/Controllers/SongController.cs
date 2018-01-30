@@ -28,18 +28,18 @@ namespace BandMate.Controllers
                 bool duplicateSong = false;
                 foreach (SetListSong existingSetListSong in setList.SetListSongs)
                 {
-                    if(songFound == existingSetListSong.Song)
+                    if (songFound == existingSetListSong.Song)
                     {
                         duplicateSong = true;
                     }
                 }
-                if(!duplicateSong)
+                if (!duplicateSong)
                 {
                     setListSong.Song = songFound;
                     setList.SetListSongs.Add(setListSong);
                     db.SaveChanges();
                     string existingSongHtml = WebUtility.HtmlEncode(GetSongHtml(setListSong));
-                    json = "{\"append\": true, \"newSong\": false, \"html\": \""+existingSongHtml+"\"}";
+                    json = "{\"append\": true, \"newSong\": false, \"html\": \"" + existingSongHtml + "\"}";
                     return Json(json, JsonRequestBehavior.AllowGet);
                 }
                 json = "{\"append\": false, \"newSong\": false, \"html\": \"\"}";
@@ -57,6 +57,50 @@ namespace BandMate.Controllers
             string songHtml = WebUtility.HtmlEncode(GetSongHtml(setListSong));
             json = "{\"append\": true, \"newSong\": true, \"html\": \"" + songHtml + "\"}";
             return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult CreateForBand(int bandId, string songName)
+        {
+            if (db.Songs.Any(s => s.BandId == bandId && s.Name == songName))
+            {
+                TempData["dangerMessage"] = songName + " already exists!";
+                return RedirectToAction("Songs", "Band", new { bandId = bandId });
+            }
+            Song song = new Song();
+            song.Name = songName;
+            song.BandId = bandId;
+            db.Songs.Add(song);
+            db.SaveChanges();
+
+            TempData["infoMessage"] = songName + " created!";
+            return RedirectToAction("Songs", "Band", new { bandId = bandId });
+        }
+
+        public ActionResult Delete(int bandId, int songId)
+        {
+            var song = db.Songs.Find(songId);
+            db.Songs.Remove(song);
+            db.SaveChanges();
+            TempData["infoMessage"] = song.Name + " deleted!";
+            return RedirectToAction("Songs", "Band", new { bandId = bandId });
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int songId)
+        {
+            var song = db.Songs.Find(songId);
+            return View(song);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(int songId, string songName)
+        {
+            var song = db.Songs.Find(songId);
+            song.Name = songName;
+            db.SaveChanges();
+            TempData["infoMessage"] = "Song successfully modified!";
+            return RedirectToAction("Songs", "Band", new { bandId = song.BandId });
         }
 
         private string GetSongHtml(SetListSong setListSong)

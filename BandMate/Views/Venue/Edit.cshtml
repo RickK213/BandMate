@@ -113,7 +113,7 @@
             let map;
             let marker;
 
-            $("#venueCreateForm :input").change(function () {
+            $("#streetOne, #city, #StateId, #zipCode").change(function () {
                 $("#submitButton").fadeOut(function () {
                     $("#map").fadeOut();
                     $("#searchGroup").fadeIn();
@@ -221,6 +221,17 @@
             }
 
             initMap(@Model.Address.Lat, @Model.Address.Lng);
+
+            //prepopulate the state select list
+            let stateId = @Model.Address.State.StateId;
+            stateId = stateId.toString();
+            $("#StateId option").each(function(){
+                let option = $(this);
+                if(option.val() === stateId)
+                {
+                    option.attr("selected", "selected");                
+                }
+            });
 
         });
     </script>

@@ -26,6 +26,11 @@ namespace BandMate.Models
         public List<Venue> CurrentBandVenues { get; set; }
     }
 
+    public class BandSongViewModel : BandViewModel
+    {
+        public List<Song> CurrentBandSongs { get; set; }
+    }
+
     public class BandSetListViewModel : BandViewModel
     {
         public List<SetList> CurrentBandSetLists { get; set; }

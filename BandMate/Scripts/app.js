@@ -21,9 +21,9 @@ $(document).ready(function () {
     //Show the infoMessage
     if ($("#infoAlertMessage").text().length > 0) {
         $("#infoAlert").fadeIn();
-        setTimeout(function () {
-            $('#infoAlert').fadeOut();
-        }, 2000);
+        //setTimeout(function () {
+        //    $('#infoAlert').fadeOut();
+        //}, 2000);
     }
 
     //Show the dangerMessage

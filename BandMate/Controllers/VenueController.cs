@@ -40,6 +40,7 @@ namespace BandMate.Controllers
             venue.AddressId = address.AddressId;
             db.Venues.Add(venue);
             db.SaveChanges();
+            TempData["infoMessage"] = "Success! " + venue.Name + " created.";
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
@@ -82,6 +83,7 @@ namespace BandMate.Controllers
             venue.ContactEmail = contactEmail;
             venue.AddressId = address.AddressId;
             db.SaveChanges();
+            TempData["infoMessage"] = "Success! " + venue.Name + " modified.";
             return RedirectToAction("Venues", "Band", new { bandId = venue.BandId });
         }
 

@@ -1,0 +1,26 @@
+﻿@model BandMate.Models.Song
+
+@{
+    ViewBag.Title = "Edit Song";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit @Model.Name</h2>
+
+    <form class="form-horizontal" action="/Song/Edit" method="POST">
+        <hr />
+        <input type="hidden" name="songId" value="@Model.SongId"/>
+        <div class="form-group">
+            <label class="control-label col-md-2">Song Name</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="songName" value="@Model.Name"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save Song" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+@Html.ActionLink("Return to My Songs", "Songs", "Band", routeValues: new { bandId = Model.BandId }, htmlAttributes: new { @class = "btn btn-default" })

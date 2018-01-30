@@ -179,6 +179,46 @@ namespace BandMate.Controllers
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////
+        //DASHBOARD: MY SONGS
+        ////////////////////////////////////////////////////////////////////////////////////////
+        public ActionResult Songs(int? bandId)
+        {
+            //Common code for all actions in BandController
+            CheckSubscription();
+            var bands = GetUserBands();
+            if (bands.Count <= 0)
+            {
+                return RedirectToAction("Create");
+            }
+            Band currentBand = bands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Venues", "Band", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands;
+            otherBands = bands.Where(b => b.BandId != bandId).ToList();
+            //End of common code
+
+            var viewModel = new BandSongViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+            viewModel.CurrentBandSongs = currentBand.Songs.ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////
         //DASHBOARD: MY SET LISTS
         ////////////////////////////////////////////////////////////////////////////////////////
         public ActionResult SetLists(int? bandId)
