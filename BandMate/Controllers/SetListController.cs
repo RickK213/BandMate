@@ -59,6 +59,54 @@ namespace BandMate.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult delete(int setListId, int bandId)
+        {
+            //check if it is used in any Tour Dates
+            var tourDates = db.TourDates
+                .Include(t => t.SetList)
+                .OrderBy(t => t.EventDate)
+                .ToList();
+            List<TourDate> tourDatesUsingSetList = new List<TourDate>();
+            foreach ( var tourDate in tourDates )
+            {
+                if ( tourDate.SetList.SetListId == setListId )
+                {
+                    tourDatesUsingSetList.Add(tourDate);
+                }
+            }
+            if ( tourDatesUsingSetList.Count>0 )
+            {
+                StringBuilder tourDateList = new StringBuilder();
+                int count = 0;
+                foreach ( var tourDate in tourDatesUsingSetList )
+                {
+                    tourDateList.Append(String.Format("{0:MM/dd/yy}", tourDate.EventDate));
+                    if ( count < tourDatesUsingSetList.Count-1)
+                    {
+                        tourDateList.Append(", ");
+                    }
+                    count++;
+                }
+                TempData["dangerMessage"] = "You cannot delete this set list because it is in use on tour dates on the following dates: " + tourDateList.ToString() + ". Please remove the set list from those tour dates first.";
+                return RedirectToAction("SetLists", "Band", new { bandId = bandId });
+            }
+
+            var setList = db.SetLists
+                .Include(s => s.SetListSongs)
+                .Where(s => s.SetListId == setListId)
+                .FirstOrDefault();
+            List<SetListSong> setListSongsToDelete = setList.SetListSongs.ToList();
+            for (int i = setListSongsToDelete.Count - 1; i >= 0; i--)
+            {
+                db.SetListSongs.Remove(setListSongsToDelete[i]);
+            }
+            db.SetLists.Remove(setList);
+            db.SaveChanges();
+            TempData["infoMessage"] = "You have removed the set list: " + setList.Name;
+            return RedirectToAction("SetLists", "Band", new { bandId = bandId });
+        }
+
         [HttpPost]
         public ActionResult SaveName(string setListName, int setListId)
         {

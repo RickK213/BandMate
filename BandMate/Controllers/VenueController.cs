@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web.Mvc;
 using BandMate.Models;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace BandMate.Controllers
 {
@@ -93,18 +95,62 @@ namespace BandMate.Controllers
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
-        public ActionResult Delete(int venueId, int bandId)
+        //public ActionResult Delete(int venueId, int bandId)
+        //{
+        //    var venue = db.Venues.Find(venueId);
+        //    var band = db.Bands
+        //        .Include(b => b.Venues)
+        //        .Where(b => b.BandId == bandId)
+        //        .FirstOrDefault();
+        //    db.Venues.Remove(venue);
+        //    band.Venues.Remove(venue);
+        //    db.SaveChanges();
+        //    TempData["infoMessage"] = venue.Name + " Deleted!";
+        //    return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
+        //}
+
+        [HttpGet]
+        public ActionResult delete(int venueId, int bandId)
         {
+            //check if it is used in any Tour Dates
+            var tourDates = db.TourDates
+                .Include(t => t.Venue)
+                .OrderBy(t => t.EventDate)
+                .ToList();
+            List<TourDate> tourDatesUsingVenue = new List<TourDate>();
+            foreach (var tourDate in tourDates)
+            {
+                if (tourDate.Venue.VenueId == venueId)
+                {
+                    tourDatesUsingVenue.Add(tourDate);
+                }
+            }
+            if (tourDatesUsingVenue.Count > 0)
+            {
+                StringBuilder tourDateList = new StringBuilder();
+                int count = 0;
+                foreach (var tourDate in tourDatesUsingVenue)
+                {
+                    tourDateList.Append(String.Format("{0:MM/dd/yy}", tourDate.EventDate));
+                    if (count < tourDatesUsingVenue.Count - 1)
+                    {
+                        tourDateList.Append(", ");
+                    }
+                    count++;
+                }
+                TempData["dangerMessage"] = "You cannot delete this venue because it is in use on tour dates on the following dates: " + tourDateList.ToString() + ". Please remove the set list from those tour dates first.";
+                return RedirectToAction("Venues", "Band", new { bandId = bandId });
+            }
             var venue = db.Venues.Find(venueId);
-            var band = db.Bands
-                .Include(b => b.Venues)
-                .Where(b => b.BandId == bandId)
-                .FirstOrDefault();
+            //var band = db.Bands
+            //    .Include(b => b.Venues)
+            //    .Where(b => b.BandId == bandId)
+            //    .FirstOrDefault();
             db.Venues.Remove(venue);
-            band.Venues.Remove(venue);
+            //band.Venues.Remove(venue);
             db.SaveChanges();
             TempData["infoMessage"] = venue.Name + " Deleted!";
-            return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
+            return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
         public ActionResult Details(int venueId, int bandId)

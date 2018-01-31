@@ -36,8 +36,14 @@ namespace BandMate.Controllers
         }
 
         [HttpGet]
-        public ActionResult Edit(int eventId)
+        public ActionResult Edit(int eventId, int bandId)
         {
+            if (eventId == 0)
+            {
+                TempData["dangerMessage"] = "You cannot edit tour dates from the event calendar. Please edit by going to your tour detail page";
+                return RedirectToAction("Events", "Band", new { bandId = bandId });
+            }
+
             var eventToEdit = db.Events.Find(eventId);
             return View(eventToEdit);
         }
@@ -55,8 +61,13 @@ namespace BandMate.Controllers
         }
 
         [HttpGet]
-        public ActionResult Delete(int eventId)
+        public ActionResult Delete(int eventId, int bandId)
         {
+            if (eventId == 0)
+            {
+                TempData["dangerMessage"] = "You cannot delete tour dates from the event calendar. Please delete by going to your tour detail page";
+                return RedirectToAction("Events", "Band", new { bandId = bandId });
+            }
             Event eventToDelete = db.Events.Find(eventId);
             db.Events.Remove(eventToDelete);
             db.SaveChanges();

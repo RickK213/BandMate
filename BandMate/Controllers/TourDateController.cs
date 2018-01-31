@@ -97,5 +97,35 @@ namespace BandMate.Controllers
             return RedirectToAction("Details", "Tour", new { tourId = tourDate.ParentId });
         }
 
+        [HttpGet]
+        public ActionResult MarkAsPaid(int tourDateId)
+        {
+            TourDate tourDate = db.TourDates
+                .Include(t => t.Venue)
+                .Where(t => t.TourDateId == tourDateId)
+                .FirstOrDefault();
+            return View(tourDate);
+        }
+
+        [HttpPost]
+        public ActionResult MarkAsPaid(int tourDateId, DateTime datePaid)
+        {
+            TourDate tourDate = db.TourDates.Find(tourDateId);
+            tourDate.FeeCollectedOn = datePaid;
+            db.SaveChanges();
+            TempData["infoMessage"] = String.Format("Tour date on {0:MM/dd/yy} has been marked as paid", tourDate.EventDate);
+            return RedirectToAction("Details", "Tour", new { tourId = tourDate.ParentId });
+        }
+
+        [HttpGet]
+        public ActionResult RemovePayment(int tourDateId)
+        {
+            TourDate tourDate = db.TourDates.Find(tourDateId);
+            tourDate.FeeCollectedOn = null;
+            db.SaveChanges();
+            TempData["infoMessage"] = String.Format("Payment removed from tour date on {0:MM/dd/yy}.", tourDate.EventDate);
+            return RedirectToAction("Details", "Tour", new { tourId = tourDate.ParentId });
+        }
+
     }
 }

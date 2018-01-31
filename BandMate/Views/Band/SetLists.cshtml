@@ -37,7 +37,7 @@
                         <td>@setList.SetListSongs.Count</td>
                         <td>
                             <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "SetList", new { setListId = setList.SetListId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "SetList", new { setListId = setList.SetListId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "SetList", new { setListId = setList.SetListId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
                         </td>
                     </tr>
                 }

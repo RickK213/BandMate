@@ -42,6 +42,11 @@
                     @tourDate.Venue.Address.StreetOne<br />
                     @tourDate.Venue.Address.City.Name, @tourDate.Venue.Address.State.Abbreviation @tourDate.Venue.Address.ZipCode.Number<br />
                     <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span>
+                    @if (tourDate.FeeCollectedOn.HasValue)
+                    {
+                        <br />
+                        <span class="text-success"><strong>Fee Collected On:</strong> @String.Format("{0:MM/dd/yy}", tourDate.FeeCollectedOn)</span>
+                    }
                 </p>
                 <p>
                     <div class="btn-group btn-group-justified" role="group">
@@ -53,8 +58,20 @@
                         </div>
                     </div>
                 </p>
+                @if (!tourDate.FeeCollectedOn.HasValue)
+                {
+                    <p>
+                        <a class="btn btn-success btn-sm btn-block" href="@Url.Action("MarkAsPaid", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Mark Appearance Fee as Paid</a>
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        <a class="btn btn-default btn-sm btn-block" href="@Url.Action("RemovePayment", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Remove Payment</a>
+                    </p>
+                }
                 <p style="margin-bottom: 0;">
-                    <a class="btn btn-success btn-sm btn-block" href="@Url.Action("MarkAsPaid", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Mark Appearance Fee as Paid</a>
+                    <a class="btn btn-warning btn-sm btn-block" href="@Url.Action("TrackMerchandise", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Track Sold Merchandise</a>
                 </p>
             </div>
         </div>

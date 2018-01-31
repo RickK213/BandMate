@@ -134,14 +134,16 @@
         $("#eventModal").on("click", "#eventEditButton", function(){
             let button = $(this);
             let eventId = button.attr("data-eventId");
-            window.location = '/Event/Edit?eventId='+eventId;
+            let bandId = @Model.CurrentBand.BandId;
+            window.location = '/Event/Edit?eventId='+eventId+'&bandId='+bandId;
         });
 
         //Delete event
         $("#eventModal").on("click", "#eventDeleteButton", function(){
             let button = $(this);
             let eventId = button.attr("data-eventId");
-            window.location = '/Event/Delete?eventId='+eventId;
+            let bandId = @Model.CurrentBand.BandId;
+            window.location = '/Event/Delete?eventId='+eventId+'&bandId='+bandId;
         });
 
         //Send event reminders

@@ -287,6 +287,8 @@ namespace BandMate.Controllers
             var viewModel = new BandEventViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
+
+            //get all the events
             viewModel.CurrentBandEvents = currentBand.Events.ToList();
             string eventsJson = "[";
             foreach (Event bandEvent in currentBand.Events)
@@ -296,6 +298,27 @@ namespace BandMate.Controllers
                 eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
                 eventsJson += "\"start\": \"" + bandEvent.EventDate.ToString("r") + "\",";
                 eventsJson += "\"description\": \"" + bandEvent.Description + "\"";
+                eventsJson += "},";
+            }
+
+            //add all of the tour dates to the list of events too
+            var tours = currentBand.Tours;
+            List<TourDate> tourDates = new List<TourDate>();
+            foreach (Tour tour in tours)
+            {
+                foreach(TourDate tourDate in tour.TourDates)
+                {
+                    tourDates.Add(tourDate);
+                }
+            }
+            foreach ( TourDate tourDate in tourDates )
+            {
+                eventsJson += "{";
+                eventsJson += "\"id\": \"0\",";
+                eventsJson += "\"title\": \"Tour Date: " + tourDate.Venue.Name + "\",";
+                eventsJson += "\"color\": \"#f89406\",";
+                eventsJson += "\"start\": \"" + tourDate.EventDate.ToString("r") + "\",";
+                eventsJson += "\"description\": \"Tour Date at " + tourDate.Venue.Name + "\"";
                 eventsJson += "},";
             }
             eventsJson += "]";

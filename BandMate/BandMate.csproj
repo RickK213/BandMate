@@ -432,6 +432,7 @@
     <Content Include="Views\Event\Edit.cshtml" />
     <Content Include="Views\Event\Itinerary.cshtml" />
     <Content Include="Views\TourDate\Edit.cshtml" />
+    <Content Include="Views\TourDate\MarkAsPaid.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
