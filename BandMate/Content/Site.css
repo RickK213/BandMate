@@ -75,3 +75,11 @@ body.dragging, body.dragging * {
 .addon {
     width: 280px;
 }
+
+/*File upload plugin*/
+.file-preview{
+    border: none;
+}
+.file-preview-frame{
+    border: none;
+}

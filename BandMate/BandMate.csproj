@@ -240,8 +240,10 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvitationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\SetListController.cs" />
     <Compile Include="Controllers\SongController.cs" />
+    <Compile Include="Controllers\StoreController.cs" />
     <Compile Include="Controllers\StripeController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\TourController.cs" />
@@ -251,9 +253,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="KeyManager.cs" />
-    <Compile Include="Migrations\201801310108383_init.cs" />
-    <Compile Include="Migrations\201801310108383_init.Designer.cs">
-      <DependentUpon>201801310108383_init.cs</DependentUpon>
+    <Compile Include="Migrations\201801312022217_init.cs" />
+    <Compile Include="Migrations\201801312022217_init.Designer.cs">
+      <DependentUpon>201801312022217_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -295,6 +297,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\fileinput.min.css" />
     <Content Include="Content\fullcalendar.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -327,6 +330,7 @@
     <Content Include="JSON\keys.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\fileinput.min.js" />
     <Content Include="Scripts\fullcalendar.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -433,9 +437,14 @@
     <Content Include="Views\Event\Itinerary.cshtml" />
     <Content Include="Views\TourDate\Edit.cshtml" />
     <Content Include="Views\TourDate\MarkAsPaid.cshtml" />
+    <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\Shared\_Layout-Store.cshtml" />
+    <Content Include="Views\Store\Index.cshtml" />
+    <Content Include="Views\Product\ManageInventory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ProductImages\" />
     <Folder Include="Views\BandMember\" />
     <Folder Include="Views\Stripe\" />
   </ItemGroup>
@@ -450,8 +459,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201801310108383_init.resx">
-      <DependentUpon>201801310108383_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201801312022217_init.resx">
+      <DependentUpon>201801312022217_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

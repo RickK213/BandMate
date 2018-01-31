@@ -1,0 +1,88 @@
+﻿@using BandMate.Models
+@model BandMate.Models.Product
+@{
+    ViewBag.Title = "Manage Inventory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Manage Inventory</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-2">
+        <p class="pull-right"><strong>Product Name</strong></p>
+    </div>
+    <div class="col-md-10">
+        <p>@Model.Name</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <p class="pull-right"><strong>Product Price</strong></p>
+    </div>
+    <div class="col-md-10">
+        <p>@String.Format("{0:C2}", Model.Price)</p>
+    </div>
+</div>
+
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-10 col-md-offset-2">
+        <img src="@Model.ImageUrl" alt="@Model.Name" title="@Model.Name" height="280" width="280" />
+    </div>
+</div>
+
+<form action="/Product/ManageInventory/" class="form form-horizontal" method="POST">
+    <input type="hidden" name="bandId" value="@ViewBag.BandId" />
+    <input type="hidden" name="productId" value="@Model.ProductId" />
+    
+    @if (Model.ProductType.ProductTypeId == 1)//Standard Product
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2">Quantity Available:</label>
+            <div class="col-md-10">
+                <input type="number" class="form-control" name="quantityAvailable" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-10 col-md-offset-2">
+                <p class="text-info">The upcharge is an optional amount you charge in addition to the unit price.<br />This is typically for sizes XXL and larger.</p>
+            </div>
+        </div>
+
+        foreach (Size size in Model.Sizes)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2">@size.Name</label>
+                <div class="col-md-10">
+
+                    <div class="input-group addon">
+                        <div class="input-group-addon" style="width: 85px;">Quantity</div>
+                        @{
+                            string inputName = "quantityAvailable" + size.Abbreviation;
+                         }
+                        <input type="number" class="form-control" name="@inputName" placeholder="qty" value="@size.QuantityAvailable" />
+                    </div>
+
+                    <div class="input-group addon">
+                        <div class="input-group-addon">Upcharge</div>
+                        <input type="number" step="0.01" class="form-control" name="upcharge@size.Abbreviation" placeholder="upcharge - i.e. 2.00" value="@size.UpCharge" />
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+
+    <div class="form-group" id="submitButton">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="submit" type="submit" value="Save Inventory" class="btn btn-primary" />
+        </div>
+    </div>
+
+</form>
+<hr />
+@Html.ActionLink("Return to My Store", "Store", "Band", routeValues: new { bandId = ViewBag.BandId }, htmlAttributes: new { @class = "btn btn-default" })

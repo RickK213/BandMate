@@ -28,6 +28,7 @@ namespace BandMate
                       "~/Scripts/bootstrap-datetimepicker.min.js",
                       "~/Scripts/respond.js",
                       "~/Scripts/jquery-sortable-min.js",
+                      "~/Scripts/fileinput.min.js",
                       "~/Scripts/app.js"
                       ));
 
@@ -35,6 +36,7 @@ namespace BandMate
                       "~/Content/bootstrap-slate.min.css",
                       "~/Content/bootstrap-datetimepicker.css",
                       "~/Content/fullcalendar.min.css",
+                      "~/Content/fileinput.min.css",
                       "~/Content/site.css"));
         }
     }

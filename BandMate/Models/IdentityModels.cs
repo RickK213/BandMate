@@ -83,5 +83,7 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.TourDate> TourDates { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.Product> Products { get; set; }
+
     }
 }

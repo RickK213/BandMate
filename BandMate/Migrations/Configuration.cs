@@ -48,34 +48,34 @@ namespace BandMate.Migrations
 
             context.SaveChanges();
 
-            //Seed the sizes
-            Size small = new Size();
-            small.Name = "Small";
-            small.Abbreviation = "S";
+            ////Seed the sizes
+            //Size small = new Size();
+            //small.Name = "Small";
+            //small.Abbreviation = "S";
 
-            Size medium = new Size();
-            medium.Name = "Medium";
-            medium.Abbreviation = "M";
+            //Size medium = new Size();
+            //medium.Name = "Medium";
+            //medium.Abbreviation = "M";
 
-            Size large = new Size();
-            large.Name = "Large";
-            large.Abbreviation = "L";
+            //Size large = new Size();
+            //large.Name = "Large";
+            //large.Abbreviation = "L";
 
-            Size xLarge = new Size();
-            xLarge.Name = "X-Large";
-            xLarge.Abbreviation = "XL";
+            //Size xLarge = new Size();
+            //xLarge.Name = "X-Large";
+            //xLarge.Abbreviation = "XL";
 
-            Size xxLarge = new Size();
-            xxLarge.Name = "XX-Large";
-            xxLarge.Abbreviation = "XXL";
+            //Size xxLarge = new Size();
+            //xxLarge.Name = "XX-Large";
+            //xxLarge.Abbreviation = "XXL";
 
-            context.Sizes.Add(small);
-            context.Sizes.Add(medium);
-            context.Sizes.Add(large);
-            context.Sizes.Add(xLarge);
-            context.Sizes.Add(xxLarge);
+            //context.Sizes.Add(small);
+            //context.Sizes.Add(medium);
+            //context.Sizes.Add(large);
+            //context.Sizes.Add(xLarge);
+            //context.Sizes.Add(xxLarge);
 
-            context.SaveChanges();
+            //context.SaveChanges();
 
             //Seed notification preferences
             NotificationPreference emailPreference = new NotificationPreference();
