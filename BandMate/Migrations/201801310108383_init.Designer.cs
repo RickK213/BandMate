@@ -13,7 +13,7 @@ namespace BandMate.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201801302330496_init"; }
+            get { return "201801310108383_init"; }
         }
         
         string IMigrationMetadata.Source

@@ -36,16 +36,19 @@ namespace BandMate.Controllers
 
         public ActionResult Delete(int tourId, int bandId)
         {
-            var tour = db.Tours.Find(tourId);
-            var band = db.Bands
-                .Include(b => b.Tours)
-                .Where(b => b.BandId == bandId)
+            var tour = db.Tours
+                .Include(t => t.TourDates)
+                .Where(t => t.TourId == tourId)
                 .FirstOrDefault();
+            List<TourDate> tourDatesToDelete = tour.TourDates.ToList();
+            for (int i= tourDatesToDelete.Count-1; i>=0; i--)
+            {
+                db.TourDates.Remove(tourDatesToDelete[i]);
+            }
             db.Tours.Remove(tour);
-            band.Tours.Remove(tour);
             db.SaveChanges();
-
-            return RedirectToAction("Tours", "Band", new { bandId = tour.BandId });
+            TempData["infoMessage"] = "You have removed the tour: " + tour.Name;
+            return RedirectToAction("Tours", "Band", new { bandId = bandId });
         }
 
         [HttpGet]
