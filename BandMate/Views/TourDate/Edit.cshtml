@@ -1,0 +1,84 @@
+﻿@model BandMate.Models.TourDate
+@{
+    ViewBag.Title = "Edit Tour Date";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Tour Date</h2>
+<form action="/TourDate/Edit" method="POST" class="form-horizontal">
+    <input type="hidden" name="tourId" value="@Model.ParentId" />
+    <input type="hidden" name="tourDateId" value="@Model.TourDateId" />
+    <div class="form-group">
+        <label class="control-label col-md-2">Date &amp; Time</label>
+        <div class="col-md-10">
+            <div class="input-group date addon">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                <input type="text" class="form-control" name="eventDate" value="@Model.EventDate" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Venue</label>
+        <div class="col-md-10">
+            @Html.DropDownList("VenueId", null, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Set List</label>
+        <div class="col-md-10">
+            @Html.DropDownList("SetListId", null, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Appearance Fee</label>
+        <div class="col-md-10">
+            <div class="input-group addon">
+                <span class="input-group-addon">$</span>
+                <input type="number" step="0.01" class="form-control" name="appearanceFee" value="@Model.AppearanceFee" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="submit" type="submit" value="Save Tour Date" class="btn btn-primary" />
+        </div>
+    </div>
+
+</form>
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //prepopulate venue select list
+            let venueId = @Model.Venue.VenueId;
+            venueId = venueId.toString();
+            $("#VenueId option").each(function(){
+                let option = $(this);
+                if(option.val() === venueId)
+                {
+                    option.attr("selected", "selected");
+                }
+            });
+
+            //prepopulate set list select list
+            let setListId = @Model.SetList.SetListId;
+            setListId = setListId.toString();
+            $("#SetListId option").each(function(){
+                let option = $(this);
+                if(option.val() === setListId)
+                {
+                    option.attr("selected", "selected");
+                }
+            });
+
+        });
+    </script>
+
+}

@@ -3,6 +3,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using BandMate.Models;
+using System.Collections.Generic;
+
 
 namespace BandMate.Controllers
 {
@@ -67,9 +69,24 @@ namespace BandMate.Controllers
         var tour = db.Tours
                 .Include(t => t.TourDates)
                 .Include("TourDates.ProductsSold")
+                .Include("TourDates.SetList")
+                .Include("TourDates.Venue")
+                .Include("TourDates.Venue.Address")
+                .Include("TourDates.Venue.Address.City")
+                .Include("TourDates.Venue.Address.State")
+                .Include("TourDates.Venue.Address.ZipCode")
                 .Where(t => t.TourId == tourId)
                 .FirstOrDefault();
-        return View(tour);
+            tour.TourDates = (ICollection<TourDate>)tour.TourDates.OrderBy(t => t.EventDate).ToList();
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(tour);
         }
 
     }

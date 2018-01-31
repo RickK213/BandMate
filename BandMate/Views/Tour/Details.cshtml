@@ -5,7 +5,99 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>@Model.Name</h2>
+<h2>Tour Details: @Model.Name</h2>
 
-details to come!
+@Html.Partial("_AlertsPartial")
 
+@if (Model.TourDates.Count <= 0)
+{
+    <div class="alert alert-danger">
+        <p>You do not have any tour dates for this tour.</p>
+    </div>
+}
+@if (Model.TourDates.Count > 0)
+{
+    <div class="row">
+        <div id="map" style="width: 100%; height: 400px;"></div>
+    </div>
+}
+
+<div class="row">
+    @if (Model.TourDates.Count > 0)
+    {
+        <div class="col-md-12">
+            <h4>Tour Dates:</h4>
+        </div>
+    }
+    @{int count = 1; }
+    @foreach (var tourDate in Model.TourDates)
+    {
+        <span class="marker" data-count="@count.ToString()" data-lat="@tourDate.Venue.Address.Lat" data-lng="@tourDate.Venue.Address.Lng"></span>
+        <div class="col-md-3">
+            <div class="well">
+                <h4 class="float-left" style="margin-top: 0;"><span class="label label-danger">@count</span> <small>@String.Format("{0:MM/dd/yy - h:mm tt}", tourDate.EventDate)</small></h4>
+                <p>
+                    <span class="text-info"><strong>Venue:</strong> @tourDate.Venue.Name</span><br />
+                    <span class="text-muted"><strong>Contact:</strong> @tourDate.Venue.ContactFirstName @tourDate.Venue.ContactLastName</span><br />
+                    @tourDate.Venue.Address.StreetOne<br />
+                    @tourDate.Venue.Address.City.Name, @tourDate.Venue.Address.State.Abbreviation @tourDate.Venue.Address.ZipCode.Number<br />
+                    <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span>
+                </p>
+                <p>
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group">
+                            <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit</a>
+                        </div>
+                        <div class="btn-group">
+                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger btn-sm" href="@Url.Action("Delete", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                        </div>
+                    </div>
+                </p>
+                <p style="margin-bottom: 0;">
+                    <a class="btn btn-success btn-sm btn-block" href="@Url.Action("MarkAsPaid", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Mark Appearance Fee as Paid</a>
+                </p>
+            </div>
+        </div>
+        if (count % 4 == 0)
+        {
+            @:</div><div class="row">
+        }
+        count++;
+    }
+</div>
+<a class="btn btn-default" href="@Url.Action("Tours", "Band", new { bandId = Model.BandId })">Return to My Tours</a>
+@section Scripts{
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            let map;
+            function initMap(latitude, longtitude) {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 13,
+                    center: { lat: latitude, lng: longtitude }
+                });
+            }
+
+            function addMarker(latitude, longtitude, label) {
+                marker = new google.maps.Marker({
+                    position: { lat: latitude, lng: longtitude },
+                    map: map,
+                    label: "" + label
+                });
+            }
+
+            let initialMapData = $(".marker").data();
+            initMap(initialMapData.lat, initialMapData.lng);
+
+            $(".marker").each(function () {
+                let mapData = $(this).data();
+                addMarker(mapData.lat, mapData.lng, mapData.count);
+            });
+
+        });
+
+    </script>
+
+}

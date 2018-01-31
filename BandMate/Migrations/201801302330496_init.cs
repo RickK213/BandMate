@@ -245,6 +245,7 @@ namespace BandMate.Migrations
                         EventDate = c.DateTime(nullable: false),
                         SetListId = c.Int(nullable: false),
                         VenueId = c.Int(nullable: false),
+                        ParentId = c.Int(nullable: false),
                         AppearanceFee = c.Double(nullable: false),
                         FeeCollectedOn = c.DateTime(),
                         BandId = c.Int(nullable: false),
