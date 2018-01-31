@@ -201,5 +201,52 @@ namespace BandMate.Controllers
             return RedirectToAction("Store", "Band", new { bandId = bandId });
         }
 
+        [HttpGet]
+        public ActionResult Edit(int productId, int bandId)
+        {
+            ViewBag.BandId = bandId;
+            var product = db.Products
+                .Include(p => p.ProductType)
+                .Where(p => p.ProductId == productId)
+                .FirstOrDefault();
+            return View(product);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(int productId, int bandId, string productName, HttpPostedFileBase productImage, string description, double price)
+        {
+            Product product = db.Products.Find(productId);
+
+            //Upload Image
+            if (productImage != null && productImage.ContentLength > 0)
+                try
+                {
+                    string imageUrl = "";
+                    string path = Path.Combine(Server.MapPath("~/ProductImages"),
+                                               Path.GetFileName(productImage.FileName));
+                    imageUrl = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+                    imageUrl += "ProductImages/" + productImage.FileName;
+                    productImage.SaveAs(path);
+                    product.ImageUrl = imageUrl;
+                    ViewBag.Message = "File uploaded successfully";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = "ERROR:" + ex.Message.ToString();
+                }
+            else
+            {
+                ViewBag.Message = "You have not specified a file.";
+            }
+
+            product.Name = productName;
+            product.Description = description;
+            product.Price = price;
+
+            db.SaveChanges();
+            TempData["infoMessage"] = "You have modified the product: " + product.Name;
+            return RedirectToAction("Store", "Band", new { bandId = bandId });
+        }
+
     }
 }

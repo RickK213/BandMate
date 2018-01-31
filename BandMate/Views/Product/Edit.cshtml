@@ -1,0 +1,84 @@
+﻿@model BandMate.Models.Product
+@{
+    ViewBag.Title = "Edit Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Product</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "productEditForm", enctype = "multipart/form-data" }))
+{
+    <div class="form-horizontal">
+        <input type="hidden" name="bandId" value="@ViewBag.BandId" />
+        <input type="hidden" name="productId" value="@Model.ProductId" />
+        <hr />
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Product Name</label>
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" name="productName" type="text" value="@Model.Name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Description</label>
+            <div class="col-md-10">
+                <textarea class="form-control" rows="3" name="description">@Model.Description</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Price</label>
+            <div class="col-md-10">
+                <div class="input-group addon">
+                    <span class="input-group-addon">$</span>
+                    <input type="number" step="0.01" class="form-control" name="price" placeholder="0.00" value="@Model.Price" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Product Image</label>
+            <div class="col-md-10">
+                @*<img id="previewImage" src="@Model.ImageUrl" alt="@Model.Name" title="@Model.Name" height="280" width="280" />*@
+                <div class="input-group addon">
+                    <input type="file" id="productImage" class="form-control" name="productImage">
+                    <span class="help-block text-info">File types allowed are .JPG or .PNG.<br />Recommended image size is 300 x 300.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Product Type</label>
+            <div class="col-md-10">
+                <select class="form-control" disabled>
+                    <option>@Model.ProductType.Name</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" id="submitButton">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="submit" type="submit" value="Save Product" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+<hr />
+@Html.ActionLink("Return to My Store", "Store", "Band", routeValues: new { bandId = ViewBag.BandId }, htmlAttributes: new { @class = "btn btn-default" })
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#productImage").fileinput({
+                showUpload: false,
+                showClose: false,
+                initialPreview: "<img src='@Model.ImageUrl' class='file-preview-image' width='154' height='160'>"
+            });
+
+            $("#productImage").click(function () {
+                $("#previewImage").hide();
+            });
+        });
+    </script>
+}
