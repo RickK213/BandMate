@@ -21,6 +21,8 @@ namespace BandMate.Controllers
             var band = db.Bands
                 .Include(b => b.Store)
                 .Include("Store.Products")
+                .Include("Store.Products.ProductType")
+                .Include("Store.Products.Sizes")
                 .Where(b => b.Name == bandName)
                 .FirstOrDefault();
             if (band.Store.PlaylistId.Length > 0)

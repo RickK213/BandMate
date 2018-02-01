@@ -26,7 +26,20 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
                 @*@Html.Partial("_LoginPartial")*@
-            </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="cartButton" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Cart <span class="badge" id="cartCount">0</span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#" class="viewCartButton">View Cart</a>
+                            </li>
+                            <li>
+                                <a href="#" class="checkoutButton">Proceed to Checkout</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>            </div>
         </div>
     </div>
     <div class="container body-content">
