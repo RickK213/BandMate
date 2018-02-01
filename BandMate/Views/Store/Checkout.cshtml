@@ -1,0 +1,162 @@
+﻿@model BandMate.Models.StoreCheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+    Layout = "~/Views/Shared/_Layout-Store.cshtml";
+}
+<h2>Checkout</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6" id="shoppingCart"></div>
+</div>
+<form id="myForm" action="/Stripe/StoreCheckout" method="POST" class="form-horizontal">
+    <input type="hidden" id="stripeToken" name="stripeToken" />
+    <input type="hidden" id="stripeEmail" name="stripeEmail" />
+    <input type="hidden" id="productsSold" name="productsSold" />
+    <input type="hidden" id="totalPrice" name="totalPrice" />
+    <input type="hidden" id="bandId" name="bandId" value="@Model.Band.BandId" />
+    <input type="hidden" id="amountInCents" name="amountInCents" />
+    <hr />
+
+    <div class="form-group">
+        <label class="control-label col-md-2">First Name</label>
+        <div class="col-md-10">
+            <input class="form-control text-box single-line" id="firstName" name="firstName" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Last Name</label>
+        <div class="col-md-10">
+            <input class="form-control text-box single-line" id="lastName" name="lastName" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Address</label>
+        <div class="col-md-10">
+            <input class="form-control text-box single-line" id="streetOne" name="streetOne" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">City</label>
+        <div class="col-md-10">
+            <input class="form-control text-box single-line" id="city" name="city" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">State</label>
+        <div class="col-md-10">
+            @Html.DropDownList("StateId", null, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Zip Code</label>
+        <div class="col-md-10">
+            <input class="form-control text-box single-line" id="zipCode" name="zipCode" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group" id="customButton">
+        <div class="col-md-offset-2 col-md-10">
+            <button class="btn btn-success" id="customButton"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span> Place Order Now</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+<script type="text/javascript">
+    $("document").ready(function () {
+        $(".navbar-right").hide();
+        let cartProducts = @Html.Raw(HttpUtility.HtmlDecode(Model.CartProducts));
+        let productsSold = getSoldProducts(cartProducts);
+        productsSold = JSON.stringify(productsSold);
+        $("#productsSold").val(productsSold);
+        let cartHtml = getCartHtml(cartProducts);
+        let cartTotal = getCartTotal(cartProducts);
+        $("#totalPrice").val(cartTotal);
+        $("#shoppingCart").html(cartHtml);
+
+        //get cart total
+        function getCartTotal(cartProducts){
+            let cartTotal = 0;
+            for (let i = 0; i < cartProducts.length; i++) {
+                cartTotal += cartProducts[i].Price;
+            }
+            return cartTotal;
+        }
+        
+        //generate cart table html
+        function getCartHtml(cartProducts) {
+            let cartHtml = '';
+            let cartTotal = 0;
+            cartHtml += '<table class="table table-striped table-condensed table-bordered">';
+            cartHtml += '<tr><th class="col-md-6">Product Name</th><th class="col-md-2">Size</th><th class="text-right col-md-2">Price</th></tr>';
+            for (let i = 0; i < cartProducts.length; i++) {
+                cartTotal += cartProducts[i].Price;
+                cartHtml += '<tr>';
+                cartHtml += '<td>' + cartProducts[i].ProductName + '</td>';
+                let size = "";
+                if (cartProducts[i].SizeName !== null) {
+                    size = cartProducts[i].SizeName;
+                }
+                cartHtml += '<td>' + size + '</td>';
+                cartHtml += '<td class="text-right">$' + cartProducts[i].Price + '</td>';
+                cartHtml += '</tr>';
+            }
+            cartHtml += '<tfoot><tr><td colspan=3 class="text-right text-warning"><h4>TOTAL: $';
+            cartHtml += cartTotal.toFixed(2);
+            cartHtml += '</h4></td></tr></tfoot></table>';
+            return cartHtml;
+        }
+
+        var handler = StripeCheckout.configure({
+            key: 'pk_test_QAiZ0p4fgRkfqSfEnBKTdRJu',
+            image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+            token: function(token) {
+                $("#stripeToken").val(token.id);
+                $("#stripeEmail").val(token.email);
+                $("#amountInCents").val(Math.floor(cartTotal * 100));
+                $("#myForm").submit();
+            }
+        });
+
+        $('#customButton').on('click', function(e) {
+            var amountInCents = Math.floor(cartTotal * 100);
+            var displayAmount = parseFloat(Math.floor(cartTotal * 100) / 100).toFixed(2);
+            // Open Checkout with further options
+            handler.open({
+                name: '@Model.Band.Name',
+                description: '@Model.Band.Name Band Merch Order',
+                amount: amountInCents,
+            });
+            e.preventDefault();
+        });
+
+        // Close Checkout on page navigation
+        $(window).on('popstate', function() {
+            handler.close();
+        });
+
+        //convert cart products to sold products for back end
+        function getSoldProducts(cartProducts)
+        {
+            let productsSold = [];
+            for (let i = 0; i < cartProducts.length; i++) {
+                let productObject = {
+                    "ProductId": cartProducts[i].ProductId,
+                    "ProductTypeId": cartProducts[i].ProductTypeId,
+                    "SizeId": cartProducts[i].SizeId,
+                    "Price": cartProducts[i].Price
+                    //"quantitySold": quantitySold
+                };
+                productsSold.push(productObject);
+            }
+            return productsSold;
+        }
+
+    });
+</script>
+}

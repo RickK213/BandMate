@@ -216,6 +216,8 @@ namespace BandMate.Migrations
                         IsShipped = c.Boolean(nullable: false),
                         CustomerFirstName = c.String(),
                         CustomerLastName = c.String(),
+                        CustomerEmail = c.String(),
+                        ConfirmationNumber = c.String(),
                         CustomerAddress_AddressId = c.Int(),
                         Store_StoreId = c.Int(),
                     })

@@ -31,37 +31,43 @@
                     <img src="@product.ImageUrl" alt="@product.Name" title="@product.Name" height="332" width="332">
                     <div class="caption">
                         <h4 class="text-center">@product.Name</h4>
-                        <h2 class="text-success text-center" style="margin-top: 0;">@String.Format("{0:C2}", product.Price)<br>
+                        <h2 class="text-success text-center" style="margin-top: 0;">@String.Format("{0:C2}", product.Price)</h2>
                             @if (product.QuantityAvailable <= 0)
                             {
-                                <span class="text-danger"><strong>SOLD OUT!</strong></span>
+                                <h4 class="text-danger text-center">SOLD OUT!</h4>
                             }
-                        </h2>
                         <p>@product.Description</p>
                         @if (product.ProductType.ProductTypeId == 2)//garment
                         {
-                            <div class="form-group sizeSelector">
-                                <select class="form-control sizeId">
-                                    @foreach (Size size in product.Sizes)
-                                    {
-                                        if (size.QuantityAvailable > 0)
+
+                            if (product.QuantityAvailable > 0)
+                            {
+                                <div class="form-group sizeSelector">
+                                    <select class="form-control sizeId">
+                                        @foreach (Size size in product.Sizes)
                                         {
-                                            <option value="@size.Price" data-size-id="@size.SizeId" data-size-name="@size.Name">
-                                                @size.Name
-                                            @if (size.UpCharge > 0)
+                                            if (size.QuantityAvailable > 0)
                                             {
-                                                @String.Format("(add {0:C2})", size.UpCharge)
+                                                <option value="@size.Price" data-size-id="@size.SizeId" data-size-name="@size.Name">
+                                                    @size.Name
+                                                    @if (size.UpCharge > 0)
+                                                    {
+                                                        @String.Format("(add {0:C2})", size.UpCharge)
+                                                    }
+                                                </option>
                                             }
-                                            </option>
                                         }
-                                    }
-                                </select>
-                            </div>
-                            <center><button data-product-id="@product.ProductId" data-product-name="@product.Name" data-product-type-id="@product.ProductType.ProductTypeId" class="btn btn-success addToCart"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add To Cart</button></center>
+                                    </select>
+                                </div>
+                                <center><button data-product-id="@product.ProductId" data-product-name="@product.Name" data-product-type-id="@product.ProductType.ProductTypeId" class="btn btn-success addToCart"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add To Cart</button></center>
+                            }
                         }
                         else
                         {
-                            <center><button data-price="@product.Price" data-product-id="@product.ProductId" data-product-name="@product.Name" data-product-type-id="@product.ProductType.ProductTypeId" class="btn btn-success addToCart"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add To Cart</button></center>
+                            if (product.QuantityAvailable > 0)
+                            {
+                                <center><button data-price="@product.Price" data-product-id="@product.ProductId" data-product-name="@product.Name" data-product-type-id="@product.ProductType.ProductTypeId" class="btn btn-success addToCart"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add To Cart</button></center>
+                            }
                         }
                     </div>
                 </div>
@@ -157,12 +163,14 @@
 
             //view cart
             $(".viewCartButton").click(function () {
-                for (let i = 0; i < cartProducts.length; i++ ) {
-                    $("#cartTitle").html('<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Your Shopping Cart');
-                    let cartHtml = getCartHtml(cartProducts);
-                    $("#cartBody").html(cartHtml);
-                    $("#cartModal").modal();
+                if (cartProducts.length <= 0) {
+                    alert("You do not have any items in your cart. Please add items and try again.");
+                    return;
                 }
+                $("#cartTitle").html('<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Your Shopping Cart');
+                let cartHtml = getCartHtml(cartProducts);
+                $("#cartBody").html(cartHtml);
+                $("#cartModal").modal();
             });
 
             //remove from cart
@@ -171,13 +179,40 @@
                 cartProducts.splice(index, 1);
                 let cartHtml = getCartHtml(cartProducts);
                 $("#cartBody").html(cartHtml);
+                $.cookie("cart-data", JSON.stringify(cartProducts));
                 toggleCartCount(cartProducts.length);
             });
 
+            //proceed to checkout
+            $(".checkoutButton").click(function () {
+                if ( cartProducts.length <= 0 )
+                {
+                    alert("You do not have any items in your cart. Please add items and try again.");
+                    return;
+                }
+                cartProducts = JSON.stringify(cartProducts);
+                $.ajax({
+                    url: '/Store/CheckoutAjax',
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "bandId": @Model.BandId, "storeId": @Model.StoreId, "cartProducts": cartProducts }),
+                    processData: false,
+                    success: function (result, textStatus, jQxhr) {
+                        //console.log(result);
+                        window.location = result;
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });                
+            });
+
+            //generate cart table html
             function getCartHtml(cartProducts) {
                 let cartHtml = '';
                 cartHtml += '<table class="table table-striped table-condensed table-bordered">';
-                cartHtml += '<tr><th class="col-md-6">Product Name</th><th>Size</th><th class="text-right">Price</th><th></th></tr>';
+                cartHtml += '<tr><th class="col-md-6">Product Name</th><th class="col-md-2">Size</th><th class="text-right col-md-2">Price</th><th class="col-md-2"></th></tr>';
                 let cartTotal = 0;
                 for ( let i=0; i<cartProducts.length; i++ ) {
                     cartTotal += cartProducts[i].Price;
@@ -189,7 +224,7 @@
                     }
                     cartHtml += '<td>' + size + '</td>';
                     cartHtml += '<td class="text-right">$'+ cartProducts[i].Price + '</td>';
-                    cartHtml += '<td><button data-index="' + i + '"class="btn btn-danger btn-xs removeFromCart"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Remove from Cart</button></td>';
+                    cartHtml += '<td><button data-index="' + i + '"class="btn btn-danger btn-xs removeFromCart"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>remove</button></td>';
                     cartHtml += '</tr>';
                 }
                 cartHtml += '<tfoot><tr><td colspan=3 class="text-right text-warning"><h4>TOTAL: $';
@@ -198,6 +233,7 @@
                 return cartHtml;
             }
 
+            //turn the cart icon to orange/gray
             function toggleCartCount(cartProductsLength)
             {
                 $("#cartCount").html(cartProducts.length);

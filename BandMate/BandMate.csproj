@@ -253,9 +253,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="KeyManager.cs" />
-    <Compile Include="Migrations\201802011019097_init.cs" />
-    <Compile Include="Migrations\201802011019097_init.Designer.cs">
-      <DependentUpon>201802011019097_init.cs</DependentUpon>
+    <Compile Include="Migrations\201802012227498_init.cs" />
+    <Compile Include="Migrations\201802012227498_init.Designer.cs">
+      <DependentUpon>201802012227498_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -281,6 +281,7 @@
     <Compile Include="Models\Song.cs" />
     <Compile Include="Models\State.cs" />
     <Compile Include="Models\Store.cs" />
+    <Compile Include="Models\StoreViewModels.cs" />
     <Compile Include="Models\Subscription.cs" />
     <Compile Include="Models\SubscriptionType.cs" />
     <Compile Include="Models\Tour.cs" />
@@ -315,6 +316,7 @@
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\checkout.js" />
     <Content Include="Scripts\collapse.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
@@ -446,6 +448,8 @@
     <Content Include="Views\Product\ManageInventory.cshtml" />
     <Content Include="Views\Product\Edit.cshtml" />
     <Content Include="Views\TourDate\TrackMerchandise.cshtml" />
+    <Content Include="Views\Store\Checkout.cshtml" />
+    <Content Include="Views\Store\ThankYou.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -464,8 +468,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201802011019097_init.resx">
-      <DependentUpon>201802011019097_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201802012227498_init.resx">
+      <DependentUpon>201802012227498_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

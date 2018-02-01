@@ -20,6 +20,7 @@ namespace BandMate
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                      "~/Scripts/checkout.js",
                       "~/Scripts/jquery.cookie.js",
                       "~/Scripts/moment.js",
                       "~/Scripts/fullcalendar.min.js",

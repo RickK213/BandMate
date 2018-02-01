@@ -25,7 +25,7 @@ namespace BandMate.Controllers
                 .Include("Store.Products.Sizes")
                 .Where(b => b.Name == bandName)
                 .FirstOrDefault();
-            if (band.Store.PlaylistId.Length > 0)
+            if (band.Store.PlaylistId != null)
             {
                 string spotifyEmbed = @"https://open.spotify.com/embed?uri=";
                 spotifyEmbed += band.Store.PlaylistId;
@@ -42,6 +42,41 @@ namespace BandMate.Controllers
             db.SaveChanges();
             TempData["infoMessage"] = "Spotify URI has been saved!";
             return RedirectToAction("Store", "Band", new { bandId = bandId });
+        }
+
+        [HttpPost]
+        public ActionResult CheckoutAjax(int bandId, int storeId, string cartProducts)
+        {
+            return Json(Url.Action("Checkout", "Store", new { bandId = bandId, storeId = storeId, cartProducts = cartProducts }), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult Checkout(int bandId, int storeId, string cartProducts)
+        {
+            StoreCheckoutViewModel viewModel = new StoreCheckoutViewModel();
+            var band = db.Bands.Find(bandId);
+            viewModel.Band = band;
+            viewModel.StoreId = storeId;
+            viewModel.CartProducts = cartProducts;
+            ViewBag.StateId = new SelectList(db.States, "StateId", "Abbreviation");
+            return View(viewModel);
+        }
+
+        public ActionResult ThankYou()
+        {
+            if (TempData["storeId"] != null)
+            {
+                ViewBag.storeId = TempData["storeId"].ToString();
+            }
+            if (TempData["bandName"] != null)
+            {
+                ViewBag.bandName = TempData["bandName"].ToString();
+            }
+            if (TempData["orderConfirmation"] != null)
+            {
+                ViewBag.orderConfirmation = TempData["orderConfirmation"].ToString();
+            }
+            return View();
         }
 
     }

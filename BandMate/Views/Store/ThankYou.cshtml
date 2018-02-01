@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Thank You";
+    Layout = "~/Views/Shared/_Layout-Store.cshtml";
+}
+
+<h2>Thank You!</h2>
+<div class="alert alert-success">
+    <p>Your order has been placed! Your order confirmation number is <strong>@ViewBag.orderConfirmation</strong>. Please save this information for your records.</p>
+    <p>
+        @Html.ActionLink("Return to Store", "Index", "Store", routeValues: new { bandName = ViewBag.bandName }, htmlAttributes: new { @class = "btn btn-default" })
+    </p>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $("document").ready(function(){
+            $(".navbar-right").hide();
+            console.log($.removeCookie('cart-data', { path: '/' }));
+        });
+    </script>    
+}
