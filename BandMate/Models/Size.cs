@@ -17,6 +17,7 @@ namespace BandMate.Models
         public string Abbreviation { get; set; }
 
         public double? UpCharge { get; set; }
+        public double Price { get; set; }
         public int QuantityAvailable { get; set; }
 
     }

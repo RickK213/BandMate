@@ -18,7 +18,8 @@ namespace BandMate.Models
 
         public int ParentId { get; set; }
         public double AppearanceFee { get; set; }
-        public ICollection<Product> ProductsSold { get; set; }
+        public double MerchSoldValue { get; set; }
+        public ICollection<SoldProduct> SoldProducts { get; set; }
         public DateTime? FeeCollectedOn { get; set; }
 
         public int BandId { get; set; }

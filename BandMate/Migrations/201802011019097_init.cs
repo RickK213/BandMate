@@ -174,18 +174,12 @@ namespace BandMate.Migrations
                         QuantityAvailable = c.Int(nullable: false),
                         ProductType_ProductTypeId = c.Int(),
                         Store_StoreId = c.Int(),
-                        Transaction_TransactionId = c.Int(),
-                        TourDate_TourDateId = c.Int(),
                     })
                 .PrimaryKey(t => t.ProductId)
                 .ForeignKey("dbo.ProductTypes", t => t.ProductType_ProductTypeId)
                 .ForeignKey("dbo.Stores", t => t.Store_StoreId)
-                .ForeignKey("dbo.Transactions", t => t.Transaction_TransactionId)
-                .ForeignKey("dbo.TourDates", t => t.TourDate_TourDateId)
                 .Index(t => t.ProductType_ProductTypeId)
-                .Index(t => t.Store_StoreId)
-                .Index(t => t.Transaction_TransactionId)
-                .Index(t => t.TourDate_TourDateId);
+                .Index(t => t.Store_StoreId);
             
             CreateTable(
                 "dbo.ProductTypes",
@@ -204,6 +198,7 @@ namespace BandMate.Migrations
                         Name = c.String(nullable: false),
                         Abbreviation = c.String(nullable: false),
                         UpCharge = c.Double(),
+                        Price = c.Double(nullable: false),
                         QuantityAvailable = c.Int(nullable: false),
                         Product_ProductId = c.Int(),
                     })
@@ -218,11 +213,36 @@ namespace BandMate.Migrations
                         TransactionId = c.Int(nullable: false, identity: true),
                         CreatedOn = c.DateTime(nullable: false),
                         TotalPrice = c.Double(nullable: false),
+                        IsShipped = c.Boolean(nullable: false),
+                        CustomerFirstName = c.String(),
+                        CustomerLastName = c.String(),
+                        CustomerAddress_AddressId = c.Int(),
                         Store_StoreId = c.Int(),
                     })
                 .PrimaryKey(t => t.TransactionId)
+                .ForeignKey("dbo.Addresses", t => t.CustomerAddress_AddressId)
                 .ForeignKey("dbo.Stores", t => t.Store_StoreId)
+                .Index(t => t.CustomerAddress_AddressId)
                 .Index(t => t.Store_StoreId);
+            
+            CreateTable(
+                "dbo.SoldProducts",
+                c => new
+                    {
+                        SoldProductId = c.Int(nullable: false, identity: true),
+                        ProductId = c.Int(nullable: false),
+                        ProductTypeId = c.Int(nullable: false),
+                        SizeId = c.Int(),
+                        Price = c.Double(nullable: false),
+                        SoldAtTourDate = c.Boolean(nullable: false),
+                        Transaction_TransactionId = c.Int(),
+                        TourDate_TourDateId = c.Int(),
+                    })
+                .PrimaryKey(t => t.SoldProductId)
+                .ForeignKey("dbo.Transactions", t => t.Transaction_TransactionId)
+                .ForeignKey("dbo.TourDates", t => t.TourDate_TourDateId)
+                .Index(t => t.Transaction_TransactionId)
+                .Index(t => t.TourDate_TourDateId);
             
             CreateTable(
                 "dbo.Tours",
@@ -246,6 +266,7 @@ namespace BandMate.Migrations
                         VenueId = c.Int(nullable: false),
                         ParentId = c.Int(nullable: false),
                         AppearanceFee = c.Double(nullable: false),
+                        MerchSoldValue = c.Double(nullable: false),
                         FeeCollectedOn = c.DateTime(),
                         BandId = c.Int(nullable: false),
                         Tour_TourId = c.Int(),
@@ -404,11 +425,12 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.TourDates", "Tour_TourId", "dbo.Tours");
             DropForeignKey("dbo.TourDates", "VenueId", "dbo.Venues");
             DropForeignKey("dbo.Venues", "AddressId", "dbo.Addresses");
+            DropForeignKey("dbo.SoldProducts", "TourDate_TourDateId", "dbo.TourDates");
             DropForeignKey("dbo.TourDates", "SetListId", "dbo.SetLists");
-            DropForeignKey("dbo.Products", "TourDate_TourDateId", "dbo.TourDates");
             DropForeignKey("dbo.Bands", "StoreId", "dbo.Stores");
             DropForeignKey("dbo.Transactions", "Store_StoreId", "dbo.Stores");
-            DropForeignKey("dbo.Products", "Transaction_TransactionId", "dbo.Transactions");
+            DropForeignKey("dbo.SoldProducts", "Transaction_TransactionId", "dbo.Transactions");
+            DropForeignKey("dbo.Transactions", "CustomerAddress_AddressId", "dbo.Addresses");
             DropForeignKey("dbo.Products", "Store_StoreId", "dbo.Stores");
             DropForeignKey("dbo.Sizes", "Product_ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "ProductType_ProductTypeId", "dbo.ProductTypes");
@@ -437,10 +459,11 @@ namespace BandMate.Migrations
             DropIndex("dbo.TourDates", new[] { "VenueId" });
             DropIndex("dbo.TourDates", new[] { "SetListId" });
             DropIndex("dbo.Tours", new[] { "BandId" });
+            DropIndex("dbo.SoldProducts", new[] { "TourDate_TourDateId" });
+            DropIndex("dbo.SoldProducts", new[] { "Transaction_TransactionId" });
             DropIndex("dbo.Transactions", new[] { "Store_StoreId" });
+            DropIndex("dbo.Transactions", new[] { "CustomerAddress_AddressId" });
             DropIndex("dbo.Sizes", new[] { "Product_ProductId" });
-            DropIndex("dbo.Products", new[] { "TourDate_TourDateId" });
-            DropIndex("dbo.Products", new[] { "Transaction_TransactionId" });
             DropIndex("dbo.Products", new[] { "Store_StoreId" });
             DropIndex("dbo.Products", new[] { "ProductType_ProductTypeId" });
             DropIndex("dbo.Songs", new[] { "BandId" });
@@ -466,6 +489,7 @@ namespace BandMate.Migrations
             DropTable("dbo.Venues");
             DropTable("dbo.TourDates");
             DropTable("dbo.Tours");
+            DropTable("dbo.SoldProducts");
             DropTable("dbo.Transactions");
             DropTable("dbo.Sizes");
             DropTable("dbo.ProductTypes");

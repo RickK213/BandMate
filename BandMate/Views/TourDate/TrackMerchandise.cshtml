@@ -1,0 +1,172 @@
+﻿@using BandMate.Models
+@model BandMate.Models.TourDateTrackMerchandiseViewModel
+@{
+    ViewBag.Title = "Track Merchandise";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Merchandise sold at @Model.TourDate.Venue.Name on @String.Format("{0:MM/dd/yy}", Model.TourDate.EventDate)</h2>
+@if (Model.Band.Store.Products.Count <= 0)
+{
+    <div class="alert alert-danger">
+        <p>@Model.Band.Name does not have any products. Please add products to your store.</p>
+        <p>
+            @Html.ActionLink("My Store", "Store", "Band", routeValues: new { bandId = Model.Band.BandId }, htmlAttributes: new { @class = "btn btn-default" })
+        </p>
+    </div>
+}
+else
+{
+    <hr />
+    <div class="row">
+        <div class="col-md-5 col-md-offset-7">
+            <h4 class="text-center">Products Sold</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <h4 class="pull-right"><strong>Products</strong></h4>
+        </div>
+        <div class="col-md-10">
+            <ul class="list-group">
+                @foreach (Product product in Model.Band.Store.Products)
+                {
+                    if (product.ProductType.ProductTypeId == 1)//Standard Product
+                    {
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h4>@product.Name <br /><small>Qty. Available: @product.QuantityAvailable</small></h4>
+                                </div>
+                                @{
+                                    List<SoldProduct> soldProducts = Model.TourDate.SoldProducts.Where(s => s.ProductId == product.ProductId).ToList();
+                                    int qtySold = soldProducts.Count;
+                                    double price = product.Price;
+                                }
+                                <div class="col-md-1">
+                                    <center>QTY</center>
+                                    <input type="number" min="0" class="form-control productQuantity" data-price="@price" data-qty-avail="@product.QuantityAvailable" data-product-id="@product.ProductId" data-product-type-id="@product.ProductType.ProductTypeId" value="@qtySold" />
+                                </div>
+                            </div>
+                        </li>
+                                    }
+                                    else //Garment
+                                    {
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-md-7">
+                                                    <h4>
+                                                        @product.Name <br /><small>
+                                                        Qty. Available:&nbsp;
+                                                        @{
+                                                            int count = 0;
+                                                            foreach (Size size in product.Sizes)
+                                                                {
+                                                                    <span>@size.QuantityAvailable @size.Abbreviation</span>
+                                                                    if ( count<product.Sizes.Count-1 )
+                                                                    {
+                                                                        <span>, </span>
+                                                                    }
+                                                                    count++;
+                                                                }
+                                                        }
+                                                    </small>
+                                                </h4>
+                                            </div>
+                                            @foreach (Size size in product.Sizes)
+                                                {
+                                                    List<Size> sizes = product.Sizes.ToList();
+                                                    List<SoldProduct> soldProducts = Model.TourDate.SoldProducts.Where(s => s.ProductId == product.ProductId && s.SizeId == size.SizeId).ToList();
+                                                    int qtySold = soldProducts.Count;
+                                                    double price = size.Price;
+
+                                                    <div class="col-md-1">
+                                                        <center>@size.Abbreviation</center>
+                                                        <input type="number" min="0" class="form-control productQuantity" data-price="@price" data-qty-avail="@size.QuantityAvailable" data-product-id="@product.ProductId" data-product-type-id="@product.ProductType.ProductTypeId" data-size-id="@size.SizeId" value="@qtySold" />
+                                                    </div>
+                                                }
+                                        </div>
+                                    </li>
+                                    }
+                                }
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-lg-offset-2">
+            <div class="alert alert-danger" id="validationErrors" style="display:none;"></div>
+            <button id="saveButton" class="btn btn-primary">Save Merchandise Sales</button>
+        </div>
+    </div>
+    <hr />
+                                                            }
+@Html.ActionLink("Return to Tour", "Details", "Tour", routeValues: new { tourId = Model.TourDate.ParentId, bandId = Model.Band.BandId }, htmlAttributes: new { @class = "btn btn-default" })
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#saveButton").click(function () {
+                let hasFormErrors = false;
+                $("#validationErrors").html("").hide();
+                let productsSold = [];
+                $(".productQuantity").each(function () {
+                    let product = $(this);
+                    product.css("background-color", "white");
+                    let quantitySold = parseInt(product.val());
+                    let quantityAvail = parseInt(product.data("qtyAvail"));
+                    let price = product.data("price");
+                    if(quantitySold > quantityAvail)
+                    {
+                        product.css("background-color", "#ee5f5b");
+                        $("#validationErrors").html("There is not enough inventory for the items marked in red. Please fix errors and save again.").show();
+                        hasFormErrors = true;
+                    }
+                    let productId = product.data("productId");
+                    let productTypeId = product.data("productTypeId");
+                    let sizeId;
+                    if (productTypeId == 2)//garment
+                    {
+                        sizeId = product.data("sizeId");
+                    }
+                    else {
+                        sizeId = null;
+                    }
+                    if ( quantitySold > 0 )
+                    {
+                        for ( let i=0; i<quantitySold; i++ )
+                        {
+                            let productObject = {
+                                "ProductId": productId,
+                                "ProductTypeId": productTypeId,
+                                "SizeId": sizeId,
+                                "Price": price
+                                //"quantitySold": quantitySold
+                            };
+                            productsSold.push(productObject);
+                        }
+                    }
+                });
+                console.log(productsSold);
+                productsSold = JSON.stringify(productsSold);
+                //return; //just doing this for testing
+                if ( !hasFormErrors )
+                {
+                    $.ajax({
+                        url: '/TourDate/TrackMerchandise',
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "tourDateId": @Model.TourDate.TourDateId, "bandId": @Model.Band.BandId, "productsSold": productsSold }),
+                        processData: false,
+                        success: function (data, textStatus, jQxhr) {
+                            window.location = "/Tour/Details?tourId=" + @Model.TourDate.ParentId;
+                            console.log(data);
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+                            console.log(errorThrown);
+                        }
+                    });                
+                }
+            });
+        });
+    </script>
+}

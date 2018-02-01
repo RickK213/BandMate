@@ -45,7 +45,7 @@
             </div>
         </div>
     }
-    else
+    else//Garment
     {
         <div class="row">
             <div class="col-md-10 col-md-offset-2">
@@ -63,13 +63,14 @@
                         <div class="input-group-addon" style="width: 85px;">Quantity</div>
                         @{
                             string inputName = "quantityAvailable" + size.Abbreviation;
+                            string upChargeInputName = "upCharge" + size.Abbreviation;
                          }
                         <input type="number" class="form-control" name="@inputName" placeholder="qty" value="@size.QuantityAvailable" />
                     </div>
 
                     <div class="input-group addon">
                         <div class="input-group-addon">Upcharge</div>
-                        <input type="number" step="0.01" class="form-control" name="upcharge@size.Abbreviation" placeholder="upcharge - i.e. 2.00" value="@size.UpCharge" />
+                        <input type="number" step="0.01" class="form-control" name="@upChargeInputName" placeholder="upcharge - i.e. 2.00" value="@size.UpCharge" />
                     </div>
 
                 </div>

@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data;
 using System.Data.Entity;
-
+using Newtonsoft.Json;
 
 namespace BandMate.Controllers
 {
@@ -125,6 +125,117 @@ namespace BandMate.Controllers
             db.SaveChanges();
             TempData["infoMessage"] = String.Format("Payment removed from tour date on {0:MM/dd/yy}.", tourDate.EventDate);
             return RedirectToAction("Details", "Tour", new { tourId = tourDate.ParentId });
+        }
+
+        [HttpGet]
+        public ActionResult TrackMerchandise(int tourDateId, int bandId)
+        {
+            var band = db.Bands
+                .Include(b => b.Store)
+                .Include("Store.Products")
+                .Include("Store.Products.ProductType")
+                .Include("Store.Products.Sizes")
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+
+            var tourDate = db.TourDates
+                .Include(t => t.Venue)
+                .Include(t => t.SoldProducts)
+                .Where(t => t.TourDateId == tourDateId)
+                .FirstOrDefault();
+
+            TourDateTrackMerchandiseViewModel viewModel = new TourDateTrackMerchandiseViewModel();
+
+            viewModel.Band = band;
+            viewModel.TourDate = tourDate;
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult TrackMerchandise(int tourDateId, int bandId, string productsSold)
+        {
+            List<SoldProduct> soldProducts = JsonConvert.DeserializeObject<List<SoldProduct>>(productsSold);
+
+            var tourDate = db.TourDates
+                .Include(t => t.SoldProducts)
+                .Where(t => t.TourDateId == tourDateId)
+                .FirstOrDefault();
+
+            var band = db.Bands
+                .Include(b => b.Store)
+                .Include("Store.Products")
+                .Include("Store.Products.ProductType")
+                .Include("Store.Products.Sizes")
+                .Where(b => b.BandId == bandId)
+                .FirstOrDefault();
+
+            //If we have already tracked the inventory for this tour date, put the inventory back, clear the list of products sold and re-add them
+            if (tourDate.SoldProducts.Count > 0)
+            {
+                //put the inventory back
+                foreach (SoldProduct soldProduct in tourDate.SoldProducts)
+                {
+                    //increment the inventory
+                    Product product = db.Products
+                        .Include(p => p.ProductType)
+                        .Include(p => p.Sizes)
+                        .Where(p => p.ProductId == soldProduct.ProductId)
+                        .FirstOrDefault();
+                    if (soldProduct.ProductTypeId == 2)//Garment
+                    {
+                        foreach (Size size in product.Sizes)
+                        {
+                            if (size.SizeId == soldProduct.SizeId)
+                            {
+                                size.QuantityAvailable++;
+                                product.QuantityAvailable++;
+                                tourDate.MerchSoldValue -= soldProduct.Price;
+                            }
+                        }
+                    }
+                    else//standard product
+                    {
+                        product.QuantityAvailable++;
+                        tourDate.MerchSoldValue -= soldProduct.Price;
+                    }
+                }
+            }
+
+            //products have been returned to inventory, so...
+            tourDate.SoldProducts.Clear();
+            foreach (SoldProduct soldProduct in soldProducts)
+            {
+                soldProduct.SoldAtTourDate = true;
+                tourDate.SoldProducts.Add(soldProduct);
+
+                //decrement the inventory
+                Product product = db.Products
+                    .Include(p => p.ProductType)
+                    .Include(p => p.Sizes)
+                    .Where(p => p.ProductId == soldProduct.ProductId)
+                    .FirstOrDefault();
+                if (product.ProductType.ProductTypeId == 2)//Garment
+                {
+                    foreach (Size size in product.Sizes)
+                    {
+                        if (size.SizeId == soldProduct.SizeId)
+                        {
+                            size.QuantityAvailable--;
+                            product.QuantityAvailable--;
+                            tourDate.MerchSoldValue += size.Price;
+                        }
+                    }
+                }
+                else
+                {
+                    product.QuantityAvailable--;
+                    tourDate.MerchSoldValue += product.Price;
+                }
+            }
+            db.SaveChanges();
+            TempData["infoMessage"] = "Merchandise has been successfully tracked";
+            return Json("success", JsonRequestBehavior.AllowGet);
         }
 
     }

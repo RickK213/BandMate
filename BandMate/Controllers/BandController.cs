@@ -635,7 +635,7 @@ namespace BandMate.Controllers
                 .Include("Bands.Invitations")
                 .Include("Bands.Tours")
                 .Include("Bands.Tours.TourDates")
-                .Include("Bands.Tours.TourDates.ProductsSold")
+                .Include("Bands.Tours.TourDates.SoldProducts")
                 .Include("Bands.Venues")
                 .Include("Bands.Venues.Address")
                 .Include("Bands.Venues.Address.City")

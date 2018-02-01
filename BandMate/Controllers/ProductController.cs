@@ -151,7 +151,7 @@ namespace BandMate.Controllers
         }
 
         [HttpPost]
-        public ActionResult ManageInventory(int productId, int bandId, int? quantityAvailable, int? quantityAvailableS, int? quantityAvailableM, int? quantityAvailableL, int? quantityAvailableXL, int? quantityAvailableXXL)
+        public ActionResult ManageInventory(int productId, int bandId, int? quantityAvailable, int? quantityAvailableS, int? quantityAvailableM, int? quantityAvailableL, int? quantityAvailableXL, int? quantityAvailableXXL, double? upChargeS, double? upChargeM, double? upChargeL, double? upChargeXL, double? upChargeXXL)
         {
             var product = db.Products
                 .Include(p => p.Sizes)
@@ -162,10 +162,15 @@ namespace BandMate.Controllers
             if ( product.ProductType.ProductTypeId == 2 )//Garment
             {
                 int qtyS = Convert.ToInt32(quantityAvailableS);
+                double priceS = Convert.ToDouble(upChargeS);
                 int qtyM = Convert.ToInt32(quantityAvailableM);
+                double priceM = Convert.ToDouble(upChargeS);
                 int qtyL = Convert.ToInt32(quantityAvailableL);
+                double priceL = Convert.ToDouble(upChargeS);
                 int qtyXL = Convert.ToInt32(quantityAvailableXL);
+                double priceXL = Convert.ToDouble(upChargeS);
                 int qtyXXL = Convert.ToInt32(quantityAvailableXXL);
+                double priceXXL = Convert.ToDouble(upChargeS);
 
                 foreach ( Size size in product.Sizes )
                 {
@@ -173,18 +178,28 @@ namespace BandMate.Controllers
                     {
                         case "S":
                             size.QuantityAvailable = qtyS;
+                            size.UpCharge = upChargeS;
+                            size.Price = Convert.ToDouble(product.Price+upChargeS);
                             break;
                         case "M":
                             size.QuantityAvailable = qtyM;
+                            size.UpCharge = upChargeM;
+                            size.Price = Convert.ToDouble(product.Price + upChargeM);
                             break;
                         case "L":
                             size.QuantityAvailable = qtyL;
+                            size.UpCharge = upChargeL;
+                            size.Price = Convert.ToDouble(product.Price + upChargeL);
                             break;
                         case "XL":
                             size.QuantityAvailable = qtyXL;
+                            size.UpCharge = upChargeXL;
+                            size.Price = Convert.ToDouble(product.Price + upChargeXL);
                             break;
                         case "XXL":
                             size.QuantityAvailable = qtyXXL;
+                            size.UpCharge = upChargeXXL;
+                            size.Price = Convert.ToDouble(product.Price + upChargeXXL);
                             break;
                     }
                 }

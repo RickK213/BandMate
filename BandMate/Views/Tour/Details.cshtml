@@ -41,12 +41,12 @@
                     <span class="text-muted"><strong>Contact:</strong> @tourDate.Venue.ContactFirstName @tourDate.Venue.ContactLastName</span><br />
                     @tourDate.Venue.Address.StreetOne<br />
                     @tourDate.Venue.Address.City.Name, @tourDate.Venue.Address.State.Abbreviation @tourDate.Venue.Address.ZipCode.Number<br />
-                    <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span>
+                    <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span><br />
                     @if (tourDate.FeeCollectedOn.HasValue)
                     {
-                        <br />
-                        <span class="text-success"><strong>Fee Collected On:</strong> @String.Format("{0:MM/dd/yy}", tourDate.FeeCollectedOn)</span>
+                        <span class="text-success"><strong>Fee Collected On:</strong> @String.Format("{0:MM/dd/yy}", tourDate.FeeCollectedOn)</span><br />
                     }
+                    <span class="text-success"><strong>Merch Sales:</strong> @String.Format("{0:C2}", tourDate.MerchSoldValue)</span>
                 </p>
                 <p>
                     <div class="btn-group btn-group-justified" role="group">

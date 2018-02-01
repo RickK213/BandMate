@@ -71,7 +71,7 @@ namespace BandMate.Controllers
         {
         var tour = db.Tours
                 .Include(t => t.TourDates)
-                .Include("TourDates.ProductsSold")
+                .Include("TourDates.SoldProducts")
                 .Include("TourDates.SetList")
                 .Include("TourDates.Venue")
                 .Include("TourDates.Venue.Address")
