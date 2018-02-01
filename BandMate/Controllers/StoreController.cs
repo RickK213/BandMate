@@ -23,8 +23,24 @@ namespace BandMate.Controllers
                 .Include("Store.Products")
                 .Where(b => b.Name == bandName)
                 .FirstOrDefault();
-
+            if (band.Store.PlaylistId.Length > 0)
+            {
+                string spotifyEmbed = @"https://open.spotify.com/embed?uri=";
+                spotifyEmbed += band.Store.PlaylistId;
+                ViewBag.SpotifyUri = spotifyEmbed;
+            }
             return View(band);
         }
+
+        [Authorize]
+        public ActionResult SavePlaylistId(int storeId, int bandId, string playListId)
+        {
+            var store = db.Stores.Find(storeId);
+            store.PlaylistId = playListId;
+            db.SaveChanges();
+            TempData["infoMessage"] = "Spotify URI has been saved!";
+            return RedirectToAction("Store", "Band", new { bandId = bandId });
+        }
+
     }
 }

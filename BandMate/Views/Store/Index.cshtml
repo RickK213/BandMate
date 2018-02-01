@@ -5,35 +5,47 @@
     Layout = "~/Views/Shared/_Layout-Store.cshtml";
 }
 
-<h2>@Model.Name Merchandise Store</h2>
+<div class="row" style="margin-top: 40px;">
+    <div class="col-md-6">
+        <h1>@Model.Name Merch Store</h1>
+    </div>
+    @if (ViewBag.SpotifyUri != null)
+    {
+        <div class="col-md-6">
+            <span class="pull-right">
+                <iframe src="@ViewBag.SpotifyUri" frameborder="0" allowtransparency="true" width="300" height="80"></iframe>
+            </span>
+        </div>
+    }
+</div>
 
 @if (Model.Store.Products.Count > 0)
 {
     <hr />
-            <h4>Current Products</h4>
-            <div class="row">
-                @foreach (Product product in Model.Store.Products)
-                {
-                    <div class="col-sm-6 col-md-4">
-                        <div class="thumbnail">
-                            <img src="@product.ImageUrl" alt="@product.Name" title="@product.Name" height="332" width="332" style="margin-top: 10px;">
-                            <div class="caption">
-                                <h4>@product.Name</h4>
-                                <p class="text-success">
-                                    <strong>Price: </strong>@String.Format("{0:C2}", product.Price)<br>
-                                    @if (product.QuantityAvailable <= 0)
-                                    {
-                                        <span class="text-danger"><strong>SOLD OUT!</strong></span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-info"><strong>Quantity Available: </strong>@product.QuantityAvailable</span>
-                                    }
-                                </p>
-                                <p>@product.Description</p>
-                            </div>
-                        </div>
+    <h4>Current Products</h4>
+    <div class="row">
+        @foreach (Product product in Model.Store.Products)
+        {
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="@product.ImageUrl" alt="@product.Name" title="@product.Name" height="332" width="332" style="margin-top: 10px;">
+                    <div class="caption">
+                        <h4>@product.Name</h4>
+                        <p class="text-success">
+                            <strong>Price: </strong>@String.Format("{0:C2}", product.Price)<br>
+                            @if (product.QuantityAvailable <= 0)
+                            {
+                                <span class="text-danger"><strong>SOLD OUT!</strong></span>
+                            }
+                            else
+                            {
+                                <span class="text-info"><strong>Quantity Available: </strong>@product.QuantityAvailable</span>
+                            }
+                        </p>
+                        <p>@product.Description</p>
                     </div>
-                }
+                </div>
             </div>
+        }
+    </div>
 }
