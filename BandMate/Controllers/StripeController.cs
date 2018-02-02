@@ -58,10 +58,12 @@ namespace BandMate.Controllers
             };
             var subscriptionService = new StripeSubscriptionService();
             StripeSubscription stripeSubscription = subscriptionService.Create(customer.Id, options);
+            //get the subscription Id and add it to the subscription model
 
             //Save subscription to db
             var subscription = new Subscription();
             subscription.AutoRenewal = true;
+            subscription.StripeSubscriptionId = stripeSubscription.Id;
             subscription.IsActive = true;
             subscription.StartDate = DateTime.Now;
 

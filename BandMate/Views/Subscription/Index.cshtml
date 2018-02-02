@@ -5,6 +5,9 @@
 }
 
 <h2>My BandMate Subscription</h2>
+
+@Html.Partial("_AlertsPartial")
+
 @if (Model != null)
 {
     <h4>Subscription Details</h4>
@@ -20,7 +23,14 @@
     }
     <p><strong>Auto Renewal:</strong> @autoRenewalStatus</p>
         <p>
-            @Html.ActionLink("Cancel Subscription", "Cancel", "Subscription", new { subscriptionId = Model.SubscriptionId }, new { @class = "btn btn-danger" })
+            @if (Model.AutoRenewal == false)
+            {
+                @Html.ActionLink("Subscribe to BandMate", "Create", "Subscription", null, new { @class = "btn btn-success" })
+            }
+            else
+            {
+                <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { subscriptionId = Model.SubscriptionId })"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel Subscription</a>
+            }
             @Html.ActionLink("Go To Dashboard", "Index", "Band", null, new { @class = "btn btn-primary" })
         </p>
 }

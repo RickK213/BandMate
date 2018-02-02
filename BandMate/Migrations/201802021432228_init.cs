@@ -343,6 +343,7 @@ namespace BandMate.Migrations
                         StartDate = c.DateTime(nullable: false),
                         EndDate = c.DateTime(nullable: false),
                         AutoRenewal = c.Boolean(nullable: false),
+                        StripeSubscriptionId = c.String(),
                     })
                 .PrimaryKey(t => t.SubscriptionId)
                 .ForeignKey("dbo.SubscriptionTypes", t => t.SubscriptionTypeId, cascadeDelete: true)
