@@ -62,11 +62,11 @@ namespace BandMate.Migrations
                         BandMemberId = c.Int(nullable: false, identity: true),
                         UserId = c.String(),
                         Title = c.String(),
-                        Band_BandId = c.Int(),
+                        BandId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.BandMemberId)
-                .ForeignKey("dbo.Bands", t => t.Band_BandId)
-                .Index(t => t.Band_BandId);
+                .ForeignKey("dbo.Bands", t => t.BandId, cascadeDelete: true)
+                .Index(t => t.BandId);
             
             CreateTable(
                 "dbo.Bands",
@@ -237,6 +237,7 @@ namespace BandMate.Migrations
                         SizeId = c.Int(),
                         Price = c.Double(nullable: false),
                         SoldAtTourDate = c.Boolean(nullable: false),
+                        DateSold = c.DateTime(nullable: false),
                         Transaction_TransactionId = c.Int(),
                         TourDate_TourDateId = c.Int(),
                     })
@@ -442,7 +443,7 @@ namespace BandMate.Migrations
             DropForeignKey("dbo.SetListSongs", "SongId", "dbo.Songs");
             DropForeignKey("dbo.Invitations", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Events", "BandId", "dbo.Bands");
-            DropForeignKey("dbo.BandMembers", "Band_BandId", "dbo.Bands");
+            DropForeignKey("dbo.BandMembers", "BandId", "dbo.Bands");
             DropForeignKey("dbo.Addresses", "ZipCodeId", "dbo.ZipCodes");
             DropForeignKey("dbo.Addresses", "StateId", "dbo.States");
             DropForeignKey("dbo.Addresses", "CityId", "dbo.Cities");
@@ -476,7 +477,7 @@ namespace BandMate.Migrations
             DropIndex("dbo.Events", new[] { "BandId" });
             DropIndex("dbo.Bands", new[] { "ApplicationUser_Id" });
             DropIndex("dbo.Bands", new[] { "StoreId" });
-            DropIndex("dbo.BandMembers", new[] { "Band_BandId" });
+            DropIndex("dbo.BandMembers", new[] { "BandId" });
             DropIndex("dbo.Addresses", new[] { "ZipCodeId" });
             DropIndex("dbo.Addresses", new[] { "StateId" });
             DropIndex("dbo.Addresses", new[] { "CityId" });

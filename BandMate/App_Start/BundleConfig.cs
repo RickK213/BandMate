@@ -21,6 +21,7 @@ namespace BandMate
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/checkout.js",
+                      "~/Scripts/chartist.min.js",
                       "~/Scripts/jquery.cookie.js",
                       "~/Scripts/moment.js",
                       "~/Scripts/fullcalendar.min.js",
@@ -37,6 +38,7 @@ namespace BandMate
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap-slate.min.css",
                       "~/Content/bootstrap-datetimepicker.css",
+                      "~/Content/chartist.min.css",
                       "~/Content/fullcalendar.min.css",
                       "~/Content/fileinput.min.css",
                       "~/Content/site.css"));

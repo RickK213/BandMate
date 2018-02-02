@@ -143,6 +143,8 @@ namespace BandMate.Controllers
             foreach (SoldProduct soldProduct in soldProducts)
             {
                 soldProduct.SoldAtTourDate = false;
+                soldProduct.DateSold = DateTime.Now;
+                //db.SoldProducts.Add(soldProduct);
                 transaction.SoldProducts.Add(soldProduct);
 
                 //decrement the inventory
@@ -167,6 +169,7 @@ namespace BandMate.Controllers
                     product.QuantityAvailable--;
                 }
             }
+            db.Transactions.Add(transaction);
             db.SaveChanges();
 
             TempData["storeId"] = band.Store.StoreId;

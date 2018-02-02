@@ -212,5 +212,17 @@ namespace BandMate.Controllers
             return songHtml.ToString();
         }
 
+        public ActionResult Details(int setListId)
+        {
+            SetList setList = db.SetLists
+                .Include(s => s.SetListSongs)
+                .Include("SetListSongs.Song")
+                .Where(s =>s.SetListId == setListId)
+                .FirstOrDefault();
+            db.SaveChanges();
+            return View(setList);
+        }
+
+
     }
 }

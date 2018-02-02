@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Band Events";
-    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
 }
 
 <div class="panel panel-default">
@@ -11,45 +11,7 @@
         <h3 class="panel-title pull-left">@Model.CurrentBand.Name Events</h3>
     </div>
     <div class="panel-body">
-        <h4>Create New Event</h4>
-        <form class="form-horizontal" action="/Event/Create" method="POST">
-            <input type="hidden" name="bandId" value="@Model.CurrentBand.BandId" />
-
-            <div class="form-group">
-                <label class="control-label col-md-2">Date &amp; Time</label>
-                <div class="col-md-10">
-                    <div class="input-group date">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                        <input type="text" class="form-control" name="eventDate" id="eventDate" placeholder="MM/DD/YYYY HH:MM AM" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-md-2">Event Name</label>
-                <div class="col-md-10">
-                    <input type="text" class="form-control" name="name" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-md-2">Description</label>
-                <div class="col-md-10">
-                    <textarea class="form-control" rows="3" name="description"></textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input id="submit" type="submit" value="Create Event" class="btn btn-primary" />
-                </div>
-            </div>
-
-        </form>
-        <hr />
-        <p class="text-info text-center" style="margin-top: 20px;">Click each day to send event reminders.<br />Click each event for details and to edit/delete event.</p>
+        <p class="text-info text-center">Click each day to view daily details.<br />Click each event for details about that event.</p>
         <div id='calendar'></div>
     </div>
 </div>
@@ -63,8 +25,7 @@
             </div>
             <div class="modal-body" id="eventModalBody"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info" id="eventEditButton"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit Event</button>
-                <button type="button" class="btn btn-danger" id="eventDeleteButton" data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete Event</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -77,7 +38,6 @@
             <div class="modal-body" id="dayModalBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" id="eventReminderButton" data-toggle="tooltip" data-placement="top" title="Send Daily Itinerary to All Band Members"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send Reminders</button>
             </div>
         </div>
     </div>
@@ -95,14 +55,13 @@
                 $('#eventReminderButton').attr('data-bandId', @Model.CurrentBand.BandId);
                 $('#dayModalBody').fullCalendar({
                     events: eventsJson,
-                    //defaultDate: date.format(),
-                    //gotoDate: date.format(),
+                    defaultDate: date.format(),
                     defaultView: "basicDay",
                     header: {
                         center: '',
                         right:  ''
                     }
-                }).fullCalendar( 'gotoDate', date );
+                });
                 $('#dayModal').modal();
                 console.log('Clicked on: ' + date.format());
             },

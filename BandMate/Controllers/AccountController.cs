@@ -477,7 +477,7 @@ namespace BandMate.Controllers
                 }
                 else if (IsBandMember())
                 {
-                    return RedirectToAction("MemberBands", "Band");
+                    return RedirectToAction("Index", "BandMember");
                 }
                 else
                 {

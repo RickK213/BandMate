@@ -1,0 +1,47 @@
+﻿@using BandMate.Models
+@model BandMate.Models.BandViewModel
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+@if (Model.Invitations.Count > 0)
+{
+    @:<div class="row">
+    int count = 1;
+    foreach (Invitation invitation in Model.Invitations)
+    {
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Invitation from @invitation.InvitedBy</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Invitation sent on: </strong>@String.Format("{0:MM/dd/yy}", invitation.CreatedOn)</p>
+                    <p><strong>Invitation sent by: </strong>@invitation.InvitedBy</p>
+                    <p><strong>Your Title: </strong>@invitation.Title</p>
+                    <p>
+                        @Html.ActionLink("Accept Invitation", "Accept", "Invitation", routeValues: new { invitationId = invitation.InvitationId }, htmlAttributes: new { @class = "btn btn-success" })
+                        @Html.ActionLink("Decline Invitation", "Decline", "Invitation", routeValues: new { invitationId = invitation.InvitationId }, htmlAttributes: new { @class = "btn btn-danger" })
+                    </p>
+                </div>
+            </div>
+        </div>
+        if (count % 2 == 0)
+        {
+            @:</div><div class="row">
+                }
+        count++;
+    }
+    @:</div>
+        }
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">@Model.CurrentBand.Name</h3>
+        @*<a href="/BandMember/LeaveBand/@Model.CurrentBand.BandId" class="btn btn-danger btn-xs pull-right"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Leave Band</a>*@
+    </div>
+    <div class="panel-body">
+        <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" href="/BandMember/LeaveBand/@Model.CurrentBand.BandId" class="btn btn-danger"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Leave Band</a>
+    </div>
+</div>

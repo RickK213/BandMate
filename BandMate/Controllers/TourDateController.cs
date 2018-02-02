@@ -207,6 +207,7 @@ namespace BandMate.Controllers
             foreach (SoldProduct soldProduct in soldProducts)
             {
                 soldProduct.SoldAtTourDate = true;
+                soldProduct.DateSold = tourDate.EventDate;
                 tourDate.SoldProducts.Add(soldProduct);
 
                 //decrement the inventory

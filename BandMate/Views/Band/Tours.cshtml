@@ -51,3 +51,68 @@
         }
     </div>
 </div>
+
+<div class="panel panel-default" id="appearanceFeeChart">
+    <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">@Model.CurrentBand.Name Appearance Fees Collected Over The Past 5 Days</h3>
+    </div>
+    <div class="panel-body">
+        <div class="ct-chart ct-golden-section"></div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $("document").ready(function(){
+            //var data = {
+            //    // A labels array that can contain any sort of values
+            //    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            //    // Our series array that contains series objects or in this case series data arrays
+            //    series: [
+            //      [5, 2, 4, 2, 0]
+            //    ]
+            //};
+            var data = @Html.Raw(HttpUtility.HtmlDecode(Model.ChartData))
+
+            // Create a new line chart object where as first parameter we pass in a selector
+            // that is resolving to our chart container element. The Second parameter
+            // is the actual data object.
+            var options = {
+                // Don't draw the line chart points
+                //showPoint: true,
+                // Disable line smoothing
+                //lineSmooth: false,
+                // X-Axis specific configuration
+                axisX: {
+                    // We can disable the grid for this axis
+                    showGrid: true,
+                    // and also don't show the label
+                    showLabel: true
+                },
+                // Y-Axis specific configuration
+                axisY: {
+                    // Lets offset the chart a bit from the labels
+                    //offset: 60,
+                    // The label interpolation function enables you to modify the values
+                    // used for the labels on each axis. Here we are converting the
+                    // values into million pound.
+                    labelInterpolationFnc: function(value) {
+                        return '$' + value + '';
+                    }
+                }
+            };        
+            new Chartist.Bar('.ct-chart', data, options);
+        
+            //check for all zero values
+            let total = 0;
+            for(let i=0; i<data.series[0].length; i++)
+            {
+                total += data.series[0][i];
+            }
+            if ( total === 0 )
+            {
+                $("#appearanceFeeChart").hide();
+            }
+        });
+
+    </script>
+}

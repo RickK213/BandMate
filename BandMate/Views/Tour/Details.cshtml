@@ -38,41 +38,49 @@
                 <h4 class="float-left" style="margin-top: 0;"><span class="label label-danger">@count</span> <small>@String.Format("{0:MM/dd/yy - h:mm tt}", tourDate.EventDate)</small></h4>
                 <p>
                     <span class="text-info"><strong>Venue:</strong> @tourDate.Venue.Name</span><br />
+                    <span class="text-warning"><strong>Set List:</strong> @tourDate.SetList.Name</span><br />
                     <span class="text-muted"><strong>Contact:</strong> @tourDate.Venue.ContactFirstName @tourDate.Venue.ContactLastName</span><br />
                     @tourDate.Venue.Address.StreetOne<br />
                     @tourDate.Venue.Address.City.Name, @tourDate.Venue.Address.State.Abbreviation @tourDate.Venue.Address.ZipCode.Number<br />
-                    <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span><br />
-                    @if (tourDate.FeeCollectedOn.HasValue)
+                    @if (User.IsInRole("Band Manager"))
                     {
-                        <span class="text-success"><strong>Fee Collected On:</strong> @String.Format("{0:MM/dd/yy}", tourDate.FeeCollectedOn)</span><br />
+                        <span class="text-success"><strong>Appearance Fee:</strong> @String.Format("{0:C2}", tourDate.AppearanceFee)</span><br />
+                        if (tourDate.FeeCollectedOn.HasValue)
+                        {
+                            <span class="text-success"><strong>Fee Collected On:</strong> @String.Format("{0:MM/dd/yy}", tourDate.FeeCollectedOn)</span><br />
+                        }
+                        <span class="text-success"><strong>Merch Sales:</strong> @String.Format("{0:C2}", tourDate.MerchSoldValue)</span>
                     }
-                    <span class="text-success"><strong>Merch Sales:</strong> @String.Format("{0:C2}", tourDate.MerchSoldValue)</span>
                 </p>
-                <p>
-                    <div class="btn-group btn-group-justified" role="group">
-                        <div class="btn-group">
-                            <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit</a>
-                        </div>
-                        <div class="btn-group">
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger btn-sm" href="@Url.Action("Delete", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
-                        </div>
-                    </div>
-                </p>
-                @if (!tourDate.FeeCollectedOn.HasValue)
+                @if (User.IsInRole("Band Manager"))
                 {
+
                     <p>
-                        <a class="btn btn-success btn-sm btn-block" href="@Url.Action("MarkAsPaid", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Mark Appearance Fee as Paid</a>
+                        <div class="btn-group btn-group-justified" role="group">
+                            <div class="btn-group">
+                                <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit</a>
+                            </div>
+                            <div class="btn-group">
+                                <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger btn-sm" href="@Url.Action("Delete", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            </div>
+                        </div>
+                    </p>
+                    if (!tourDate.FeeCollectedOn.HasValue)
+                    {
+                        <p>
+                            <a class="btn btn-success btn-sm btn-block" href="@Url.Action("MarkAsPaid", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Mark Appearance Fee as Paid</a>
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            <a class="btn btn-default btn-sm btn-block" href="@Url.Action("RemovePayment", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Remove Payment</a>
+                        </p>
+                    }
+                    <p style="margin-bottom: 0;">
+                        <a class="btn btn-warning btn-sm btn-block" href="@Url.Action("TrackMerchandise", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Track Sold Merchandise</a>
                     </p>
                 }
-                else
-                {
-                    <p>
-                        <a class="btn btn-default btn-sm btn-block" href="@Url.Action("RemovePayment", "TourDate", new { tourDateId = tourDate.TourDateId })"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Remove Payment</a>
-                    </p>
-                }
-                <p style="margin-bottom: 0;">
-                    <a class="btn btn-warning btn-sm btn-block" href="@Url.Action("TrackMerchandise", "TourDate", new { tourDateId = tourDate.TourDateId, bandId = tourDate.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Track Sold Merchandise</a>
-                </p>
             </div>
         </div>
         if (count % 4 == 0)
@@ -82,7 +90,14 @@
         count++;
     }
 </div>
-<a class="btn btn-default" href="@Url.Action("Tours", "Band", new { bandId = Model.BandId })">Return to My Tours</a>
+@if (User.IsInRole("Band Manager"))
+{
+    <a class="btn btn-default" href="@Url.Action("Tours", "Band", new { bandId = Model.BandId })">Return to My Tours</a>
+}
+@if (User.IsInRole("Band Member"))
+{
+    <a class="btn btn-default" href="@Url.Action("Tours", "BandMember", new { bandId = Model.BandId })">Return to My Tours</a>
+}
 @section Scripts{
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>

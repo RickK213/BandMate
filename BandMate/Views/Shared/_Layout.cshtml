@@ -6,6 +6,7 @@
     <title>@ViewBag.Title - BandMate</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab" rel="stylesheet">
 </head>
 <body>
@@ -17,7 +18,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("BandMate", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a class="navbar-brand" href="/Home/Index" style="padding: 5px 5px 0 0; margin-right: 20px;"><img src="~/Images/bandmate_logo-146x40.png" alt="BandMate" style="line-height: 0;"></a>
+
+                @*@Html.ActionLink("BandMate", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -33,7 +36,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - BandMate, LLC</p>
+            <p class="text-center">&copy; @DateTime.Now.Year - BandMate, LLC</p>
         </footer>
     </div>
 

@@ -63,6 +63,7 @@ namespace BandMate.Controllers
             BandMember bandMember = new BandMember();
             bandMember.UserId = user.Id;
             bandMember.Title = invitation.Title;
+            bandMember.BandId = invitation.BandId;
             db.BandMembers.Add(bandMember);
             db.SaveChanges();
 
@@ -74,7 +75,7 @@ namespace BandMate.Controllers
             band.BandMembers.Add(bandMember);
             db.SaveChanges();
 
-            return RedirectToAction("MemberBands", "Band", new { bandId = band.BandId } );
+            return RedirectToAction("Index", "BandMember", new { bandId = band.BandId } );
         }
 
     }

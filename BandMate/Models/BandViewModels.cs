@@ -9,16 +9,18 @@ namespace BandMate.Models
     {
         public Band CurrentBand { get; set; }
         public List<Band> OtherBands { get; set; }
+        public List<ApplicationUser> CurrentBandMembers { get; set; }
+        public List<Invitation> Invitations { get; set; }
     }
 
     public class BandMemberViewModel : BandViewModel
     {
-        public List<ApplicationUser> CurrentBandMembers { get; set; }
     }
 
     public class BandTourViewModel : BandViewModel
     {
         public List<Tour> CurrentBandTours { get; set; }
+        public String ChartData { get; set; }
     }
 
     public class BandVenueViewModel : BandViewModel
@@ -45,6 +47,7 @@ namespace BandMate.Models
     public class BandStoreViewModel : BandViewModel
     {
         public List<Product> CurrentBandProducts { get; set; }
+        public String ChartData { get; set; }
     }
 
 }

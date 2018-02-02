@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BandMate
+namespace BandMate.Models
 {
     public class SoldProduct
     {
@@ -13,5 +13,6 @@ namespace BandMate
         public int? SizeId { get; set; }
         public double Price { get; set; }
         public bool SoldAtTourDate { get; set; }
+        public DateTime DateSold { get; set; }
     }
 }

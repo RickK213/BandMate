@@ -1,34 +1,24 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Welcome to BandMate";
 }
-
-<div class="jumbotron">
-    <h1>Welcome to BandMate.</h1>
-    <p class="lead"><em>Manage your band online.</em></p>
-    <p>
-        @*@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { @class = "btn btn-primary" })
-        @Html.ActionLink("Login", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "btn btn-success" })*@
+<div class="jumbotron" id="homeJumbotron">
+    <center><img src="~/Images/bandmate_logo-600x179.png" style="margin-right: 75px; margin-bottom: 25px; margin-top: 25px;" /></center>
+    <p class="text-center">
+        @Html.ActionLink("Register", "Register", "Account", null, new { @class = "btn btn-default btn-lg" })
+        @Html.ActionLink("Login", "Login", "Account", null, new { @class = "btn btn-default btn-lg" })
     </p>
 </div>
-
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <h2>Invite your members</h2>
+        <p>Send an email to your band members so they can see all the info they need. Send daily reminders about your band events via email or text.</p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <h2>Manage your tours</h2>
+        <p>Add venues, songs, and set lists. Add tour dates and view them on a map. Collect your appearance fees and track the merch you sell at gigs.</p>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <h2>Sell your merch</h2>
+        <p>Create an online storefront so your fans can get your latest products. Upload product images and sell standard products or garments. Spotify playlist included.</p>
     </div>
 </div>

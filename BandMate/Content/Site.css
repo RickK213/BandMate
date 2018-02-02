@@ -2,6 +2,11 @@
     padding-top: 50px;
     padding-bottom: 20px;
     font-family: 'Roboto', sans-serif;
+    background: url("../Images/bandmate_bg3-212529.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -26,6 +31,7 @@ textarea {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Roboto Slab', sans-serif;
+    /*font-family: 'Kanit', sans-serif;*/
     font-weight: 700;
 }
 
@@ -82,4 +88,45 @@ body.dragging, body.dragging * {
 }
 .file-preview-frame{
     border: none;
+}
+#homeJumbotron {
+    height: 400px;
+    background: rgba(0,0,0,.25);
+    border: none;
+    border-radius: 0;
+}
+
+/*Chartist Styles*/
+/* Use this selector to override the line style on a given series */
+.ct-series-a .ct-line {
+  /* Set the colour of this series line */
+  stroke: #3a87ad;
+  /* Control the thikness of your lines */
+  stroke-width: 3px;
+  /* Create a dashed line with a pattern */
+  /*stroke-dasharray: 10px 20px;*/
+}
+
+/* This selector overrides the points style on line charts. Points on line charts are actually just very short strokes. This allows you to customize even the point size in CSS */
+.ct-series-a .ct-point {
+  /* Colour of your points */
+  stroke: #3a87ad;
+  /* Size of your points */
+  stroke-width: 10px;
+  /* Make your points appear as squares */
+}
+.ct-grid {
+    /*stroke: rgba(0,0,0,.2);*/
+    stroke: rgba(255,255,255,.5);
+    stroke-width: 1px;
+    /*stroke-dasharray: 2px;*/
+}
+.ct-label {
+    fill: rgba(255,255,255,.75);
+    color: rgba(255,255,255,.7);
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+.ct-series-a .ct-bar, .ct-series-a .ct-line, .ct-series-a .ct-point, .ct-series-a .ct-slice-donut {
+    stroke: #62c462;
 }

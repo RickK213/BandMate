@@ -1,0 +1,20 @@
+﻿@using BandMate.Models
+@model BandMate.Models.SetList
+@{
+    ViewBag.Title = "Set List Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Set List: @Model.Name</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul class="list-group">
+            @foreach (SetListSong setListSong in Model.SetListSongs)
+            {
+                <li class="list-group-item">@setListSong.Song.Name</li>
+            }
+        </ul>
+    </div>
+</div>
+<hr />
+@Html.ActionLink("Return to My Set Lists", "SetLists", "BandMember", routeValues: new { bandId = ViewBag.BandId }, htmlAttributes: new { @class = "btn btn-default" })

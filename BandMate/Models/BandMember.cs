@@ -10,5 +10,6 @@ namespace BandMate.Models
         public int BandMemberId { get; set; }
         public string UserId { get; set; }
         public string Title { get; set; }
+        public int BandId { get; set; }
     }
 }

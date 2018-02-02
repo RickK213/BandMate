@@ -22,7 +22,7 @@
                     foreach (Band band in Model.OtherBands)
                     {
                         <li>
-                            <a href="@Url.Action("Index", "Band", new { band.BandId })">@band.Name</a>
+                            <a href="@Url.Action("Index", "BandMember", new { band.BandId })">@band.Name</a>
                         </li>
                     }
                 }
@@ -37,6 +37,7 @@
             int tourCount = 0;
             int venueCount = 0;
             int setListCount = 0;
+            int songCount = 0;
             if (Model.CurrentBand.BandMembers != null)
             {
                 bandMemberCount = Model.CurrentBand.BandMembers.Count;
@@ -53,16 +54,22 @@
             {
                 setListCount = Model.CurrentBand.SetLists.Count;
             }
+            if (Model.CurrentBand.Songs != null)
+            {
+                songCount = Model.CurrentBand.Songs.Count;
+            }
         }
 
         <div class="list-group" style="margin-top: 20px;">
-            <a class="list-group-item" href="@Url.Action("MemberBands", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
-            @*<a class="list-group-item" href="@Url.Action("Members", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Band Members <span class="badge">@bandMemberCount</span></a>
-            <a class="list-group-item" href="@Url.Action("Index", "Tour", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-road" aria-hidden="true"></span> My Tours <span class="badge">@tourCount</span></a>
-            <a class="list-group-item" href="@Url.Action("Index", "Venue", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> My Venues <span class="badge">@venueCount</span></a>
-            <a class="list-group-item" href="@Url.Action("Index", "SetList", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> My Set Lists <span class="badge">@setListCount</span></a>
-            <a class="list-group-item" href="@Url.Action("Index", "Event", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> My Events</a>
-            <a class="list-group-item" href="@Url.Action("Index", "Store", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> My Store</a>*@
+            <a class="list-group-item" href="@Url.Action("Index", "BandMember", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+            @*<a class="list-group-item" href="@Url.Action("Members", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Band Members <span class="badge">@bandMemberCount</span></a>*@
+            @*<a class="list-group-item" href="@Url.Action("Venues", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> My Venues <span class="badge">@venueCount</span></a>*@
+            @*<a class="list-group-item" href="@Url.Action("Songs", "Band", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> My Songs <span class="badge">@songCount</span></a>*@
+            <a class="list-group-item" href="@Url.Action("SetLists", "BandMember", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> My Set Lists <span class="badge">@setListCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Tours", "BandMember", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-road" aria-hidden="true"></span> My Tours <span class="badge">@tourCount</span></a>
+            <a class="list-group-item" href="@Url.Action("Events", "BandMember", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> My Events</a>
+            <a target="_blank" class="list-group-item" href="/Store/Index?bandName=@Model.CurrentBand.Name"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> My Store</a>
+            @*<a class="list-group-item" href="@Url.Action("Store", "BandMember", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> My Store</a>*@
         </div>
 
     </div>
@@ -73,3 +80,6 @@
         @RenderBody()
     </div>
 </div>
+@section Scripts {
+    @RenderSection("scripts", required: false)
+}

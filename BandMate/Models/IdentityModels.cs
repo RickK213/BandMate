@@ -85,5 +85,9 @@ namespace BandMate.Models
 
         public System.Data.Entity.DbSet<BandMate.Models.Product> Products { get; set; }
 
+        public System.Data.Entity.DbSet<BandMate.Models.SoldProduct> SoldProducts { get; set; }
+
+        public System.Data.Entity.DbSet<BandMate.Models.Transaction> Transactions { get; set; }
+
     }
 }

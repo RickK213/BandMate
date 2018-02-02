@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BandMate.Models;
+using System.Data.Entity;
 
 namespace BandMate.Controllers
 {
@@ -15,6 +16,8 @@ namespace BandMate.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public ManageController()
         {
@@ -54,6 +57,14 @@ namespace BandMate.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            //get the notification preference
+            string userId = User.Identity.GetUserId();
+            ApplicationUser user = db.Users
+                .Include(u => u.NotificationPreference)
+                .Where(u => u.Id == userId)
+                .FirstOrDefault();
+            NotificationPreference notificationPreference = user.NotificationPreference;
+
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
@@ -63,14 +74,14 @@ namespace BandMate.Controllers
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
 
-            var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                NotificationPreference = notificationPreference
             };
             return View(model);
         }
@@ -332,6 +343,23 @@ namespace BandMate.Controllers
 
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        public ActionResult ChangeNotificationPreference(int notificationPreference, string phoneNumber)
+        {
+            //get the notification preference
+            string userId = User.Identity.GetUserId();
+            ApplicationUser user = db.Users
+                .Include(u => u.NotificationPreference)
+                .Where(u => u.Id == userId)
+                .FirstOrDefault();
+
+            user.NotificationPreferenceId = notificationPreference;
+            user.PhoneNumber = phoneNumber;
+            db.SaveChanges();
+            return RedirectToAction("Index", "Manage");
+        }
+
 
 #region Helpers
         // Used for XSRF protection when adding external logins
