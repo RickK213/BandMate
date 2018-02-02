@@ -15,6 +15,9 @@ namespace BandMate
         //properties
         public string SendGridKey { get; set; }
         public string StripeSecretKey { get; set; }
+        public string TwilioAccountSid { get; set; }
+        public string TwilioAuthToken { get; set; }
+
         //constructor
         public KeyManager()
         {
@@ -27,6 +30,8 @@ namespace BandMate
             JObject keyObject = JObject.Parse(File.ReadAllText(@"C:\Users\Rick Kippert\Dropbox\_devCodeCamp\Assignments\BandMate\App\BandMate\BandMate\JSON\keys.json"));
             SendGridKey = keyObject.GetValue("SendGridKey").ToString();
             StripeSecretKey = keyObject.GetValue("StripeSecretKey").ToString();
+            TwilioAccountSid = keyObject.GetValue("TwilioAccountSid").ToString();
+            TwilioAuthToken = keyObject.GetValue("TwilioAuthToken").ToString();
         }
 
     }

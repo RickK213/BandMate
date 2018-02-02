@@ -5,7 +5,9 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 
 namespace BandMate.Controllers
@@ -78,10 +80,6 @@ namespace BandMate.Controllers
         [HttpGet]
         public ActionResult SendReminders(DateTime eventDate, int bandId)
         {
-            //get all band members for the band.
-            //generate the link url
-            //foreach band member
-            //send email with link
             Band band = db.Bands
                 .Include(b => b.BandMembers)
                 .Where(b => b.BandId == bandId)
@@ -116,7 +114,11 @@ namespace BandMate.Controllers
                     string email = user.Email;
                     EmailIninerary(email, subject, plainTextContent, htmlTextContent);
                 }
-                //TO DO: send text to users who prefer text messages
+                if (user.NotificationPreference.Name == "Text")
+                {
+                    string phoneNumber = user.PhoneNumber;
+                    SMSItinerary(phoneNumber, plainTextContent);
+                }
             }
 
             TempData["infoMessage"] = "Intineraries sent to " + band.BandMembers.Count + " band members.";
@@ -125,7 +127,6 @@ namespace BandMate.Controllers
 
         private void EmailIninerary(string toEmail, string subject, string plainTextContent, string htmlTextContent)
         {
-            //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
             KeyManager keyManager = new KeyManager();
             var apiKey = keyManager.SendGridKey;
             var client = new SendGridClient(apiKey);
@@ -158,8 +159,26 @@ namespace BandMate.Controllers
             viewModel.EventsJson = eventsJson;
             viewModel.BandName = band.Name;
             viewModel.EventDate = eventDate.ToString("r");
-            //YOU ARE HERE! CREATE THE viewModel and View!!!
             return View(viewModel);
+        }
+
+        static void SMSItinerary(string phoneNumber, string messageBody)
+        {
+            KeyManager keyManager = new KeyManager();
+
+            //const string accountSid = keyManager.TwilioAccountSid;
+            //const string authToken = keyManager.TwilioAuthToken;
+            string accountSid = keyManager.TwilioAccountSid;
+            string authToken = keyManager.TwilioAuthToken;
+            TwilioClient.Init(accountSid, authToken);
+
+            var to = new PhoneNumber(phoneNumber);
+            var message = MessageResource.Create(
+                to,
+                from: new PhoneNumber("+14142061574"),
+                body: messageBody);
+
+            Console.WriteLine(message.Sid);
         }
 
     }
