@@ -234,6 +234,7 @@ namespace BandMate.Migrations
                         SoldProductId = c.Int(nullable: false, identity: true),
                         ProductId = c.Int(nullable: false),
                         ProductTypeId = c.Int(nullable: false),
+                        BandId = c.Int(nullable: false),
                         SizeId = c.Int(),
                         Price = c.Double(nullable: false),
                         SoldAtTourDate = c.Boolean(nullable: false),

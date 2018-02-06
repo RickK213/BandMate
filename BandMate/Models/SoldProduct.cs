@@ -10,6 +10,7 @@ namespace BandMate.Models
         public int SoldProductId { get; set; }
         public int ProductId { get; set; }
         public int ProductTypeId { get; set; }
+        public int BandId { get; set; }
         public int? SizeId { get; set; }
         public double Price { get; set; }
         public bool SoldAtTourDate { get; set; }

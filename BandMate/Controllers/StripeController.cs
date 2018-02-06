@@ -145,6 +145,7 @@ namespace BandMate.Controllers
             foreach (SoldProduct soldProduct in soldProducts)
             {
                 soldProduct.SoldAtTourDate = false;
+                soldProduct.BandId = bandId;
                 soldProduct.DateSold = DateTime.Now;
                 //db.SoldProducts.Add(soldProduct);
                 transaction.SoldProducts.Add(soldProduct);

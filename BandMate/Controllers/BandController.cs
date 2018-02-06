@@ -416,11 +416,13 @@ namespace BandMate.Controllers
             List<String> labels = new List<String>();
             List<Double> storeSeries = new List<Double>();
             List<Double> tourDateSeries = new List<Double>();
+            var soldProducts = db.SoldProducts
+                .Where(s => s.BandId == currentBand.BandId)
+                .ToList();
             for (int i = 0; i < 5; i++)
             {
                 Double dailyStoreSales = 0d;
                 Double dailyTourDateSales = 0d;
-                var soldProducts = db.SoldProducts.ToList();
 
                 foreach (SoldProduct soldProduct in soldProducts)
                 {
