@@ -8,7 +8,7 @@ using SendGrid.Helpers.Mail;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
-
+using System.Collections.Generic;
 
 namespace BandMate.Controllers
 {
@@ -141,6 +141,9 @@ namespace BandMate.Controllers
         {
             Band band = db.Bands
                 .Include(b => b.Events)
+                .Include(b => b.Tours)
+                .Include("Tours.TourDates")
+                .Include("Tours.TourDates.Venue")
                 .Where(b => b.BandId == bandId)
                 .FirstOrDefault();
 
@@ -152,6 +155,26 @@ namespace BandMate.Controllers
                 eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
                 eventsJson += "\"start\": \"" + bandEvent.EventDate.ToString("r") + "\",";
                 eventsJson += "\"description\": \"" + bandEvent.Description + "\"";
+                eventsJson += "},";
+            }
+            //add all of the tour dates to the list of events too
+            var tours = band.Tours;
+            List<TourDate> tourDates = new List<TourDate>();
+            foreach (Tour tour in tours)
+            {
+                foreach (TourDate tourDate in tour.TourDates)
+                {
+                    tourDates.Add(tourDate);
+                }
+            }
+            foreach (TourDate tourDate in tourDates)
+            {
+                eventsJson += "{";
+                eventsJson += "\"id\": \"0\",";
+                eventsJson += "\"title\": \"Tour Date: " + tourDate.Venue.Name + "\",";
+                eventsJson += "\"color\": \"#f89406\",";
+                eventsJson += "\"start\": \"" + tourDate.EventDate.ToString("r") + "\",";
+                eventsJson += "\"description\": \"Tour Date at " + tourDate.Venue.Name + "\"";
                 eventsJson += "},";
             }
             eventsJson += "]";

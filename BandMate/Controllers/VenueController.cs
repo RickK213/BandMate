@@ -138,7 +138,7 @@ namespace BandMate.Controllers
                     }
                     count++;
                 }
-                TempData["dangerMessage"] = "You cannot delete this venue because it is in use on tour dates on the following dates: " + tourDateList.ToString() + ". Please remove the set list from those tour dates first.";
+                TempData["dangerMessage"] = "You cannot delete this venue because it is in use on tour dates on the following dates: " + tourDateList.ToString() + ". Please remove the venue from those tour dates first.";
                 return RedirectToAction("Venues", "Band", new { bandId = bandId });
             }
             var venue = db.Venues.Find(venueId);

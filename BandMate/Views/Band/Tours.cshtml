@@ -25,29 +25,41 @@
         {
             <hr />
             <h4>Current Tours</h4>
-            <table class="table table-striped table-condensed table-bordered">
-                <tr>
-                    <th>Tour <small>(Click to view details)</small></th>
-                    <th>Tour Dates</th>
-                    <th>Actions</th>
-                </tr>
+            <div class="row">
+                @{int count = 1; }
                 @foreach (Tour tour in Model.CurrentBandTours)
                 {
-                    <tr>
-                        <td>
-                            <a class="btn btn-xs btn-primary" href="@Url.Action("Details", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @tour.Name</a>
-                        </td>
-                        <td>
-                            @tour.TourDates.Count Tour Dates
-                            <a class="btn btn-xs btn-success" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
-                        </td>
-                    </tr>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h4>@tour.Name</h4>
+                                <p class="text-success">
+                                    <strong>@tour.TourDates.Count Tour Dates</strong>
+                                </p>
+                                <p>
+                                    <a class="btn btn-primary btn-sm btn-block" href="@Url.Action("Details", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Tour Details</a>
+                                </p>
+                                <p>
+                                    <a class="btn btn-success btn-sm btn-block" href="@Url.Action("Create", "TourDate", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Tour Date</a>
+                                </p>
+                                <div class="btn-group btn-group-justified" role="group">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger btn-sm" href="@Url.Action("Delete", "Tour", new { tourId = tour.TourId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    if (count % 3 == 0)
+                    {
+                        @:</div><div class="row">
+                    }
+                    count++;
                 }
-            </table>
+            </div>
         }
     </div>
 </div>

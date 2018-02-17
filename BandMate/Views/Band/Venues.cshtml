@@ -12,36 +12,72 @@
     </div>
     <div class="panel-body">
         <a class="btn btn-s btn-primary" href="@Url.Action("Create", "Venue", new { bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add New Venue</a>
-        @if (Model.CurrentBandVenues.Count>0)
+        @if (Model.CurrentBandVenues.Count > 0)
         {
             <hr />
             <h4>Current Venues</h4>
-            <table class="table table-striped table-condensed table-bordered">
-                <tr>
-                    <th>Venue Name <small>(Click for details)</small></th>
-                    <th>City, State</th>
-                    <th>Contact Name</th>
-                    <th>Contact Phone</th>
-                    <th>Contact Email</th>
-                    <th>Actions</th>
-                </tr>
-                @foreach (Venue venue in Model.CurrentBandVenues)
+            var count = 1;
+            <div class="row">
+                @foreach (var venue in Model.CurrentBand.Venues)
                 {
-                    <tr>
-                        <td>
-                            <a class="btn btn-xs btn-primary" href="@Url.Action("Details", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> @venue.Name</a>
-                        </td>
-                        <td>@venue.Address.City.Name, @venue.Address.State.Abbreviation</td>
-                        <td>@venue.ContactFirstName @venue.ContactLastName</td>
-                        <td>@String.Format("{0:(###) ###-####}", Convert.ToInt64(venue.ContactPhoneNumber))</td>
-                        <td><a href="mailto:@venue.ContactEmail">@venue.ContactEmail</a></td>
-                        <td>
-                            <a class="btn btn-xs btn-info" href="@Url.Action("Edit", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
-                            <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
-                        </td>
-                    </tr>
-                }
-            </table>
+                    <div class="col-md-4">
+                        <div class="well">
+                            @{
+                                string idName = "map" + count;
+                            }
+                            <div id="@idName" style="width: 100%; height: 200px; margin-bottom: 20px;"></div>
+                            <h4>@venue.Name</h4>
+                            <p class="text-info"><strong>Contact:</strong> @venue.ContactFirstName @venue.ContactLastName<br />
+                            @String.Format("{0:(###) ###-####}", Convert.ToInt64(venue.ContactPhoneNumber))<br />
+                                <a href="mailto:@venue.ContactEmail">@venue.ContactEmail</a></p>
+                            <p>
+                                @venue.Address.StreetOne<br />
+                                @venue.Address.City.Name, @venue.Address.State.Abbreviation @venue.Address.ZipCode.Number
+                            </p>
+                            <div class="btn-group btn-group-justified" role="group">
+                                <div class="btn-group">
+                                    <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a>
+                                </div>
+                                <div class="btn-group">
+                                    <a data-toggle="tooltip" data-placement="top" title="You Cannot Undo This!" class="btn btn-danger btn-sm" href="@Url.Action("Delete", "Venue", new { venueId = venue.VenueId, bandId = Model.CurrentBand.BandId })"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    if (count % 3 == 0)
+                    {
+                        @:</div><div class="row">
+                    }
+                        count++;
+                    }
+            </div>
         }
     </div>
 </div>
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3F02Dr7BSQRR48YgU8akdwdR-9FsXp3w"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @{
+               int count = 1;
+            }
+            @foreach (var venue in Model.CurrentBand.Venues)
+            {
+                string idName = "map" + count;
+                string markerName = "marker" + count;
+                <text>
+                var @idName = new google.maps.Map(document.getElementById("@idName"), {
+                    zoom: 15,
+                    center: { lat: @venue.Address.Lat, lng: @venue.Address.Lng },
+                    disableDefaultUI: true
+                });
+                var @markerName = new google.maps.Marker({
+                    position: { lat: @venue.Address.Lat, lng: @venue.Address.Lng },
+                    map: @idName
+                });
+                </text>
+                count++;
+            }
+        });
+    </script>
+}
