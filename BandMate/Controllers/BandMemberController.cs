@@ -23,57 +23,11 @@ namespace BandMate.Controllers
         ////////////////////////////////////////////////////////////////////////////////////////
         public ActionResult Index(int? bandId)
         {
-            var bands = db.Bands
-                .Include(b => b.BandMembers)
-                .Include("BandMembers")
-                .Include("Invitations")
-                .Include("Tours")
-                .Include("Tours.TourDates")
-                .Include("Tours.TourDates.SoldProducts")
-                .Include("Venues")
-                .Include("Venues.Address")
-                .Include("Venues.Address.City")
-                .Include("Venues.Address.State")
-                .Include("Venues.Address.ZipCode")
-                .Include("Songs")
-                .Include("SetLists")
-                .Include("SetLists.SetListSongs")
-                .Include("Events")
-                .Include("Store")
-                .Include("Store.Products")
-                .ToList();
-            List<Band> myBands = new List<Band>();
-            foreach (Band band in bands)
-            {
-                foreach (BandMember bandMember in band.BandMembers)
-                {
-                    if (bandMember.UserId == User.Identity.GetUserId())
-                    {
-                        myBands.Add(band);
-                    }
-                }
-            }
-            //Get the Band Member's Invitations
-            string userId = User.Identity.GetUserId();
-            var user = db.Users
-                .Include(u => u.Bands)
-                .Where(u => u.Id == userId)
-                .FirstOrDefault();
-            var invitations = db.Invitations
-                .Where(i => i.IsAccepted == false)
-                .Where(i => i.Email == user.Email)
-                .ToList();
-
-            if (myBands.Count <= 0)
-            {
-                //User is not a member of any bands. Do they have any invitations?
-                if (invitations.Count > 0)
-                {
-                    return RedirectToAction("Index", "Invitation");
-                }
-                //User is not a member of any bands and they have no pending invitations. They cannot use the site.
-                return RedirectToAction("NoMemberData", "BandMember");
-            }
+            //Common code for all actions in BandMemberController
+            List<Band> bands = GetAllBands();
+            List<Band> myBands = GetUserBands(bands);
+            List<Invitation> invitations = GetInvitations();
+            CheckInvitationStatus(myBands, invitations);
             Band currentBand = myBands[0];
             if (bandId != null)
             {
@@ -83,8 +37,9 @@ namespace BandMate.Controllers
             {
                 return RedirectToAction("Index", "BandMember", new { bandId = currentBand.BandId });
             }
-            List<Band> otherBands;
-            otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            List<Band> otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            //end of common code ////////////////////////////////////////////////////
+
             var viewModel = new BandViewModel();
             viewModel.OtherBands = otherBands;
             viewModel.Invitations = invitations;
@@ -106,58 +61,10 @@ namespace BandMate.Controllers
         public ActionResult SetLists(int? bandId)
         {
             //Common code for all actions in BandMemberController
-            var bands = db.Bands
-                .Include(b => b.BandMembers)
-                .Include("BandMembers")
-                .Include("Invitations")
-                .Include("Tours")
-                .Include("Tours.TourDates")
-                .Include("Tours.TourDates.SoldProducts")
-                .Include("Venues")
-                .Include("Venues.Address")
-                .Include("Venues.Address.City")
-                .Include("Venues.Address.State")
-                .Include("Venues.Address.ZipCode")
-                .Include("Songs")
-                .Include("SetLists")
-                .Include("SetLists.SetListSongs")
-                .Include("SetLists.SetListSongs.Song")
-                .Include("Events")
-                .Include("Store")
-                .Include("Store.Products")
-                .ToList();
-            List<Band> myBands = new List<Band>();
-            foreach (Band band in bands)
-            {
-                foreach (BandMember bandMember in band.BandMembers)
-                {
-                    if (bandMember.UserId == User.Identity.GetUserId())
-                    {
-                        myBands.Add(band);
-                    }
-                }
-            }
-            //Get the Band Member's Invitations
-            string userId = User.Identity.GetUserId();
-            var user = db.Users
-                .Include(u => u.Bands)
-                .Where(u => u.Id == userId)
-                .FirstOrDefault();
-            var invitations = db.Invitations
-                .Where(i => i.IsAccepted == false)
-                .Where(i => i.Email == user.Email)
-                .ToList();
-
-            if (myBands.Count <= 0)
-            {
-                //User is not a member of any bands. Do they have any invitations?
-                if (invitations.Count > 0)
-                {
-                    return RedirectToAction("Index", "Invitation");
-                }
-                //User is not a member of any bands and they have no pending invitations. They cannot use the site.
-                return RedirectToAction("NoMemberData", "BandMember");
-            }
+            List<Band> bands = GetAllBands();
+            List<Band> myBands = GetUserBands(bands);
+            List<Invitation> invitations = GetInvitations();
+            CheckInvitationStatus(myBands, invitations);
             Band currentBand = myBands[0];
             if (bandId != null)
             {
@@ -167,9 +74,8 @@ namespace BandMate.Controllers
             {
                 return RedirectToAction("Index", "BandMember", new { bandId = currentBand.BandId });
             }
-            List<Band> otherBands;
-            otherBands = bands.Where(b => b.BandId != bandId).ToList();
-            //End of common code/////////////////////////////////////////////////////////////////
+            List<Band> otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            //end of common code ////////////////////////////////////////////////////
 
             var viewModel = new BandSetListViewModel();
             viewModel.OtherBands = otherBands;
@@ -192,58 +98,10 @@ namespace BandMate.Controllers
         public ActionResult Tours(int? bandId)
         {
             //Common code for all actions in BandMemberController
-            var bands = db.Bands
-                .Include(b => b.BandMembers)
-                .Include("BandMembers")
-                .Include("Invitations")
-                .Include("Tours")
-                .Include("Tours.TourDates")
-                .Include("Tours.TourDates.SoldProducts")
-                .Include("Venues")
-                .Include("Venues.Address")
-                .Include("Venues.Address.City")
-                .Include("Venues.Address.State")
-                .Include("Venues.Address.ZipCode")
-                .Include("Songs")
-                .Include("SetLists")
-                .Include("SetLists.SetListSongs")
-                .Include("SetLists.SetListSongs.Song")
-                .Include("Events")
-                .Include("Store")
-                .Include("Store.Products")
-                .ToList();
-            List<Band> myBands = new List<Band>();
-            foreach (Band band in bands)
-            {
-                foreach (BandMember bandMember in band.BandMembers)
-                {
-                    if (bandMember.UserId == User.Identity.GetUserId())
-                    {
-                        myBands.Add(band);
-                    }
-                }
-            }
-            //Get the Band Member's Invitations
-            string userId = User.Identity.GetUserId();
-            var user = db.Users
-                .Include(u => u.Bands)
-                .Where(u => u.Id == userId)
-                .FirstOrDefault();
-            var invitations = db.Invitations
-                .Where(i => i.IsAccepted == false)
-                .Where(i => i.Email == user.Email)
-                .ToList();
-
-            if (myBands.Count <= 0)
-            {
-                //User is not a member of any bands. Do they have any invitations?
-                if (invitations.Count > 0)
-                {
-                    return RedirectToAction("Index", "Invitation");
-                }
-                //User is not a member of any bands and they have no pending invitations. They cannot use the site.
-                return RedirectToAction("NoMemberData", "BandMember");
-            }
+            List<Band> bands = GetAllBands();
+            List<Band> myBands = GetUserBands(bands);
+            List<Invitation> invitations = GetInvitations();
+            CheckInvitationStatus(myBands, invitations);
             Band currentBand = myBands[0];
             if (bandId != null)
             {
@@ -253,9 +111,8 @@ namespace BandMate.Controllers
             {
                 return RedirectToAction("Index", "BandMember", new { bandId = currentBand.BandId });
             }
-            List<Band> otherBands;
-            otherBands = bands.Where(b => b.BandId != bandId).ToList();
-            //End of common code/////////////////////////////////////////////////////////////////
+            List<Band> otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            //end of common code ////////////////////////////////////////////////////
 
             var viewModel = new BandTourViewModel();
             viewModel.OtherBands = otherBands;
@@ -278,6 +135,84 @@ namespace BandMate.Controllers
         public ActionResult Events(int? bandId)
         {
             //Common code for all actions in BandMemberController
+            List<Band> bands = GetAllBands();
+            List<Band> myBands = GetUserBands(bands);
+            List<Invitation> invitations = GetInvitations();
+            CheckInvitationStatus(myBands, invitations);
+            Band currentBand = myBands[0];
+            if (bandId != null)
+            {
+                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
+            }
+            else
+            {
+                return RedirectToAction("Index", "BandMember", new { bandId = currentBand.BandId });
+            }
+            List<Band> otherBands = myBands.Where(b => b.BandId != bandId).ToList();
+            //end of common code ////////////////////////////////////////////////////
+
+            var viewModel = new BandEventViewModel();
+            viewModel.OtherBands = otherBands;
+            viewModel.CurrentBand = currentBand;
+
+            //get all the events
+            viewModel.CurrentBandEvents = currentBand.Events.ToList();
+
+            string eventsJson = GetEventsJson(currentBand);
+            viewModel.EventsJson = eventsJson;
+
+            if (TempData["infoMessage"] != null)
+            {
+                ViewBag.infoMessage = TempData["infoMessage"].ToString();
+            }
+            if (TempData["dangerMessage"] != null)
+            {
+                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
+            }
+            return View(viewModel);
+        }
+
+
+        public ActionResult NoMemberData()
+        {
+            return View();
+        }
+
+        public ActionResult LeaveBand(int id)
+        {
+            string userId = User.Identity.GetUserId();
+            Band band = db.Bands.Find(id);
+            var bandMembers = db.BandMembers.ToList();
+            foreach ( BandMember bandMember in bandMembers )
+            {
+                if (bandMember.UserId == userId && bandMember.BandId == id )
+                {
+                    db.BandMembers.Remove(bandMember);
+                    db.SaveChanges();
+                }
+            }
+
+            TempData["infoMessage"] = "You have left the band '"+ band.Name +"'";
+            return RedirectToAction("Index", "BandMember");
+        }
+
+        private List<Band> GetUserBands(List<Band> bands) {
+
+            List<Band> myBands = new List<Band>();
+            foreach (Band band in bands)
+            {
+                foreach (BandMember bandMember in band.BandMembers)
+                {
+                    if (bandMember.UserId == User.Identity.GetUserId())
+                    {
+                        myBands.Add(band);
+                    }
+                }
+            }
+            return myBands;
+        }
+
+        private List<Band> GetAllBands() {
             var bands = db.Bands
                 .Include(b => b.BandMembers)
                 .Include("BandMembers")
@@ -293,23 +228,14 @@ namespace BandMate.Controllers
                 .Include("Songs")
                 .Include("SetLists")
                 .Include("SetLists.SetListSongs")
-                .Include("SetLists.SetListSongs.Song")
                 .Include("Events")
                 .Include("Store")
                 .Include("Store.Products")
                 .ToList();
-            List<Band> myBands = new List<Band>();
-            foreach (Band band in bands)
-            {
-                foreach (BandMember bandMember in band.BandMembers)
-                {
-                    if (bandMember.UserId == User.Identity.GetUserId())
-                    {
-                        myBands.Add(band);
-                    }
-                }
-            }
-            //Get the Band Member's Invitations
+            return bands;
+        }
+
+        private List<Invitation> GetInvitations() {
             string userId = User.Identity.GetUserId();
             var user = db.Users
                 .Include(u => u.Bands)
@@ -319,7 +245,10 @@ namespace BandMate.Controllers
                 .Where(i => i.IsAccepted == false)
                 .Where(i => i.Email == user.Email)
                 .ToList();
+            return invitations;
+        }
 
+        private ActionResult CheckInvitationStatus(List<Band> myBands, List<Invitation> invitations) {
             if (myBands.Count <= 0)
             {
                 //User is not a member of any bands. Do they have any invitations?
@@ -330,25 +259,10 @@ namespace BandMate.Controllers
                 //User is not a member of any bands and they have no pending invitations. They cannot use the site.
                 return RedirectToAction("NoMemberData", "BandMember");
             }
-            Band currentBand = myBands[0];
-            if (bandId != null)
-            {
-                currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
-            }
-            else
-            {
-                return RedirectToAction("Index", "BandMember", new { bandId = currentBand.BandId });
-            }
-            List<Band> otherBands;
-            otherBands = bands.Where(b => b.BandId != bandId).ToList();
-            //End of common code/////////////////////////////////////////////////////////////////
+            return null;
+        }
 
-            var viewModel = new BandEventViewModel();
-            viewModel.OtherBands = otherBands;
-            viewModel.CurrentBand = currentBand;
-
-            //get all the events
-            viewModel.CurrentBandEvents = currentBand.Events.ToList();
+        private string GetEventsJson(Band currentBand) {
             string eventsJson = "[";
             foreach (Event bandEvent in currentBand.Events)
             {
@@ -381,43 +295,7 @@ namespace BandMate.Controllers
                 eventsJson += "},";
             }
             eventsJson += "]";
-            viewModel.EventsJson = eventsJson;
-            if (TempData["infoMessage"] != null)
-            {
-                ViewBag.infoMessage = TempData["infoMessage"].ToString();
-            }
-            if (TempData["dangerMessage"] != null)
-            {
-                ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
-            }
-            return View(viewModel);
-        }
-
-
-        public ActionResult NoMemberData()
-        {
-            return View();
-        }
-
-        public ActionResult LeaveBand(int id)
-        {
-            string userId = User.Identity.GetUserId();
-            Band band = db.Bands.Find(id);
-
-            //YOU ARE HERE...GET THE BAND MEMBER BY USER ID AND BAND ID WITHIN THE FOREACH AND DELETE IT FROM THE DB THERE.
-
-            var bandMembers = db.BandMembers.ToList();
-            foreach ( BandMember bandMember in bandMembers )
-            {
-                if (bandMember.UserId == userId && bandMember.BandId == id )
-                {
-                    db.BandMembers.Remove(bandMember);
-                    db.SaveChanges();
-                }
-            }
-
-            TempData["infoMessage"] = "You have left the band '"+ band.Name +"'";
-            return RedirectToAction("Index", "BandMember");
+            return eventsJson;
         }
 
     }
