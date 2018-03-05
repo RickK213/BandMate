@@ -2,11 +2,11 @@
 <h3><em>Manage your band online</em></h3>
 <p>Bandmate is online band manager built as my capstone project for devCodeCamp. Bandmate was built in 2 weeks using ASP.NET MVC5 and Entity Framework. BandMate implements 5 APIs:</p>
 <ul>
-	<li>Google Maps API &mdash; <em>for geolocating addresses and displaying maps</em></li>
-	<li>Stripe API &mdash; <em>for processing payments and managing paid subscriptions</em></li>
-	<li>Twilio API &mdash; <em>for sending text messages</em></li>
-	<li>SendGrid API &mdash; <em>for sending email messages</em></li>
-	<li>Spotify API &mdash; <em>for embedding playlists</em></li>
+	<li><strong>Google Maps API</strong> &mdash; <em>for geolocating addresses and displaying maps</em></li>
+	<li><strong>Stripe API</strong> &mdash; <em>for processing payments and managing paid subscriptions</em></li>
+	<li><strong>Twilio API</strong> &mdash; <em>for sending text messages</em></li>
+	<li><strong>SendGrid API</strong> &mdash; <em>for sending email messages</em></li>
+	<li><strong>Spotify API</strong> &mdash; <em>for embedding playlists</em></li>
 </ul>
 <h3>BandMate's key features:</h3>
 <ul>
