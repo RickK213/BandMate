@@ -105,20 +105,6 @@ namespace BandMate.Controllers
 
         private string GetSongHtml(SetListSong setListSong)
         {
-            //< li class="list-group-item" data-songId="@setListSong.Song.SongId">
-            //    <div class="row">
-            //        <div class="col-md-1">
-            //            <a class="btn btn-link btn-s"><span class="glyphicon glyphicon-move"></span></a>
-            //        </div>
-            //        <div class="col-md-10">
-            //            <h4>@setListSong.Song.Name</h4>
-            //        </div>
-            //        <div class="col-md-1">
-            //            <a class="btn btn-danger btn-s removeSong" data-setListSongId="@setListSong.SetListSongId"><span class="glyphicon glyphicon-trash"></span></a>
-            //        </div>
-            //    </div>
-            //</li>
-
             StringBuilder songHtml = new StringBuilder();
             songHtml.Append("<li class=\"list-group-item\" data-songId=\"" + setListSong.Song.SongId + "\">");
             songHtml.Append("<div class=\"row\">");

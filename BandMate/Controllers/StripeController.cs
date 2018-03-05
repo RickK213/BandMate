@@ -181,7 +181,6 @@ namespace BandMate.Controllers
             return RedirectToAction("ThankYou", "Store");
         }
 
-        //TO DO: move these duplicate helper methods (they are also in the VenueController) to a static class
         private Address GetAddress(string StreetOne, string City_Name, string StateId, string ZipCode_Number)
         {
             int stateIdNumber = Convert.ToInt32(StateId);

@@ -95,20 +95,6 @@ namespace BandMate.Controllers
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
         }
 
-        //public ActionResult Delete(int venueId, int bandId)
-        //{
-        //    var venue = db.Venues.Find(venueId);
-        //    var band = db.Bands
-        //        .Include(b => b.Venues)
-        //        .Where(b => b.BandId == bandId)
-        //        .FirstOrDefault();
-        //    db.Venues.Remove(venue);
-        //    band.Venues.Remove(venue);
-        //    db.SaveChanges();
-        //    TempData["infoMessage"] = venue.Name + " Deleted!";
-        //    return RedirectToAction("Venues", "Band", new { bandId = band.BandId });
-        //}
-
         [HttpGet]
         public ActionResult delete(int venueId, int bandId)
         {
@@ -142,12 +128,7 @@ namespace BandMate.Controllers
                 return RedirectToAction("Venues", "Band", new { bandId = bandId });
             }
             var venue = db.Venues.Find(venueId);
-            //var band = db.Bands
-            //    .Include(b => b.Venues)
-            //    .Where(b => b.BandId == bandId)
-            //    .FirstOrDefault();
             db.Venues.Remove(venue);
-            //band.Venues.Remove(venue);
             db.SaveChanges();
             TempData["infoMessage"] = venue.Name + " Deleted!";
             return RedirectToAction("Venues", "Band", new { bandId = bandId });
