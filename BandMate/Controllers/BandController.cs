@@ -17,7 +17,6 @@ namespace BandMate.Controllers
     [Authorize]
     public class BandController : Controller
     {
-
         private ApplicationDbContext db = new ApplicationDbContext();
 
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +42,7 @@ namespace BandMate.Controllers
             }
             List<Band> otherBands;
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
-            //End of common code
+            //End of common code            
 
             var viewModel = new BandViewModel();
             viewModel.OtherBands = otherBands;
@@ -125,49 +124,10 @@ namespace BandMate.Controllers
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
             //End of common code
 
-            //Chart Data!!!//////////////////////////////////////////////////////////////
-            //var data = {
-            // A labels array that can contain any sort of values
-            //labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            // Our series array that contains series objects or in this case series data arrays
-            //series: [
-            //      [5, 2, 4, 2, 0]
-            //    ]
-            //};
-            DateTime date = DateTime.Now.AddDays(-4);
-            List<String> labels = new List<String>();
-            List<Double> series = new List<Double>();
-            for (int i=0; i<5; i++)
-            {
-                Double dailyAppearanceFeeCollected = 0d;
-                foreach (Tour tour in currentBand.Tours)
-                {
-                    foreach (TourDate tourDate in tour.TourDates)
-                    {
-                        DateTime feeCollectedDate = tourDate.FeeCollectedOn ?? DateTime.Now.AddDays(365);
-                        if (feeCollectedDate.Date == date.Date )
-                        {
-                            dailyAppearanceFeeCollected += tourDate.AppearanceFee;
-                        }   
-                    }
-                }
-                series.Add(dailyAppearanceFeeCollected);
-                labels.Add(String.Format("{0:MM/dd/yy}", date));
-                date = date.AddDays(1);
-            }
-
-            StringBuilder chartData = new StringBuilder();
-            chartData.Append("{");
-            chartData.Append("labels: ['"+ labels[0]+"', '" + labels[1] + "', '" + labels[2] + "', '" + labels[3] + "', '" + labels[4] + "'],");
-            chartData.Append("series: [");
-            chartData.Append("[" + series[0] + ", " + series[1] + "," + series[2] + "," + series[3] + ", " + series[4] + "]");
-            chartData.Append("]");
-            chartData.Append("};");
-
-            ///////////////////////
+            string chartData = GetAppearanceFeeChartData(currentBand);
 
             var viewModel = new BandTourViewModel();
-            viewModel.ChartData = chartData.ToString();
+            viewModel.ChartData = chartData;
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
             viewModel.CurrentBandTours = currentBand.Tours.ToList();
@@ -331,41 +291,11 @@ namespace BandMate.Controllers
             viewModel.OtherBands = otherBands;
             viewModel.CurrentBand = currentBand;
 
-            //get all the events
             viewModel.CurrentBandEvents = currentBand.Events.ToList();
-            string eventsJson = "[";
-            foreach (Event bandEvent in currentBand.Events)
-            {
-                eventsJson += "{";
-                eventsJson += "\"id\": " + bandEvent.EventId + ",";
-                eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
-                eventsJson += "\"start\": \"" + bandEvent.EventDate.ToString("r") + "\",";
-                eventsJson += "\"description\": \"" + bandEvent.Description + "\"";
-                eventsJson += "},";
-            }
 
-            //add all of the tour dates to the list of events too
-            var tours = currentBand.Tours;
-            List<TourDate> tourDates = new List<TourDate>();
-            foreach (Tour tour in tours)
-            {
-                foreach(TourDate tourDate in tour.TourDates)
-                {
-                    tourDates.Add(tourDate);
-                }
-            }
-            foreach ( TourDate tourDate in tourDates )
-            {
-                eventsJson += "{";
-                eventsJson += "\"id\": \"0\",";
-                eventsJson += "\"title\": \"Tour Date: " + tourDate.Venue.Name + "\",";
-                eventsJson += "\"color\": \"#f89406\",";
-                eventsJson += "\"start\": \"" + tourDate.EventDate.ToString("r") + "\",";
-                eventsJson += "\"description\": \"Tour Date at " + tourDate.Venue.Name + "\"";
-                eventsJson += "},";
-            }
-            eventsJson += "]";
+            string eventsJson = GetEventsJson(currentBand);
             viewModel.EventsJson = eventsJson;
+
             if (TempData["infoMessage"] != null)
             {
                 ViewBag.infoMessage = TempData["infoMessage"].ToString();
@@ -402,61 +332,7 @@ namespace BandMate.Controllers
             otherBands = bands.Where(b => b.BandId != bandId).ToList();
             //End of common code
 
-
-            //Chart Data!!!//////////////////////////////////////////////////////////////
-            //var data = {
-            // A labels array that can contain any sort of values
-            //labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            // Our series array that contains series objects or in this case series data arrays
-            //series: [
-            //      [5, 2, 4, 2, 0]
-            //    ]
-            //};
-            DateTime date = DateTime.Now.AddDays(-4);
-            List<String> labels = new List<String>();
-            List<Double> storeSeries = new List<Double>();
-            List<Double> tourDateSeries = new List<Double>();
-            var soldProducts = db.SoldProducts
-                .Where(s => s.BandId == currentBand.BandId)
-                .ToList();
-            for (int i = 0; i < 5; i++)
-            {
-                Double dailyStoreSales = 0d;
-                Double dailyTourDateSales = 0d;
-
-                foreach (SoldProduct soldProduct in soldProducts)
-                {
-                    if ( soldProduct.DateSold.Date == date.Date )
-                    {
-                        if (soldProduct.SoldAtTourDate)
-                        {
-                            dailyTourDateSales += soldProduct.Price;
-                        }
-                        if (!soldProduct.SoldAtTourDate)
-                        {
-                            dailyStoreSales += soldProduct.Price;
-                        }
-                    }
-                }
-                storeSeries.Add(Math.Round(dailyStoreSales, 2));
-                tourDateSeries.Add(Math.Round(dailyTourDateSales,2));
-                labels.Add(String.Format("{0:MM/dd/yy}", date));
-                date = date.AddDays(1);
-            }
-
-            StringBuilder chartData = new StringBuilder();
-            chartData.Append("{");
-            chartData.Append("labels: ['" + labels[0] + "', '" + labels[1] + "', '" + labels[2] + "', '" + labels[3] + "', '" + labels[4] + "'],");
-            chartData.Append("series: [");
-            chartData.Append("[" + storeSeries[0] + ", " + storeSeries[1] + "," + storeSeries[2] + "," + storeSeries[3] + ", " + storeSeries[4] + "],");
-            chartData.Append("[" + tourDateSeries[0] + ", " + tourDateSeries[1] + "," + tourDateSeries[2] + "," + tourDateSeries[3] + ", " + tourDateSeries[4] + "]");
-            chartData.Append("]");
-            chartData.Append("};");
-
-            ///////////////////////
-
-
-
+            string chartData = GetMerchChartData(currentBand);
             var viewModel = new BandStoreViewModel();
             viewModel.ChartData = chartData.ToString();
             viewModel.OtherBands = otherBands;
@@ -550,15 +426,6 @@ namespace BandMate.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         private List<ApplicationUser> GetBandMembers(Band band)
         {
             List<ApplicationUser> bandMembers = new List<ApplicationUser>();
@@ -623,7 +490,6 @@ namespace BandMate.Controllers
 
         private void SendEmail(string toEmail, string subject, string plainTextContent, string htmlTextContent)
         {
-            //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
             KeyManager keyManager = new KeyManager();
             var apiKey = keyManager.SendGridKey;
             var client = new SendGridClient(apiKey);
@@ -632,67 +498,6 @@ namespace BandMate.Controllers
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlTextContent);
             var response = client.SendEmailAsync(msg);
         }
-
-        //MOVE THIS TO BAND MEMBER CONTROLLER!!!!!!!!!!!!!!!!!!!!!!!!
-        //public ActionResult MemberBands(int? bandId)
-        //{
-        //    var bands = db.Bands.Include(b =>b.BandMembers).ToList();
-        //    List<Band> myBands = new List<Band>();
-        //    foreach(Band band in bands)
-        //    {
-        //        foreach(BandMember bandMember in band.BandMembers)
-        //        {
-        //            if ( bandMember.UserId == User.Identity.GetUserId() )
-        //            {
-        //                myBands.Add(band);
-        //            }
-        //        }
-        //    }
-        //    //Get the Band Member's Invitations
-        //    string userId = User.Identity.GetUserId();
-        //    var user = db.Users
-        //        .Include(u => u.Bands)
-        //        .Where(u => u.Id == userId)
-        //        .FirstOrDefault();
-        //    var invitations = db.Invitations
-        //        .Where(i => i.IsAccepted == false)
-        //        .Where(i => i.Email == user.Email)
-        //        .ToList();
-
-        //    if (myBands.Count <= 0)
-        //    {
-        //        //User is not a member of any bands. Do they have any invitations?
-        //        if ( invitations.Count > 0 )
-        //        {
-        //            return RedirectToAction("Index", "Invitation");
-        //        }
-        //        //User is not a member of any bands and they have no pending invitations. They cannot use the site.
-        //        return RedirectToAction("NoMemberData", "Band");
-        //    }
-        //    Band currentBand = myBands[0];
-        //    if (bandId != null)
-        //    {
-        //        currentBand = bands.Where(b => b.BandId == bandId).FirstOrDefault();
-        //    }
-        //    else
-        //    {
-        //        return RedirectToAction("MemberBands", "Band", new { bandId = currentBand.BandId });
-        //    }
-        //    List<Band> otherBands;
-        //    otherBands = myBands.Where(b => b.BandId != bandId).ToList();
-        //    var viewModel = new BandViewModel();
-        //    viewModel.OtherBands = otherBands;
-        //    viewModel.CurrentBand = currentBand;
-        //    if (TempData["infoMessage"] != null)
-        //    {
-        //        ViewBag.infoMessage = TempData["infoMessage"].ToString();
-        //    }
-        //    if (TempData["dangerMessage"] != null)
-        //    {
-        //        ViewBag.dangerMessage = TempData["dangerMessage"].ToString();
-        //    }
-        //    return View(viewModel);
-        //}
 
         public ActionResult RemoveMember(int? bandId, int bandMemberId)
         {
@@ -706,16 +511,6 @@ namespace BandMate.Controllers
             db.SaveChanges();
             TempData["infoMessage"] = bandMember.Title + " removed from your band.";
             return RedirectToAction("Members", "Band", new { bandId = bandId });
-        }
-
-        //For redirect from action filter:
-        public RedirectToRouteResult RedirectToAction(string action, string controller, int? bandId)
-        {
-            if (bandId == null )
-            {
-                return base.RedirectToAction(action, controller);
-            }
-            return base.RedirectToAction(action, controller, new { bandId = bandId });
         }
 
         private List<Band> GetUserBands()
@@ -746,13 +541,130 @@ namespace BandMate.Controllers
             List<Band> bands = user.Bands.ToList();
             foreach (Band band in bands)
             {
-                //band.SetLists = band.SetLists.OrderBy(s => s.Name);
                 foreach (var setList in band.SetLists)
                 {
                     setList.SetListSongs = setList.SetListSongs.OrderBy(s => s.SetListOrder).ToList();
                 }
             }
             return bands;
+        }
+
+        private string GetAppearanceFeeChartData(Band currentBand)
+        {
+            DateTime date = DateTime.Now.AddDays(-4);
+            List<String> labels = new List<String>();
+            List<Double> series = new List<Double>();
+            for (int i = 0; i < 5; i++)
+            {
+                Double dailyAppearanceFeeCollected = 0d;
+                foreach (Tour tour in currentBand.Tours)
+                {
+                    foreach (TourDate tourDate in tour.TourDates)
+                    {
+                        DateTime feeCollectedDate = tourDate.FeeCollectedOn ?? DateTime.Now.AddDays(365);
+                        if (feeCollectedDate.Date == date.Date)
+                        {
+                            dailyAppearanceFeeCollected += tourDate.AppearanceFee;
+                        }
+                    }
+                }
+                series.Add(dailyAppearanceFeeCollected);
+                labels.Add(String.Format("{0:MM/dd/yy}", date));
+                date = date.AddDays(1);
+            }
+            StringBuilder chartData = new StringBuilder();
+            chartData.Append("{");
+            chartData.Append("labels: ['" + labels[0] + "', '" + labels[1] + "', '" + labels[2] + "', '" + labels[3] + "', '" + labels[4] + "'],");
+            chartData.Append("series: [");
+            chartData.Append("[" + series[0] + ", " + series[1] + "," + series[2] + "," + series[3] + ", " + series[4] + "]");
+            chartData.Append("]");
+            chartData.Append("};");
+            return chartData.ToString();
+        }
+
+        private string GetEventsJson(Band currentBand) {
+
+            string eventsJson = "[";
+            foreach (Event bandEvent in currentBand.Events)
+            {
+                eventsJson += "{";
+                eventsJson += "\"id\": " + bandEvent.EventId + ",";
+                eventsJson += "\"title\": \"" + bandEvent.Name + "\",";
+                eventsJson += "\"start\": \"" + bandEvent.EventDate.ToString("r") + "\",";
+                eventsJson += "\"description\": \"" + bandEvent.Description + "\"";
+                eventsJson += "},";
+            }
+
+            //add all of the tour dates to the list of events too
+            var tours = currentBand.Tours;
+            List<TourDate> tourDates = new List<TourDate>();
+            foreach (Tour tour in tours)
+            {
+                foreach (TourDate tourDate in tour.TourDates)
+                {
+                    tourDates.Add(tourDate);
+                }
+            }
+            foreach (TourDate tourDate in tourDates)
+            {
+                eventsJson += "{";
+                eventsJson += "\"id\": \"0\",";
+                eventsJson += "\"title\": \"Tour Date: " + tourDate.Venue.Name + "\",";
+                eventsJson += "\"color\": \"#f89406\",";
+                eventsJson += "\"start\": \"" + tourDate.EventDate.ToString("r") + "\",";
+                eventsJson += "\"description\": \"Tour Date at " + tourDate.Venue.Name + "\"";
+                eventsJson += "},";
+            }
+            eventsJson += "]";
+
+            return eventsJson;
+
+        }
+
+        private string GetMerchChartData(Band currentBand)
+        {
+            DateTime date = DateTime.Now.AddDays(-4);
+            List<String> labels = new List<String>();
+            List<Double> storeSeries = new List<Double>();
+            List<Double> tourDateSeries = new List<Double>();
+            var soldProducts = db.SoldProducts
+                .Where(s => s.BandId == currentBand.BandId)
+                .ToList();
+            for (int i = 0; i < 5; i++)
+            {
+                Double dailyStoreSales = 0d;
+                Double dailyTourDateSales = 0d;
+
+                foreach (SoldProduct soldProduct in soldProducts)
+                {
+                    if (soldProduct.DateSold.Date == date.Date)
+                    {
+                        if (soldProduct.SoldAtTourDate)
+                        {
+                            dailyTourDateSales += soldProduct.Price;
+                        }
+                        if (!soldProduct.SoldAtTourDate)
+                        {
+                            dailyStoreSales += soldProduct.Price;
+                        }
+                    }
+                }
+                storeSeries.Add(Math.Round(dailyStoreSales, 2));
+                tourDateSeries.Add(Math.Round(dailyTourDateSales, 2));
+                labels.Add(String.Format("{0:MM/dd/yy}", date));
+                date = date.AddDays(1);
+            }
+
+            StringBuilder chartData = new StringBuilder();
+            chartData.Append("{");
+            chartData.Append("labels: ['" + labels[0] + "', '" + labels[1] + "', '" + labels[2] + "', '" + labels[3] + "', '" + labels[4] + "'],");
+            chartData.Append("series: [");
+            chartData.Append("[" + storeSeries[0] + ", " + storeSeries[1] + "," + storeSeries[2] + "," + storeSeries[3] + ", " + storeSeries[4] + "],");
+            chartData.Append("[" + tourDateSeries[0] + ", " + tourDateSeries[1] + "," + tourDateSeries[2] + "," + tourDateSeries[3] + ", " + tourDateSeries[4] + "]");
+            chartData.Append("]");
+            chartData.Append("};");
+
+            return chartData.ToString();
         }
 
     }
